@@ -1,1 +1,1 @@
-# logic-academy
+# Excel Logic Academy
