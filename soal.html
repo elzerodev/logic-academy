@@ -1,0 +1,3113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Logic Academy — Modul</title>
+<script>
+/* Set tema sedini mungkin (sebelum CSS/HTML dirender) supaya tidak ada
+   "kedipan" warna saat halaman dibuka. Key localStorage sama dengan
+   index.html, jadi preferensi tema tetap nyambung di kedua halaman. */
+(function(){
+  try{
+    var THEME_KEY = 'ela_theme';
+    var saved = localStorage.getItem(THEME_KEY);
+    var theme = (saved === 'light' || saved === 'dark') ? saved :
+      ((window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-25..200&display=swap">
+<style>
+
+:root{
+  --bg:#080b09;
+  --panel:#101512;
+  --panel-2:#161d19;
+  --panel-3:#1c2420;
+  --line:#26312b;
+  --text:#e9efe9;
+  --text-dim:#8ba396;
+  --text-dim-2:#5e7268;
+  --accent:#b6ff3d;
+  --accent-dim:#7ea832;
+  --amber:#ffb400;
+  --danger:#ff6b5c;
+  --ok:#4ade80;
+  --btn-text:#0a1006;
+  --grid-bg:#0d1210;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+  --sans:'Manrope', -apple-system, sans-serif;
+  --radius:10px;
+}
+:root[data-theme="light"]{
+  --bg:#f3f6f0;
+  --panel:#ffffff;
+  --panel-2:#eef2e9;
+  --panel-3:#e1e8da;
+  --line:#d6ddce;
+  --text:#141b15;
+  --text-dim:#4c5b4f;
+  --text-dim-2:#78887a;
+  --accent:#5c9c1f;
+  --accent-dim:#457016;
+  --amber:#b26b00;
+  --danger:#c9392a;
+  --ok:#1f8a4c;
+  --btn-text:#ffffff;
+  --grid-bg:#ffffff;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%; text-size-adjust:100%;}
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(182,255,61,0.07), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(255,180,0,0.05), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  min-height:100vh;
+  line-height:1.55;
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    linear-gradient(rgba(182,255,61,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(182,255,61,0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, black, transparent 75%);
+}
+#app{position:relative; z-index:1; max-width:980px; margin:0 auto; padding:22px 18px 40px;}
+h1,h2,h3{font-family:var(--mono); letter-spacing:-0.01em; margin:0 0 8px;}
+.mono{font-family:var(--mono);}
+.dim{color:var(--text-dim);}
+.screen{display:none; animation:fadeUp .5s ease both;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+/* topbar */
+#topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:22px; padding-bottom:14px; border-bottom:1px solid var(--line);}
+#topbar .brand{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-weight:700; font-size:14px; color:var(--accent);}
+#topbar .brand .brand-logo{width:22px; height:22px; flex:none; display:block;}
+#topbar .brand .dot{width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+#topbar .actions{display:flex; align-items:center; gap:10px;}
+.progress-pill{font-family:var(--mono); font-size:11px; color:var(--text-dim); background:var(--panel-2); border:1px solid var(--line); padding:5px 10px; border-radius:20px;}
+.btn-ghost{background:none; border:1px solid var(--line); color:var(--text-dim); font-family:var(--mono); font-size:11px; padding:6px 11px; border-radius:7px; cursor:pointer; transition:.15s;}
+.btn-ghost:hover{border-color:var(--danger); color:var(--danger);}
+
+/* theme switch */
+.theme-switch{position:relative; display:inline-flex; align-items:center; cursor:pointer; flex:none;}
+.theme-switch input{position:absolute; opacity:0; width:0; height:0;}
+.theme-switch-track{width:46px; height:25px; background:var(--panel-3); border:1px solid var(--line); border-radius:20px; position:relative; transition:.2s ease;}
+.theme-switch-thumb{position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:50%; background:var(--panel); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:11px; line-height:1; transition:.2s ease;}
+.theme-switch-thumb::before{content:"🌙";}
+.theme-switch input:checked + .theme-switch-track{background:rgba(182,255,61,0.18); border-color:rgba(182,255,61,0.4);}
+.theme-switch input:checked + .theme-switch-track .theme-switch-thumb{transform:translateX(21px); border-color:var(--accent);}
+.theme-switch input:checked + .theme-switch-track .theme-switch-thumb::before{content:"☀️";}
+.theme-switch input:focus-visible + .theme-switch-track{outline:2px solid var(--accent); outline-offset:2px;}
+
+/* buttons */
+.btn{
+  font-family:var(--mono); font-weight:700; font-size:14px; letter-spacing:.02em;
+  background:var(--accent); color:var(--btn-text); border:none; padding:13px 22px; border-radius:8px;
+  cursor:pointer; transition:.15s ease; box-shadow:0 4px 0 var(--accent-dim);
+}
+.btn:hover{transform:translateY(-2px); box-shadow:0 6px 0 var(--accent-dim);}
+.btn:active{transform:translateY(1px); box-shadow:0 2px 0 var(--accent-dim);}
+.btn:disabled{background:var(--panel-3); color:var(--text-dim-2); box-shadow:none; cursor:not-allowed; transform:none;}
+.btn.secondary{background:var(--panel-3); color:var(--text); box-shadow:0 4px 0 #0b0f0d; border:1px solid var(--line);}
+.btn.secondary:hover{box-shadow:0 6px 0 #0b0f0d;}
+.btn.small{padding:9px 14px; font-size:12px; box-shadow:0 3px 0 var(--accent-dim);}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+/* panels */
+.card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:22px; margin-bottom:16px;}
+.card.glow{border-color:rgba(182,255,61,0.35); box-shadow:0 0 0 1px rgba(182,255,61,0.08), 0 10px 30px -15px rgba(182,255,61,0.2);}
+
+/* dialog / narrative */
+.dialog{display:flex; gap:12px; margin-bottom:14px; align-items:flex-start;}
+.dialog .avatar{flex:none; width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:800; font-size:14px;}
+.dialog .bubble{background:var(--panel-2); border:1px solid var(--line); border-radius:0 10px 10px 10px; padding:12px 15px; font-size:14.5px;}
+.dialog .name{font-family:var(--mono); font-size:11px; font-weight:700; margin-bottom:4px; display:block;}
+.av-mentor{background:rgba(182,255,61,0.15); color:var(--accent); border:1px solid rgba(182,255,61,0.3);}
+.av-client{background:rgba(255,180,0,0.15); color:var(--amber); border:1px solid rgba(255,180,0,0.3);}
+.av-you{background:rgba(255,255,255,0.08); color:var(--text); border:1px solid var(--line);}
+
+/* map */
+.roadmap{display:flex; flex-direction:column; gap:14px; margin:22px 0;}
+.node{display:flex; align-items:center; gap:16px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; cursor:pointer; transition:.15s; position:relative;}
+.node:hover:not(.locked){border-color:var(--accent); transform:translateX(4px);}
+.node.locked{opacity:.45; cursor:not-allowed;}
+.node .num{font-family:var(--mono); font-size:22px; font-weight:800; color:var(--text-dim-2); width:38px; flex:none;}
+.node.done .num{color:var(--ok);}
+.node.current .num{color:var(--accent);}
+.node .info{flex:1;}
+.node .info h3{margin:0 0 3px; font-size:16px;}
+.node .info p{margin:0; font-size:12.5px; color:var(--text-dim);}
+.node .status{font-family:var(--mono); font-size:11px; padding:5px 10px; border-radius:20px; flex:none;}
+.node.done .status{background:rgba(74,222,128,0.12); color:var(--ok); border:1px solid rgba(74,222,128,0.3);}
+.node.current .status{background:rgba(182,255,61,0.12); color:var(--accent); border:1px solid rgba(182,255,61,0.3);}
+.node.locked .status{background:var(--panel-2); color:var(--text-dim-2); border:1px solid var(--line);}
+.overall-bar{height:8px; background:var(--panel-2); border:1px solid var(--line); border-radius:20px; overflow:hidden; margin:14px 0 4px;}
+.overall-bar .fill{height:100%; background:linear-gradient(90deg,var(--accent-dim),var(--accent)); transition:width .6s ease;}
+
+/* level step nav */
+.steps-nav{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px;}
+.step-chip{font-family:var(--mono); font-size:10.5px; padding:5px 10px; border-radius:20px; background:var(--panel-2); border:1px solid var(--line); color:var(--text-dim-2);}
+.step-chip.active{background:rgba(182,255,61,0.12); border-color:rgba(182,255,61,0.4); color:var(--accent);}
+.step-chip.past{color:var(--ok); border-color:rgba(74,222,128,0.25);}
+
+/* concept card */
+.concept-item{border-left:3px solid var(--accent); padding:10px 14px; margin-bottom:10px; background:var(--panel-2); border-radius:0 8px 8px 0;}
+.concept-item code{font-family:var(--mono); color:var(--amber); background:rgba(255,180,0,0.08); padding:1px 6px; border-radius:4px; font-size:13px;}
+.concept-item h4{margin:0 0 4px; font-size:13.5px; font-family:var(--mono);}
+.concept-item p{margin:0; font-size:13px; color:var(--text-dim);}
+
+/* ===================== SPREADSHEET SURFACE ===================== */
+.ss{margin:14px 0 10px;}
+.fx-bar{display:flex; align-items:stretch; border:1px solid var(--line); border-radius:8px 8px 0 0; background:var(--panel-2); overflow:hidden;}
+.fx-ref{font-family:var(--mono); font-size:12px; font-weight:700; color:var(--accent); min-width:74px; padding:0 8px; display:flex; align-items:center; justify-content:center; background:var(--panel-3); border-right:1px solid var(--line);}
+.fx-sym{font-family:var(--mono); font-size:12px; color:var(--amber); display:flex; align-items:center; padding:0 11px; border-right:1px solid var(--line);}
+.fx-in{flex:1; min-width:0; background:transparent; border:none; outline:none; color:var(--text); font-family:var(--mono); font-size:12.5px; padding:10px 11px;}
+.fx-in::placeholder{color:var(--text-dim-2);}
+.fx-in:disabled{color:var(--text-dim-2);}
+/* Fix: matikan ligature font (JetBrains Mono) di semua elemen formula, supaya
+   karakter ">=" "<=" "<>" tidak digabung jadi satu glyph gabungan yang bisa
+   terlihat terpotong di kotak sel yang sempit. */
+.fx-in,
+input.cell-input,
+td.cell .cv,
+.fx-ref,
+.fx-sym {
+  font-variant-ligatures: none;
+  -webkit-font-feature-settings: "liga" 0, "calt" 0;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+.grid-wrap{overflow-x:auto; border:1px solid var(--line); border-top:none; border-radius:0 0 8px 8px; background:var(--grid-bg); outline:none; -webkit-overflow-scrolling:touch;}
+table.xgrid{border-collapse:separate; border-spacing:0; width:100%; min-width:460px; font-family:var(--mono); font-size:12.5px; table-layout:fixed;}
+table.xgrid th, table.xgrid td{border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:0; text-align:center; height:34px;}
+table.xgrid thead th{background:var(--panel-3); color:var(--text-dim); font-weight:600; font-size:11px; padding:7px 4px; cursor:pointer; transition:.12s;}
+table.xgrid th.rownum{background:var(--panel-3); color:var(--text-dim-2); width:34px; font-size:11px; cursor:pointer; transition:.12s;}
+table.xgrid th.corner{cursor:default;}
+table.xgrid th.hl{background:rgba(182,255,61,0.16); color:var(--accent);}
+td.cell{position:relative; user-select:none; -webkit-user-select:none; background:transparent;}
+td.cell.editable{background:rgba(182,255,61,0.05);}
+td.cell.in-range{background:rgba(182,255,61,0.22);}
+/* Fix: border blok multi-select memakai class + !important, bukan inline
+   box-shadow tipis — supaya pasti menang dari border grid bawaan dan
+   benar-benar terlihat jelas sebagai satu blok utuh (ala Excel). */
+td.cell.sel-top{border-top:2px solid var(--accent) !important;}
+td.cell.sel-bottom{border-bottom:2px solid var(--accent) !important;}
+td.cell.sel-left{border-left:2px solid var(--accent) !important;}
+td.cell.sel-right{border-right:2px solid var(--accent) !important;}
+td.cell.active{box-shadow:inset 0 0 0 2px var(--accent); z-index:2;}
+td.cell.fill-preview{box-shadow:inset 0 0 0 1px rgba(182,255,61,0.55);}
+td.cell .cv{display:block; padding:7px 8px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+td.cell.editable .cv{color:var(--accent);}
+.cell-err{color:var(--danger) !important;}
+input.cell-input{
+  position:absolute; inset:0; width:100%; height:100%;
+  border:none; background:var(--grid-bg); color:var(--accent); font-family:var(--mono);
+  /* Fix: rata kiri (bukan center) supaya teks tidak bergeser-geser recenter
+     tiap kali karakter baru diketik — mencegah kesan karakter "hilang". */
+  font-size:12.5px; text-align:left; padding:0 8px; outline:none; z-index:4;
+}
+.fill-handle{position:absolute; right:-4px; bottom:-4px; width:9px; height:9px; background:var(--accent); border:1px solid var(--grid-bg); border-radius:2px; cursor:crosshair; z-index:5;}
+td.cell.ref-picked{box-shadow:inset 0 0 0 2px var(--amber); background:rgba(255,180,0,0.14);}
+.fx-warn{margin-top:8px; font-family:var(--mono); font-size:11.5px; color:var(--amber); background:rgba(255,180,0,0.07); border:1px solid rgba(255,180,0,0.3); border-radius:7px; padding:8px 11px; line-height:1.5;}
+.grid-tips{font-family:var(--mono); font-size:10.5px; color:var(--text-dim-2); line-height:1.7; margin-bottom:12px;}
+.grid-tips kbd{background:var(--panel-3); border:1px solid var(--line); border-radius:4px; padding:1px 5px; color:var(--text-dim); font-size:10px;}
+
+.sel-summary{
+  display:flex; gap:16px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:11px; color:var(--text-dim);
+  background:var(--panel-2); border:1px solid var(--line);
+  padding:6px 12px; border-radius:7px; margin-bottom:12px;
+}
+.sel-summary b{color:var(--accent);}
+
+.fx-hint{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px; color:var(--text-dim); background:var(--panel-2); border:1px solid var(--line); padding:8px 12px; border-radius:7px; margin-bottom:12px;}
+.fx-hint b{color:var(--amber);}
+
+.check-row{display:flex; align-items:center; gap:8px; font-size:13px; padding:6px 0;}
+.check-row .ico{flex:none; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800;}
+.check-row.ok .ico{background:rgba(74,222,128,0.15); color:var(--ok);}
+.check-row.fail .ico{background:rgba(255,107,92,0.15); color:var(--danger);}
+
+.feedback-box{margin-top:14px; padding:14px 16px; border-radius:8px; border:1px solid var(--line); background:var(--panel-2);}
+.feedback-box.success{border-color:rgba(74,222,128,0.4); background:rgba(74,222,128,0.06);}
+.feedback-box.fail{border-color:rgba(255,107,92,0.3); background:rgba(255,107,92,0.05);}
+
+.action-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+
+/* quiz */
+.quiz-progress{font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-bottom:10px;}
+.quiz-q{font-size:16px; font-weight:600; margin-bottom:16px;}
+.quiz-opt{display:block; width:100%; text-align:left; background:var(--panel-2); border:1px solid var(--line); color:var(--text); padding:13px 16px; border-radius:8px; margin-bottom:9px; cursor:pointer; font-size:14px; font-family:var(--sans); transition:.15s;}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);}
+.quiz-opt.correct{background:rgba(74,222,128,0.12); border-color:var(--ok); color:var(--ok);}
+.quiz-opt.wrong{background:rgba(255,107,92,0.12); border-color:var(--danger); color:var(--danger);}
+.quiz-opt:disabled{cursor:default;}
+.quiz-explain{margin-top:12px; padding:12px 14px; background:var(--panel-2); border-left:3px solid var(--amber); border-radius:0 8px 8px 0; font-size:13.5px; color:var(--text-dim);}
+
+/* macro sequencer */
+.macro-pool{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+.macro-chip{font-family:var(--mono); font-size:12.5px; background:var(--panel-2); border:1px solid var(--line); padding:9px 13px; border-radius:7px; cursor:pointer; transition:.12s;}
+.macro-chip:hover{border-color:var(--accent);}
+.macro-chip.used{opacity:0; pointer-events:none; height:0; padding:0; margin:0; border:none;}
+.macro-chip.shake{animation:shake .3s; border-color:var(--danger);}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.macro-seq{display:flex; flex-direction:column; gap:8px; margin-bottom:16px;}
+.macro-seq-item{font-family:var(--mono); font-size:12.5px; background:rgba(182,255,61,0.08); border:1px solid rgba(182,255,61,0.3); padding:9px 13px; border-radius:7px; display:flex; gap:10px;}
+.macro-seq-item .n{color:var(--accent); font-weight:800;}
+.macro-seq-placeholder{font-size:12px; color:var(--text-dim-2); font-style:italic;}
+
+textarea.reflect{width:100%; min-height:120px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; color:var(--text); font-family:var(--sans); font-size:14px; padding:12px 14px; resize:vertical; outline:none;}
+textarea.reflect:focus{border-color:var(--accent);}
+
+.level-complete-badge{
+  width:88px; height:88px; border-radius:16px;
+  border:3px solid var(--accent); object-fit:cover;
+  margin:0 auto 14px; display:block;
+  box-shadow:0 0 0 4px rgba(182,255,61,0.15), 0 8px 20px -6px rgba(0,0,0,0.4);
+  animation:badgePop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes badgePop{
+  0%{transform:scale(0) rotate(-15deg); opacity:0;}
+  60%{transform:scale(1.15) rotate(5deg); opacity:1;}
+  100%{transform:scale(1) rotate(0deg);}
+}
+
+/* certificate */
+.cert{border:2px solid var(--accent); border-radius:14px; padding:44px 30px; text-align:center; background:radial-gradient(ellipse at 50% 0%, rgba(182,255,61,0.08), transparent 70%), var(--panel); position:relative; overflow:hidden;}
+.cert::before{content:"";position:absolute; inset:8px; border:1px dashed rgba(182,255,61,0.25); border-radius:8px; pointer-events:none;}
+.cert .kicker{font-family:var(--mono); font-size:12px; color:var(--amber); letter-spacing:.15em; text-transform:uppercase;}
+.cert .cert-logo{width:56px; height:56px; display:block; margin:0 auto 14px;}
+.cert .name{font-family:var(--mono); font-size:clamp(24px,5vw,36px); color:var(--accent); margin:14px 0; font-weight:800;}
+.cert .sub{color:var(--text-dim); font-size:14px; max-width:440px; margin:0 auto 6px;}
+.cert .sig{margin-top:30px; font-family:var(--mono); font-size:11px; color:var(--text-dim-2);}
+.name-field{background:var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:var(--mono); font-size:15px; padding:11px 14px; border-radius:8px; width:100%; max-width:340px; outline:none; text-align:center;}
+.name-field:focus{border-color:var(--accent);}
+
+/* star rating (review level terakhir) */
+.star-rating{display:flex; gap:6px; margin:12px 0 14px;}
+.star-btn{background:none; border:none; font-size:30px; line-height:1; cursor:pointer; color:var(--panel-3); transition:.12s ease; padding:0;}
+.star-btn:hover{transform:scale(1.1);}
+.star-btn.active{color:var(--amber);}
+
+/* tombol tip kopi (disorot) + modal in-page (tanpa buka tab baru) */
+.tip-coffee-btn{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--mono); font-weight:800; font-size:11.5px;
+  background:#ffdd00; color:#0d0d0d;
+  border:1px solid #0d0d0d; border-radius:18px;
+  padding:7px 14px 7px 10px; cursor:pointer; transition:.15s ease;
+  box-shadow:0 3px 0 #0d0d0d;
+  animation:tipPulse 2.2s ease-in-out infinite;
+}
+.tip-coffee-btn .coffee-icon{width:16px; height:16px;}
+.tip-coffee-btn:hover{background:#ffe94d; transform:translateY(-2px); box-shadow:0 4px 0 #0d0d0d;}
+.tip-coffee-btn:active{transform:translateY(1px); box-shadow:0 1px 0 #0d0d0d;}
+@keyframes tipPulse{
+  0%,100%{box-shadow:0 3px 0 #0d0d0d, 0 0 0 0 rgba(255,221,0,0.5);}
+  50%{box-shadow:0 3px 0 #0d0d0d, 0 0 0 8px rgba(255,221,0,0);}
+}
+@media (prefers-reduced-motion: reduce){ .tip-coffee-btn{animation:none;} }
+
+.tip-coffee-btn{ position:relative; overflow:visible; }
+.tip-coffee-btn::after{
+  content:'';
+  position:absolute; right:-14px; top:-34px;
+  width:52px; height:47px;
+  background-image:var(--excited-img);
+  background-size:cover; background-position:center;
+  border-radius:10px;
+  border:2px solid #0d0d0d;
+  box-shadow:0 4px 10px -3px rgba(0,0,0,0.5);
+  opacity:0; transform:scale(.4) rotate(-12deg) translateY(6px);
+  transition:opacity .18s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none; z-index:10;
+}
+.tip-coffee-btn:hover::after{
+  opacity:1; transform:scale(1) rotate(-6deg) translateY(0);
+}
+
+.tip-modal-overlay{position:fixed; inset:0; z-index:60; background:rgba(0,0,0,0.62); display:flex; align-items:center; justify-content:center; padding:18px;}
+.tip-modal{background:var(--panel); border:1px solid var(--line); border-radius:14px; width:100%; max-width:720px; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 24px 70px -20px rgba(0,0,0,0.55);}
+.tip-modal-head{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--line); font-family:var(--mono); font-weight:700; color:var(--amber); font-size:14px;}
+.tip-modal-head span{display:flex; align-items:center; gap:9px;}
+.tip-modal-head .coffee-icon{width:22px; height:22px; flex:none; display:block;}
+.tip-modal-close{background:none; border:none; color:var(--text-dim); font-size:15px; line-height:1; cursor:pointer; padding:6px 9px; border-radius:6px; transition:.12s;}
+.tip-modal-close:hover{color:var(--danger); background:rgba(255,107,92,0.1);}
+.tip-modal-frame{flex:1; width:100%; min-height:680px; border:none; background:var(--panel-2);}
+.tip-modal-fallback{padding:9px 16px; font-size:10.5px; color:var(--text-dim-2); font-family:var(--mono); text-align:center; border-top:1px solid var(--line);}
+.tip-modal-fallback a{color:var(--accent);}
+@media (max-width:640px){
+  .tip-modal{max-height:95vh;}
+  .tip-modal-frame{min-height:70vh;}
+}
+
+/* footer */
+.site-footer{
+  margin-top:36px; padding:18px 0 26px; border-top:1px solid var(--line);
+  text-align:center; font-family:var(--mono); font-size:11.5px; color:var(--text-dim-2);
+}
+.site-footer .tag{color:var(--accent);}
+
+@media print{
+  body::before, #topbar, .no-print{display:none !important;}
+  #app{max-width:100%;}
+}
+
+/* ===================== MOBILE RESPONSIVE (ditambahkan; tidak mengubah struktur/JS) ===================== */
+@media (max-width:640px){
+  #app{padding:14px 12px 30px;}
+
+  #topbar{flex-wrap:wrap; row-gap:10px; margin-bottom:16px; padding-bottom:12px;}
+  #topbar .brand{font-size:12px; gap:8px;}
+  #topbar .brand .brand-logo{width:18px; height:18px;}
+  #topbar .actions{width:100%; justify-content:space-between; gap:8px;}
+  .progress-pill{font-size:10px; padding:4px 8px;}
+  .btn-ghost{font-size:10px; padding:5px 9px;}
+  .theme-switch-track{width:40px; height:22px;}
+  .theme-switch-thumb{width:16px; height:16px; font-size:10px;}
+  .theme-switch input:checked + .theme-switch-track .theme-switch-thumb{transform:translateX(18px);}
+
+  h2{font-size:17px;}
+  .card{padding:16px;}
+
+  .dialog{gap:9px; margin-bottom:11px;}
+  .dialog .avatar{width:30px; height:30px; font-size:12px; border-radius:8px;}
+  .dialog .bubble{font-size:13.5px; padding:10px 12px;}
+
+  .node{padding:14px; gap:10px;}
+  .node .num{font-size:17px; width:28px;}
+  .node .info h3{font-size:14px;}
+  .node .info p{font-size:11px;}
+  .node .status{font-size:9.5px; padding:4px 8px; text-align:center;}
+
+  .steps-nav{gap:5px; margin-bottom:16px;}
+  .step-chip{font-size:9.5px; padding:4px 8px;}
+
+  .concept-item{padding:8px 10px;}
+  .concept-item code{font-size:11.5px; word-break:break-word;}
+  .concept-item p{font-size:12.5px;}
+
+  .fx-hint{font-size:10.5px; padding:7px 10px; align-items:flex-start;}
+  .grid-tips{font-size:9px; line-height:1.6;}
+
+  .fx-ref{min-width:56px; font-size:11px;}
+  .fx-sym{padding:0 8px; font-size:11px;}
+  .fx-in{font-size:12px; padding:9px 8px;}
+
+  .sel-summary{font-size:9.5px; gap:8px 12px; padding:5px 10px;}
+
+  table.xgrid{font-size:11px; min-width:400px;}
+  table.xgrid th, table.xgrid td{height:30px;}
+  table.xgrid th.rownum{width:26px; font-size:10px;}
+  table.xgrid thead th{font-size:10px; padding:6px 3px;}
+  td.cell .cv{padding:5px 5px;}
+  input.cell-input{font-size:12px; padding:0 5px;}
+
+  .macro-chip{font-size:11.5px; padding:8px 11px;}
+  .macro-seq-item{font-size:11.5px; padding:8px 11px;}
+
+  .quiz-q{font-size:14.5px; margin-bottom:12px;}
+  .quiz-opt{font-size:13px; padding:11px 13px;}
+  .quiz-explain{font-size:12.5px; padding:10px 12px;}
+
+  textarea.reflect{font-size:13px; padding:10px 12px; min-height:100px;}
+
+  .cert{padding:26px 14px; border-radius:12px;}
+  .cert .cert-logo{width:44px; height:44px; margin-bottom:10px;}
+  .cert .kicker{font-size:10px;}
+  .cert .name{font-size:20px; margin:10px 0;}
+  .cert .sub{font-size:12px;}
+  .cert .sig{font-size:9.5px; margin-top:20px;}
+  .name-field{font-size:13px; padding:9px 12px; max-width:100%;}
+
+  .btn{padding:12px 16px; font-size:13px;}
+  .btn.small{padding:9px 13px; font-size:11.5px;}
+  .action-row{gap:8px;}
+  .action-row .btn, .action-row .btn.secondary{flex:1 1 auto;}
+}
+@media (max-width:360px){
+  table.xgrid{min-width:360px;}
+  .node .info p{display:none;}
+}
+
+/* ===================== DOKUMEN LAMPIRAN CV =====================
+   Tempel blok ini di paling bawah isi tag style, setelah aturan CSS terakhir.
+   Dokumen selalu berlatar kertas putih (tidak ikut mode gelap/terang)
+   supaya hasil cetak/PDF konsisten. */
+.cv-doc{
+  --cv-ink:#1c2a1f; --cv-muted:#5b6b5f; --cv-rule:#d8dfd2; --cv-accent:#2f6b1f;
+  --cv-tint:#eef4e8; --cv-track:#e4eadf;
+  max-width:794px; margin:0 auto; padding:40px 44px 30px;
+  background:#fff; color:var(--cv-ink);
+  border:1px solid var(--line); border-radius:6px;
+  box-shadow:0 18px 50px -22px rgba(0,0,0,.55);
+  font-family:var(--sans); font-size:13px; line-height:1.5; text-align:left;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+.cv-doc *{box-sizing:border-box;}
+.cv-doc h2,.cv-doc h3{font-family:var(--sans); letter-spacing:-.01em;}
+
+.cv-head{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; padding-bottom:16px; border-bottom:2px solid var(--cv-accent);}
+.cv-brand{display:flex; align-items:center; gap:12px;}
+.cv-brand svg{width:38px; height:38px; flex:none; display:block;}
+.cv-brand-name{font-weight:800; font-size:16px; line-height:1.25;}
+.cv-brand-sub{font-size:12px; color:var(--cv-muted);}
+.cv-meta{text-align:right; font-size:11.5px; color:var(--cv-muted); line-height:1.7;}
+.cv-meta b{color:var(--cv-ink); font-weight:700; font-variant-numeric:tabular-nums;}
+
+.cv-title{margin:24px 0 0; font-size:14px; font-weight:700; color:var(--cv-accent);}
+.cv-given{margin:2px 0 0; font-size:12px; color:var(--cv-muted);}
+.cv-doc h2.cv-name{margin:2px 0 8px; font-size:32px; font-weight:800; line-height:1.15; letter-spacing:-.02em; overflow-wrap:anywhere;}
+.cv-lead{margin:0; max-width:62ch; font-size:12.5px; color:var(--cv-muted);}
+
+.cv-scores{display:grid; grid-template-columns:1.15fr 1fr 1fr; margin:20px 0 22px; border:1px solid var(--cv-rule); border-radius:6px; overflow:hidden;}
+.cv-score{padding:14px 16px 16px; border-right:1px solid var(--cv-rule);}
+.cv-score:last-child{border-right:none;}
+.cv-score.main{background:var(--cv-tint);}
+.cv-score-label{font-size:12px; color:var(--cv-muted);}
+.cv-score-num{font-size:34px; font-weight:800; line-height:1.15; letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
+.cv-score.main .cv-score-num{font-size:46px; color:var(--cv-accent);}
+.cv-score-rate{margin-bottom:9px; font-size:12px; font-weight:700;}
+
+/* batang skala dengan sekat tiap 10% */
+.cv-bar{position:relative; height:9px; background:var(--cv-track); border-radius:2px; overflow:hidden;}
+.cv-bar i{position:absolute; inset:0 auto 0 0; background:var(--cv-accent);}
+.cv-bar::after{content:""; position:absolute; inset:0; background:repeating-linear-gradient(90deg, transparent 0, transparent calc(10% - 1.5px), #fff calc(10% - 1.5px), #fff 10%);}
+
+.cv-group{margin-bottom:18px; break-inside:avoid;}
+.cv-group-head{display:flex; justify-content:space-between; align-items:baseline; padding-bottom:5px; border-bottom:1px solid var(--cv-ink);}
+.cv-doc .cv-group-head h3{margin:0; font-size:14px; font-weight:800;}
+.cv-group-head span{font-size:14px; font-weight:800; color:var(--cv-accent); font-variant-numeric:tabular-nums;}
+.cv-skill{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 96px; column-gap:16px; align-items:center; padding:8px 0; border-bottom:1px solid #e9eee4;}
+.cv-skill-info{grid-column:1;}
+.cv-skill-name{font-size:12.5px; font-weight:700;}
+.cv-skill-desc{font-size:11px; color:var(--cv-muted);}
+.cv-skill .cv-bar{grid-column:2;}
+.cv-skill-val{grid-column:3; text-align:right; font-variant-numeric:tabular-nums;}
+.cv-skill-val b{display:block; font-size:15px; font-weight:800; line-height:1.2;}
+.cv-skill-val small{font-size:10.5px; color:var(--cv-muted);}
+
+.cv-facts{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:4px 0 12px; padding:12px 0; border-top:1px solid var(--cv-rule); border-bottom:1px solid var(--cv-rule);}
+.cv-facts div{margin:0;}
+.cv-facts dt{font-size:11px; color:var(--cv-muted);}
+.cv-facts dd{margin:0; font-size:15px; font-weight:800; font-variant-numeric:tabular-nums;}
+.cv-highlight{margin:0 0 4px; font-size:12.5px;}
+.cv-foot{margin-top:14px; padding-top:10px; border-top:1px solid var(--cv-rule); font-size:10.5px; line-height:1.65; color:var(--cv-muted);}
+.cv-foot p{margin:0 0 3px;}
+
+@media (max-width:640px){
+  .cv-doc{padding:22px 16px 18px; font-size:12.5px;}
+  .cv-head{flex-direction:column; gap:12px;}
+  .cv-meta{text-align:left;}
+  .cv-doc h2.cv-name{font-size:24px;}
+  .cv-scores{grid-template-columns:1fr;}
+  .cv-score{border-right:none; border-bottom:1px solid var(--cv-rule);}
+  .cv-score:last-child{border-bottom:none;}
+  .cv-skill{grid-template-columns:minmax(0,1fr) auto; row-gap:7px;}
+  .cv-skill-info{grid-column:1; grid-row:1;}
+  .cv-skill-val{grid-column:2; grid-row:1;}
+  .cv-skill .cv-bar{grid-column:1 / -1; grid-row:2;}
+  .cv-facts{grid-template-columns:1fr; gap:8px;}
+}
+
+/* cetak: hanya dokumen CV yang keluar, ukuran A4 */
+@media print{
+  @page{size:A4; margin:10mm;}
+  html,body{background:#fff !important;}
+  body::before,#topbar,.no-print,.site-footer,.tip-modal-overlay{display:none !important;}
+  .screen{display:none !important;}
+  #screen-cert.active{display:block !important; animation:none !important;}
+  #app{max-width:100%; padding:0;}
+  .cv-doc{max-width:none; padding:0; border:none; border-radius:0; box-shadow:none; font-size:12px;}
+  /* dipadatkan agar seluruh dokumen muat satu halaman A4 */
+  .cv-head{padding-bottom:12px;}
+  .cv-title{margin-top:16px;}
+  .cv-doc h2.cv-name{font-size:28px; margin-bottom:4px;}
+  .cv-scores{margin:14px 0 14px;}
+  .cv-score{padding:10px 14px 12px;}
+  .cv-score-num{font-size:30px;}
+  .cv-score.main .cv-score-num{font-size:38px;}
+  .cv-score-rate{margin-bottom:6px;}
+  .cv-group{margin-bottom:11px;}
+  .cv-skill{padding:5px 0;}
+  .cv-facts{margin:2px 0 9px; padding:9px 0;}
+  .cv-foot{margin-top:10px; padding-top:8px;}
+}
+
+/* ===== Unduh CV ===== */
+.dl-bar{display:flex; gap:10px; flex-wrap:wrap; margin:0 auto 16px; max-width:794px;}
+.dl-bar .btn{flex:1 1 150px;}
+.dl-status{max-width:794px; margin:0 auto 12px; font-family:var(--mono); font-size:11.5px; color:var(--text-dim); text-align:center; min-height:16px;}
+
+/* Versi tetap lebar A4: dipakai saat dibuat gambar/PDF agar hasilnya
+   konsisten di HP maupun desktop (menimpa aturan responsif @media). */
+.cv-doc.cv-fixed{width:794px; max-width:none; margin:0; padding:40px 44px 30px; font-size:13px; box-shadow:none; border:none; border-radius:0;}
+.cv-doc.cv-fixed .cv-head{flex-direction:row; gap:16px;}
+.cv-doc.cv-fixed .cv-meta{text-align:right;}
+.cv-doc.cv-fixed h2.cv-name{font-size:32px;}
+.cv-doc.cv-fixed .cv-scores{grid-template-columns:1.15fr 1fr 1fr;}
+.cv-doc.cv-fixed .cv-score{border-right:1px solid var(--cv-rule); border-bottom:none;}
+.cv-doc.cv-fixed .cv-score:last-child{border-right:none;}
+.cv-doc.cv-fixed .cv-skill{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 96px; row-gap:0;}
+.cv-doc.cv-fixed .cv-skill-info{grid-column:1; grid-row:auto;}
+.cv-doc.cv-fixed .cv-skill .cv-bar{grid-column:2; grid-row:auto;}
+.cv-doc.cv-fixed .cv-skill-val{grid-column:3; grid-row:auto;}
+.cv-doc.cv-fixed .cv-facts{grid-template-columns:repeat(3,1fr); gap:16px;}
+
+.material-symbols-rounded{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;
+  font-style:normal;
+  font-size:20px;
+  line-height:1;
+  letter-spacing:normal;
+  text-transform:none;
+  display:inline-block;
+  white-space:nowrap;
+  word-wrap:normal;
+  direction:ltr;
+  -webkit-font-feature-settings:'liga';
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:'liga';
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 500,
+    'GRAD' 0,
+    'opsz' 24;
+  vertical-align:middle;
+}
+
+.icon-sm{
+  font-size:18px;
+}
+
+.icon-md{
+  font-size:20px;
+}
+
+.icon-lg{
+  font-size:24px;
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="topbar">
+    <div class="brand"><svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" width="486" height="500" viewBox="0 0 486 500" role="img" aria-label="Logo Microsoft Excel">
+  <defs>
+    <style>
+      .l1{fill:#fff;}
+      .m1{fill:url(#d1);}
+      .n1{fill:url(#h1);}
+      .o1{fill:url(#j1);}
+      .p1{fill:url(#g1);}
+      .q1{fill:url(#k1);}
+      .q1,.r1{fill-opacity:.3;}
+      .s1{fill:url(#i1);}
+      .t1{fill:url(#f1);}
+      .u1{fill:url(#b1);}
+      .r1{fill:url(#e1);}
+      .v1{fill:url(#c1);fill-opacity:.7;}
+    </style>
+    <radialGradient id="b1" cx="-746.66" cy="781.44" fx="-746.66" fy="781.44" r="13.89" gradientTransform="translate(-2596.39 -38900.31) rotate(-133.54) scale(41.12 -31.9) skewX(-.01)" gradientUnits="userSpaceOnUse">
+      <stop offset=".06" stop-color="#379539"/><stop offset=".42" stop-color="#297c2d"/><stop offset=".7" stop-color="#15561c"/>
+    </radialGradient>
+    <radialGradient id="c1" cx="-773.19" cy="771.25" fx="-773.19" fy="771.25" r="13.89" gradientTransform="translate(-2155.12 -15858.88) rotate(-135.96) scale(16.66 -12.89) skewX(-.01)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#073b10"/><stop offset=".99" stop-color="#084a13" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="d1" x1="69.43" y1="210.33" x2="260.84" y2="210.33" gradientTransform="translate(0 502) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#52d17c"/><stop offset=".33" stop-color="#4aa647"/>
+    </linearGradient>
+    <linearGradient id="e1" x1="194.4" y1="335.33" x2="194.4" y2="161.68" gradientTransform="translate(0 502) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#29852f"/><stop offset=".5" stop-color="#4aa647" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f1" x1="80.49" y1="297.22" x2="311.45" y2="497.54" gradientTransform="translate(0 502) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#66d052"/><stop offset="1" stop-color="#85e972"/>
+    </linearGradient>
+    <radialGradient id="g1" cx="-824.11" cy="810.99" fx="-824.11" fy="810.99" r="13.89" gradientTransform="translate(-7120.4 -15378.69) rotate(-180) scale(9.02 -19.09)" gradientUnits="userSpaceOnUse">
+      <stop offset=".29" stop-color="#4eb43b"/><stop offset="1" stop-color="#72cc61" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="h1" x1="182.11" y1="377" x2="69.43" y2="377" gradientTransform="translate(0 502) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset=".18" stop-color="#c0e075" stop-opacity="0"/><stop offset="1" stop-color="#d1eb95"/>
+    </linearGradient>
+    <radialGradient id="i1" cx="-769.14" cy="808.9" fx="-769.14" fy="808.9" r="13.89" gradientTransform="translate(-23523.37 3309.71) rotate(-141.02) scale(21.75 21.69) skewX(.01)" gradientUnits="userSpaceOnUse">
+      <stop offset=".44" stop-color="#79e96d"/><stop offset="1" stop-color="#d0eb76"/>
+    </radialGradient>
+    <radialGradient id="j1" cx="-675.64" cy="793.28" fx="-675.64" fy="793.28" r="13.89" gradientTransform="translate(-25315.85 47178.18) rotate(45.01) scale(22.62 -64.41) skewX(-.04)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#20a85e"/><stop offset=".94" stop-color="#09442a"/>
+    </radialGradient>
+    <radialGradient id="k1" cx="-657.62" cy="853.99" fx="-657.62" fy="853.99" r="13.89" gradientTransform="translate(-10902.85 7734.8) rotate(90) scale(11.2 -12.9)" gradientUnits="userSpaceOnUse">
+      <stop offset=".58" stop-color="#33a662" stop-opacity="0"/><stop offset=".97" stop-color="#98f0b0"/>
+    </radialGradient>
+  </defs>
+  <path class="u1" d="M69.43,159.72c0-34.52,27.98-62.5,62.49-62.5h354.09v361.11c0,23.01-18.65,41.67-41.66,41.67H152.74c-46.01,0-83.31-37.31-83.31-83.33V159.72Z"/>
+  <path class="v1" d="M69.43,159.72c0-34.52,27.98-62.5,62.49-62.5h354.09v361.11c0,23.01-18.65,41.67-41.66,41.67H152.74c-46.01,0-83.31-37.31-83.31-83.33V159.72Z"/>
+  <path class="m1" d="M69.43,229.17c0-34.52,27.98-62.5,62.49-62.5h187.46c-23.01,0-41.66,18.66-41.66,41.67v83.33c0,23.01-18.65,41.67-41.66,41.67h-83.31c-46.01,0-83.31,37.31-83.31,83.33v-187.5Z"/>
+  <path class="r1" d="M69.43,229.17c0-34.52,27.98-62.5,62.49-62.5h187.46c-23.01,0-41.66,18.66-41.66,41.67v83.33c0,23.01-18.65,41.67-41.66,41.67h-83.31c-46.01,0-83.31,37.31-83.31,83.33v-187.5Z"/>
+  <path class="t1" d="M69.43,83.33C69.43,37.31,106.73,0,152.74,0h166.63v166.67h-166.63c-46.01,0-83.31,37.31-83.31,83.33V83.33Z"/>
+  <path class="p1" d="M69.43,83.33C69.43,37.31,106.73,0,152.74,0h166.63v166.67h-166.63c-46.01,0-83.31,37.31-83.31,83.33V83.33Z"/>
+  <path class="n1" d="M69.43,83.33C69.43,37.31,106.73,0,152.74,0h166.63v166.67h-166.63c-46.01,0-83.31,37.31-83.31,83.33V83.33Z"/>
+  <rect class="s1" x="277.71" width="208.29" height="166.67" rx="41.66" ry="41.66"/>
+  <rect class="o1" y="236.11" width="222.17" height="222.22" rx="45.13" ry="45.13"/>
+  <rect class="q1" y="236.11" width="222.17" height="222.22" rx="45.13" ry="45.13"/>
+  <path class="l1" d="M169.48,410.71h-34.25l-21.5-40.47c-.77-1.42-1.36-2.54-1.77-3.37-.35-.88-.74-1.89-1.15-3.01h-.35c-.53,1.42-1.03,2.57-1.5,3.45-.47.89-1.03,1.98-1.68,3.28l-22.3,40.11h-32.3l38.76-63.58-36.1-63.4h33.8l19.11,36.13c.77,1.48,1.42,2.78,1.95,3.9.59,1.06,1.18,2.33,1.77,3.81h.35c.82-1.71,1.47-3.07,1.95-4.07.53-1,1.24-2.33,2.12-3.98l19.82-35.77h32.21l-36.63,62.43,37.7,64.55Z"/>
+</svg><span class="dot"></span> EXCEL LOGIC ACADEMY</div>
+    <div class="actions">
+      <a class="btn-ghost no-print" href="<?= scriptUrl ?>" style="text-decoration:none;">
+  <span class="material-symbols-rounded icon-sm">home</span>
+  Beranda
+</a>
+      <span class="progress-pill" id="topProgressPill">Level 0/5</span>
+      <button class="btn-ghost no-print" id="resetBtn" title="Hapus progres">Reset</button>
+      <label class="theme-switch no-print" title="Ganti mode gelap/terang">
+        <input type="checkbox" id="themeToggleInput" aria-label="Ganti mode gelap/terang">
+        <span class="theme-switch-track"><span class="theme-switch-thumb"></span></span>
+      </label>
+    </div>
+  </div>
+
+<section id="screen-name" class="screen active">
+    <div class="card glow" style="text-align:center;">
+      <h2>
+  <span class="material-symbols-rounded">waving_hand</span>
+  Selamat Datang di Excel Logic Academy
+</h2>
+      <p class="dim" style="max-width:480px; margin:0 auto 18px;">Sebelum mulai, tuliskan nama lengkapmu. Nama ini otomatis dipakai pada dokumen lampiran CV berisi penilaian kompetensimu — begitu semua level selesai, dokumennya langsung siap diunduh sebagai gambar, PDF, atau Word.</p>
+      <input type="text" id="startNameInput" class="name-field" placeholder="Nama lengkapmu…">
+      <div style="margin-top:16px;"><button class="btn" id="startNameBtn" disabled>Mulai Belajar</button></div>
+    </div>
+  </section>
+
+<section id="screen-map" class="screen">
+    <h2>Peta Pembelajaran</h2>
+    <p class="dim mono" style="font-size:13px;">Selesaikan tiap level secara berurutan untuk membuka level berikutnya.</p>
+    <div class="overall-bar"><div class="fill" id="overallFill" style="width:0%"></div></div>
+    <div class="dim mono" style="font-size:11px; margin-bottom:6px;" id="overallLabel">0% selesai</div>
+    <div class="roadmap" id="roadmapList"></div>
+    <div class="dim mono no-print" id="mapTipCoffeeWrap" style="font-size:12px; margin-top:14px; text-align:center;"></div>
+  </section>
+
+<section id="screen-level" class="screen">
+    <button class="btn-ghost no-print" onclick="goToMap()" style="margin-bottom:16px;">
+  <span class="material-symbols-rounded icon-sm">arrow_back</span>
+  Kembali ke Peta
+</button>
+    <div class="steps-nav" id="stepsNav"></div>
+    <div id="levelContent"></div>
+  </section>
+
+<section id="screen-cert" class="screen">
+    <button class="btn-ghost no-print" onclick="goToMap()" style="margin-bottom:16px;">
+  <span class="material-symbols-rounded icon-sm">arrow_back</span>
+  Kembali ke Peta
+</button>
+
+    <div class="dl-bar no-print">
+      <button class="btn small" id="dlPngBtn" onclick="downloadCv('png')">
+  <span class="material-symbols-rounded icon-sm">image</span>
+  Unduh Gambar (PNG)
+</button>
+      <button class="btn small" id="dlPdfBtn" onclick="downloadCv('pdf')">
+  <span class="material-symbols-rounded icon-sm">picture_as_pdf</span>
+  Unduh PDF
+</button>
+      <button class="btn small" id="dlDocBtn" onclick="downloadCv('doc')">
+  <span class="material-symbols-rounded icon-sm">description</span>
+  Unduh Word
+</button>
+     <button class="btn secondary small" onclick="window.print()">
+  <span class="material-symbols-rounded icon-sm">print</span>
+  Cetak
+</button>
+    </div>
+    <div class="dl-status no-print" id="cvDlStatus"></div>
+
+    <div class="cv-doc" id="cvDoc"></div>
+
+    <div class="dim mono no-print" id="tipCoffeeWrap" style="font-size:12px; margin-top:14px; text-align:center;"></div>
+    <div class="dim mono no-print" id="certSaveStatus" style="font-size:11px; margin-top:10px; text-align:center;"></div>
+  </section>
+
+  <footer class="site-footer"><span class="tag">&lt;/&gt;</span> 2026 dikiLabs - Logika Data</footer>
+
+  <div class="tip-modal-overlay no-print" id="tipModalOverlay" style="display:none;">
+    <div class="tip-modal">
+      <div class="tip-modal-head">
+        <span><svg class="coffee-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M463.52993 521.415858c-1.878162 0-3.758455-0.241965-5.588651-0.716302l-10.725348-2.786331c-11.84457-3.076263-18.978814-15.215029-15.902551-27.059599l123.151769-474.233707c2.541168-9.785201 11.372365-16.619919 21.47308-16.619919 1.878162 0 3.759521 0.240899 5.588651 0.715236l10.724282 2.785265a22.05401 22.05401 0 0 1 13.55858 10.236088 22.045483 22.045483 0 0 1 2.347169 16.824577L485.001945 504.794873c-2.541168 9.786267-11.371299 16.620985-21.472015 16.620985z" fill="currentColor"/><path d="M274.613721 323.819813l45.209122 581.254815c0 30.001555 22.949388 54.320658 51.258253 54.320659H594.057907c28.30993 0 51.259319-24.319103 51.259318-54.320659l45.206991-581.254815H274.613721z" fill="#E33E3D"/><path d="M655.845377 323.389179l21.178885-150.273192c0-9.601862-10.081529-17.387386-22.51449-17.387386H289.197721c-12.432962 0-22.512359 7.785524-22.512359 17.387386l21.178885 150.273192h367.98113z" fill="#FFFFFF"/><path d="M485.901586 557.608312c-96.667769 0-179.500884-13.127945-197.428695-38.955334-2.052974 4.73591 0.510579 9.616785 0.689654 14.596791 1.922931 53.082052 88.081735 61.608395 196.739041 61.608395 108.655174 0 196.739041-16.453635 196.739041-61.608395 0-4.982138-1.074453-9.860882-3.131691-14.596791-29.346011 34.782234-96.937449 38.955334-193.60735 38.955334z" fill="#FDFAED"/><path d="M427.801154 574.716425a57.9075 56.064514 0 1 0 115.814999 0 57.9075 56.064514 0 1 0-115.814999 0Z" fill="#FDFAED"/><path d="M650.534934 323.27619l-45.205925 581.254816c0 30.003687-22.953652 54.320658-51.260385 54.320659h39.989283c28.307799 0 51.260385-24.316971 51.260384-54.320659l45.205925-581.254816h-39.989282z" fill="#9D1F24"/></svg> Traktir Kopi</span>
+        <button type="button" class="tip-modal-close" id="tipModalClose" aria-label="Tutup">✕</button>
+      </div>
+      <iframe id="tipModalFrame" class="tip-modal-frame" src="" title="Traktir Kopi" loading="lazy"></iframe>
+      <div class="tip-modal-fallback">Halaman tidak tampil? <a id="tipModalFallbackLink" href="#" target="_blank" rel="noopener">Buka di tab baru</a>.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+/* ============================= FORMULA ENGINE ============================= */
+class Sheet {
+  constructor(rows, cols) {
+    this.rows = rows; this.cols = cols;
+    this.data = Array.from({length: rows}, () => Array(cols).fill(''));
+  }
+  setRaw(r, c, val) { this.data[r][c] = val; }
+  getRaw(r, c) { return (this.data[r] && this.data[r][c] !== undefined) ? this.data[r][c] : ''; }
+  colIndex(letters) { let n = 0; for (const ch of letters.toUpperCase()) n = n * 26 + (ch.charCodeAt(0) - 64); return n - 1; }
+  parseRef(ref) {
+    const clean = ref.replace(/\$/g, '');
+    const m = clean.match(/^([A-Za-z]+)(\d+)$/);
+    if (!m) throw new Error('bad ref ' + ref);
+    return { col: this.colIndex(m[1]), row: parseInt(m[2], 10) - 1 };
+  }
+  isNumericStr(v) { return typeof v === 'string' && /^-?\d+(\.\d+)?$/.test(v.trim()); }
+  evalCell(r, c, visiting, cache) {
+    const key = r + ',' + c;
+    if (cache.has(key)) return cache.get(key);
+    if (visiting.has(key)) return '#CIRCULAR!';
+    const raw = this.getRaw(r, c);
+    let result;
+    if (typeof raw === 'string' && raw.trim().startsWith('=')) {
+      visiting.add(key);
+      try { result = this.evalFormula(raw.trim().slice(1), visiting, cache); }
+      catch (e) { result = '#ERROR!'; }
+      visiting.delete(key);
+    } else if (raw === '' || raw === undefined || raw === null) {
+      result = '';
+    } else if (this.isNumericStr(raw)) {
+      result = parseFloat(raw);
+    } else if (typeof raw === 'number') {
+      result = raw;
+    } else {
+      result = raw;
+    }
+    cache.set(key, result);
+    return result;
+  }
+  getRange(ref1, ref2, visiting, cache) {
+    const a = this.parseRef(ref1), b = this.parseRef(ref2);
+    const r1 = Math.min(a.row, b.row), r2 = Math.max(a.row, b.row);
+    const c1 = Math.min(a.col, b.col), c2 = Math.max(a.col, b.col);
+    const values = [], values2d = [];
+    for (let r = r1; r <= r2; r++) {
+      const rowArr = [];
+      for (let c = c1; c <= c2; c++) { const v = this.evalCell(r, c, visiting, cache); rowArr.push(v); values.push(v); }
+      values2d.push(rowArr);
+    }
+    return { __range: true, values, values2d };
+  }
+  recalcAll() {
+    const cache = new Map();
+    for (let r = 0; r < this.rows; r++) for (let c = 0; c < this.cols; c++) this.evalCell(r, c, new Set(), cache);
+    this._cache = cache;
+  }
+  displayValue(r, c) { if (!this._cache) this.recalcAll(); return this._cache.get(r + ',' + c); }
+
+  evalFormula(expr, visiting, cache) {
+    const self = this;
+    const tokens = tokenize(expr);
+    let pos = 0;
+    const peek = () => tokens[pos];
+    const next = () => tokens[pos++];
+    const expect = (type, value) => { const t = next(); if (!t || t.type !== type || (value && t.value !== value)) throw new Error('parse error'); return t; };
+
+    function numOf(x) {
+      if (typeof x === 'number') return x;
+      if (typeof x === 'boolean') return x ? 1 : 0;
+      if (x && x.__range) throw new Error('range in arithmetic');
+      const n = parseFloat(x);
+      return isNaN(n) ? 0 : n;
+    }
+    function truthy(x) {
+      if (typeof x === 'boolean') return x;
+      if (typeof x === 'number') return x !== 0;
+      if (typeof x === 'string') return x !== '' && x.toUpperCase() !== 'FALSE';
+      return false;
+    }
+    function toStr(x) {
+      if (typeof x === 'boolean') return x ? 'TRUE' : 'FALSE';
+      if (typeof x === 'number') return String(Math.round(x * 1e6) / 1e6);
+      return x === undefined || x === null ? '' : String(x);
+    }
+    function tryNum(x) {
+      if (typeof x === 'number') return x;
+      if (typeof x === 'string' && self.isNumericStr(x)) return parseFloat(x);
+      return null;
+    }
+    function compareVals(l, r, op) {
+      const ln = tryNum(l), rn = tryNum(r);
+      let cmp;
+      if (ln !== null && rn !== null) cmp = ln < rn ? -1 : ln > rn ? 1 : 0;
+      else { const ls = toStr(l).toUpperCase(), rs = toStr(r).toUpperCase(); cmp = ls < rs ? -1 : ls > rs ? 1 : 0; }
+      switch (op) {
+        case '>': return cmp > 0; case '<': return cmp < 0;
+        case '>=': return cmp >= 0; case '<=': return cmp <= 0;
+        case '=': return cmp === 0; case '<>': return cmp !== 0;
+      }
+    }
+    function flattenAll(args) { const out = []; args.forEach(a => { if (a && a.__range) out.push(...a.values); else out.push(a); }); return out; }
+    function flattenNums(args) { return flattenAll(args).map(v => (typeof v === 'number') ? v : parseFloat(v)).filter(v => !isNaN(v)); }
+    function matchCriteria(value, crit) {
+      const m = String(crit).match(/^(<=|>=|<>|>|<|=)?(.*)$/);
+      const op = m[1] || '=';
+      const rest = m[2];
+      return compareVals(value, self.isNumericStr(rest) ? parseFloat(rest) : rest, op);
+    }
+
+    const FUNCS = {
+      SUM: a => flattenNums(a).reduce((x, y) => x + y, 0),
+      AVERAGE: a => { const n = flattenNums(a); return n.length ? n.reduce((x, y) => x + y, 0) / n.length : 0; },
+      COUNT: a => flattenNums(a).length,
+      COUNTA: a => flattenAll(a).filter(v => v !== '' && v !== null && v !== undefined).length,
+      MAX: a => { const n = flattenNums(a); return n.length ? Math.max(...n) : 0; },
+      MIN: a => { const n = flattenNums(a); return n.length ? Math.min(...n) : 0; },
+      ROUND: a => { const d = a.length > 1 ? numOf(a[1]) : 0; const p = Math.pow(10, d); return Math.round(numOf(a[0]) * p) / p; },
+      IF: a => truthy(a[0]) ? a[1] : (a.length > 2 ? a[2] : false),
+      AND: a => flattenAll(a).every(truthy),
+      OR: a => flattenAll(a).some(truthy),
+      NOT: a => !truthy(a[0]),
+      CONCATENATE: a => flattenAll(a).map(toStr).join(''),
+      COUNTIF: a => { const range = a[0]; const vals = range && range.__range ? range.values : [range]; return vals.filter(v => matchCriteria(v, a[1])).length; },
+      SUMIF: a => { const range = a[0]; const vals = range.__range ? range.values : [range]; const sumVals = (a[2] && a[2].__range) ? a[2].values : vals; let s = 0; vals.forEach((v, i) => { if (matchCriteria(v, a[1])) s += numOf(sumVals[i]); }); return s; },
+      VLOOKUP: a => { const lookup = a[0], range = a[1], colIdx = numOf(a[2]); if (!range || !range.__range) return '#N/A'; for (const row of range.values2d) { if (toStr(row[0]).toUpperCase() === toStr(lookup).toUpperCase()) return row[colIdx - 1]; } return '#N/A'; },
+      INDEX: a => { const range = a[0]; const rowNum = numOf(a[1]); const colNum = a.length > 2 ? numOf(a[2]) : 1; if (!range || !range.__range) return '#REF!'; const row = range.values2d[rowNum - 1]; return row ? (row[colNum - 1] === undefined ? '#REF!' : row[colNum - 1]) : '#REF!'; },
+      MATCH: a => { const lookup = a[0], range = a[1]; if (!range || !range.__range) return '#N/A'; const idx = range.values.findIndex(v => toStr(v).toUpperCase() === toStr(lookup).toUpperCase()); return idx >= 0 ? idx + 1 : '#N/A'; },
+      SUMPRODUCT: a => { const r1 = a[0], r2 = a[1]; if (!r1 || !r1.__range || !r2 || !r2.__range) return 0; let s = 0; for (let i = 0; i < r1.values.length; i++) s += numOf(r1.values[i]) * numOf(r2.values[i]); return s; }
+    };
+
+    function parsePrimary() {
+      const t = peek();
+      if (!t) throw new Error('unexpected end');
+      if (t.type === 'num') { next(); return t.value; }
+      if (t.type === 'str') { next(); return t.value; }
+      if (t.type === 'punct' && t.value === '(') { next(); const v = parseExpression(); expect('punct', ')'); return v; }
+      if (t.type === 'ident') {
+        const name = t.value; next();
+        if (peek() && peek().type === 'punct' && peek().value === '(') {
+          next();
+          const args = parseArgs();
+          expect('punct', ')');
+          const fn = FUNCS[name.toUpperCase()];
+          if (!fn) return '#NAME?';
+          return fn(args);
+        }
+        if (name.toUpperCase() === 'TRUE') return true;
+        if (name.toUpperCase() === 'FALSE') return false;
+        if (/^[A-Za-z]+\d+$/.test(name)) {
+          if (peek() && peek().type === 'punct' && peek().value === ':') {
+            next(); const endTok = next();
+            return self.getRange(name, endTok.value, visiting, cache);
+          }
+          return self.getCellValueByRefInner(name, visiting, cache);
+        }
+        return '#NAME?';
+      }
+      throw new Error('unexpected token');
+    }
+    function parseArgs() {
+      const args = [];
+      if (peek() && !(peek().type === 'punct' && peek().value === ')')) {
+        args.push(parseExpression());
+        while (peek() && peek().type === 'punct' && peek().value === ',') { next(); args.push(parseExpression()); }
+      }
+      return args;
+    }
+    function parseUnary() {
+      if (peek() && peek().type === 'punct' && peek().value === '-') { next(); return -numOf(parseUnary()); }
+      return parsePrimary();
+    }
+    function parseFactor() {
+      let left = parseUnary();
+      while (peek() && peek().type === 'punct' && (peek().value === '*' || peek().value === '/')) {
+        const op = next().value; const right = parseUnary();
+        left = op === '*' ? numOf(left) * numOf(right) : numOf(left) / numOf(right);
+      }
+      return left;
+    }
+    function parseTerm() {
+      let left = parseFactor();
+      while (peek() && peek().type === 'punct' && (peek().value === '+' || peek().value === '-')) {
+        const op = next().value; const right = parseFactor();
+        left = op === '+' ? numOf(left) + numOf(right) : numOf(left) - numOf(right);
+      }
+      return left;
+    }
+    function parseConcat() {
+      let left = parseTerm();
+      while (peek() && peek().type === 'punct' && peek().value === '&') { next(); const right = parseTerm(); left = toStr(left) + toStr(right); }
+      return left;
+    }
+    function parseComparison() {
+      let left = parseConcat();
+      while (peek() && peek().type === 'punct' && ['>', '<', '>=', '<=', '=', '<>'].includes(peek().value)) {
+        const op = next().value; const right = parseConcat();
+        left = compareVals(left, right, op);
+      }
+      return left;
+    }
+    function parseExpression() { return parseComparison(); }
+
+    const result = parseExpression();
+    if (pos < tokens.length) throw new Error('trailing tokens');
+    return result;
+  }
+  getCellValueByRefInner(ref, visiting, cache) { const { row, col } = this.parseRef(ref); return this.evalCell(row, col, visiting, cache); }
+}
+
+function tokenize(expr) {
+  const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|(\$?[A-Za-z_][A-Za-z0-9_]*\$?\d*)|(<=|>=|<>|[<>=+\-*/&,():]))/g;
+  const tokens = [];
+  let m;
+  while ((m = re.exec(expr)) !== null) {
+    if (m[1] !== undefined) tokens.push({ type: 'str', value: m[1] });
+    else if (m[2] !== undefined) tokens.push({ type: 'num', value: parseFloat(m[2]) });
+    else if (m[3] !== undefined) tokens.push({ type: 'ident', value: m[3].replace(/\$/g, '') });
+    else if (m[4] !== undefined) tokens.push({ type: 'punct', value: m[4] });
+  }
+  return tokens;
+}
+
+/* ============================= HELPERS ============================= */
+function colLetter(i){ let s=''; i++; while(i>0){ const m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26);} return s; }
+function fmtVal(v){
+  if (v === '' || v === undefined || v === null) return '';
+  if (typeof v === 'number') { return Number.isInteger(v) ? String(v) : String(Math.round(v*100)/100); }
+  return String(v);
+}
+function copyFormulaDown(formula, offset){
+  if (typeof formula !== 'string' || !formula.trim().startsWith('=')) return formula;
+  return formula.replace(/(\$?)([A-Za-z]+)(\$?)(\d+)/g, (m,dc,col,dr,row)=>{
+    if (dr === '$') return m;
+    return dc+col+dr+(parseInt(row,10)+offset);
+  });
+}
+function checkNumeric(actual, expected, tol){ tol = tol===undefined?0.01:tol; return typeof actual === 'number' && Math.abs(actual-expected) < tol; }
+function checkText(actual, expected){ return typeof actual !== 'undefined' && String(actual).trim().toUpperCase() === String(expected).trim().toUpperCase(); }
+
+/* ============================= SPREADSHEET UI =============================
+   Prinsip penting: teks yang sedang diketik TIDAK PERNAH ditulis ulang oleh
+   render. Sel hanya dihitung ulang saat nilai di-commit (Enter / klik keluar),
+   jadi karakter seperti ">" pada ">=" tidak bisa hilang di tengah pengetikan.
+========================================================================= */
+function createSpreadsheet(mount, sheet, editableRefs, options){
+  options = options || {};
+  const hidden = options.hiddenRows || new Set();
+  const edSet = new Set(editableRefs || []);
+  const hint = (options.formulaHint || '').replace(/^\s*Contoh:\s*/i, '').trim();
+
+  const ss = document.createElement('div'); ss.className = 'ss';
+
+  const bar = document.createElement('div'); bar.className = 'fx-bar';
+  const refEl = document.createElement('span'); refEl.className = 'fx-ref';
+  const symEl = document.createElement('span'); symEl.className = 'fx-sym'; symEl.textContent = 'ƒx';
+  const fxIn = document.createElement('input');
+  fxIn.className = 'fx-in'; fxIn.type = 'text'; fxIn.spellcheck = false;
+  fxIn.autocomplete = 'off'; fxIn.autocapitalize = 'off'; fxIn.setAttribute('aria-label','Bilah formula');
+  fxIn.placeholder = hint ? ('Pilih sel hijau, lalu ketik formula, contoh: ' + hint) : 'Pilih sel hijau, lalu ketik formula di sini';
+  bar.appendChild(refEl); bar.appendChild(symEl); bar.appendChild(fxIn);
+
+  const wrap = document.createElement('div'); wrap.className = 'grid-wrap'; wrap.tabIndex = 0;
+  const table = document.createElement('table'); table.className = 'xgrid';
+
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  const corner = document.createElement('th'); corner.className = 'rownum corner'; headRow.appendChild(corner);
+  for (let c = 0; c < sheet.cols; c++){
+    const th = document.createElement('th'); th.className = 'colhead'; th.dataset.c = c; th.textContent = colLetter(c);
+    headRow.appendChild(th);
+  }
+  thead.appendChild(headRow); table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  const cells = {};
+  for (let r = 0; r < sheet.rows; r++){
+    if (hidden.has(r)) continue;
+    const tr = document.createElement('tr');
+    const rn = document.createElement('th'); rn.className = 'rownum'; rn.dataset.r = r; rn.textContent = (r+1);
+    tr.appendChild(rn);
+    for (let c = 0; c < sheet.cols; c++){
+      const td = document.createElement('td');
+      td.className = 'cell' + (edSet.has(colLetter(c)+(r+1)) ? ' editable' : '');
+      td.dataset.r = r; td.dataset.c = c;
+      const cv = document.createElement('span'); cv.className = 'cv';
+      td.appendChild(cv); tr.appendChild(td);
+      cells[r+','+c] = td;
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody); wrap.appendChild(table);
+  const warn = document.createElement('div'); warn.className = 'fx-warn'; warn.hidden = true;
+  ss.appendChild(bar); ss.appendChild(wrap); ss.appendChild(warn);
+  mount.appendChild(ss);
+
+  const tips = document.createElement('div');
+  tips.className = 'grid-tips';
+  tips.innerHTML = 'Klik sel untuk memilih · klik nomor baris atau huruf kolom untuk memilih satu baris/kolom · tarik untuk memilih beberapa sel<br>'+
+    'Sedang mengetik rumus? Klik sel lain untuk menyisipkan referensinya di posisi kursor — sama seperti di Excel<br>'+
+    'Tarik kotak hijau di pojok sel untuk menyalin rumus ke bawah — klik dua kali kotak itu untuk mengisi sampai baris terakhir · '+
+    '<kbd>Ctrl</kbd>+<kbd>D</kbd> salin dari sel atas · <kbd>Enter</kbd> simpan · <kbd>Esc</kbd> batal · <kbd>Del</kbd> hapus isi';
+  mount.appendChild(tips);
+
+  const selSummary = document.createElement('div');
+  selSummary.className = 'sel-summary';
+  mount.appendChild(selSummary);
+
+  let act = {r:0,c:0}, anc = {r:0,c:0};
+  let editing = false, editInput = null, closing = false;
+  let dragging = false, filling = false, fillTo = 0;
+  let fxCell = {r:0,c:0}, fxDirty = false;
+  let pointCtx = null;        // {el, start, end} — rentang referensi terakhir yang disisipkan lewat klik
+  let pointAnchor = null;     // {r,c} — sel awal saat menyisipkan referensi lewat drag (jadi rentang)
+
+  function refOf(r,c){ return colLetter(c)+(r+1); }
+  function isEd(r,c){ return edSet.has(refOf(r,c)); }
+  function exists(r,c){ return !!cells[r+','+c]; }
+  function box(){ return {r1:Math.min(act.r,anc.r), r2:Math.max(act.r,anc.r), c1:Math.min(act.c,anc.c), c2:Math.max(act.c,anc.c)}; }
+  function rawOf(r,c){ const v = sheet.getRaw(r,c); return (v===undefined||v===null)?'':String(v); }
+
+  /* ---- Mode "tunjuk-klik" ala Excel: sedang mengetik rumus, klik sel lain
+     menyisipkan referensinya di posisi kursor alih-alih berpindah/membatalkan. */
+  function activeFormulaInput(){
+    if (editing && editInput) return editInput;
+    if (!editing && document.activeElement === fxIn && isEd(act.r, act.c)) return fxIn;
+    return null;
+  }
+  function isFormulaInProgress(el){
+    return !!(el && typeof el.value === 'string' && el.value.trim().charAt(0) === '=');
+  }
+  function insertReference(refText){
+    const el = activeFormulaInput();
+    if (!el || !isFormulaInProgress(el)) return false;
+    let start, end;
+    if (pointCtx && pointCtx.el === el){
+      start = pointCtx.start; end = pointCtx.end;
+    } else {
+      start = el.selectionStart != null ? el.selectionStart : el.value.length;
+      end = el.selectionEnd != null ? el.selectionEnd : start;
+    }
+    const value = el.value.slice(0, start) + refText + el.value.slice(end);
+    el.value = value;
+    const caret = start + refText.length;
+    if (el.setSelectionRange) el.setSelectionRange(caret, caret);
+    pointCtx = { el:el, start:start, end:caret };
+    if (el === editInput) fxIn.value = value;
+    else { fxDirty = true; setWarn(''); }
+    el.focus({preventScroll:true});
+    return true;
+  }
+
+  let pointRange = null;   // {r1,c1,r2,c2} — blok referensi yang sedang ditunjuk (border hijau) saat mengetik formula
+  function clearPointRange(){
+    if (!pointRange) return;
+    for (let r=pointRange.r1;r<=pointRange.r2;r++){
+      for (let c=pointRange.c1;c<=pointRange.c2;c++){
+        const td = cells[r+','+c];
+        if (td) td.classList.remove('in-range','sel-top','sel-bottom','sel-left','sel-right','active');
+      }
+    }
+    pointRange = null;
+  }
+  /* Menyalakan border hijau di sekeliling sel/rentang yang baru saja dipilih
+     lewat klik/drag saat mengetik rumus, supaya pengguna bisa melihat dengan
+     jelas sel mana yang sedang dirujuk — sama seperti pengalaman di Excel. */
+  function paintPointRange(r1,c1,r2,c2){
+    clearPointRange();
+    const isMulti = (r1 !== r2 || c1 !== c2);
+    for (let r=r1;r<=r2;r++){
+      for (let c=c1;c<=c2;c++){
+        const td = cells[r+','+c]; if (!td) continue;
+        if (isMulti){
+          td.classList.add('in-range');
+          if (r === r1) td.classList.add('sel-top');
+          if (r === r2) td.classList.add('sel-bottom');
+          if (c === c1) td.classList.add('sel-left');
+          if (c === c2) td.classList.add('sel-right');
+        } else {
+          td.classList.add('active');
+        }
+      }
+    }
+    pointRange = {r1:r1, c1:c1, r2:r2, c2:c2};
+  }
+
+  function firstEditable(){
+    for (let r=0;r<sheet.rows;r++) for (let c=0;c<sheet.cols;c++) if (!hidden.has(r) && isEd(r,c)) return {r:r,c:c};
+    return {r:0,c:0};
+  }
+  function lastEditableInCol(c, fromRow){
+    let last = fromRow;
+    for (let r=fromRow+1;r<sheet.rows;r++){ if (hidden.has(r)) continue; if (isEd(r,c)) last = r; else break; }
+    return last;
+  }
+
+  function refreshValues(){
+    sheet.recalcAll();
+    for (const key in cells){
+      const parts = key.split(','); const r = +parts[0], c = +parts[1];
+      const cv = cells[key].querySelector('.cv'); if (!cv) continue;
+      const v = sheet.displayValue(r,c);
+      const isErr = (typeof v === 'string') && v.charAt(0) === '#';
+      cv.textContent = fmtVal(v);
+      cv.classList.toggle('cell-err', isErr);
+    }
+  }
+
+  function clearPreview(){ for (const k in cells) cells[k].classList.remove('fill-preview'); }
+
+  /* Fix: bersihkan visual border blok seleksi (in-range + sel-top/bottom/
+     left/right). Dipanggil setiap kali mode mengetik formula dimulai,
+     supaya border blok seleksi sebelumnya tidak "menempel" secara visual
+     selagi pengguna sedang mengetik/menunjuk referensi formula. */
+  function clearRangeVisuals(){
+    for (const k in cells){
+      const td = cells[k];
+      td.classList.remove('in-range','sel-top','sel-bottom','sel-left','sel-right');
+    }
+  }
+
+  function paint(keepFx){
+    const b = box();
+    const isMulti = (b.r1 !== b.r2 || b.c1 !== b.c2);
+    for (const key in cells){
+      const parts = key.split(','); const r = +parts[0], c = +parts[1];
+      const td = cells[key];
+      const inside = r>=b.r1 && r<=b.r2 && c>=b.c1 && c<=b.c2;
+      const isAct = (r===act.r && c===act.c);
+      td.classList.toggle('in-range', inside && !isAct);
+      td.classList.toggle('active', isAct);
+      const h = td.querySelector('.fill-handle'); if (h) h.remove();
+
+      // Border tepi luar blok seleksi — pakai class CSS (sel-top/bottom/left/right)
+      const onEdge = inside && isMulti && !isAct;
+      td.classList.toggle('sel-top',    onEdge && r === b.r1);
+      td.classList.toggle('sel-bottom', onEdge && r === b.r2);
+      td.classList.toggle('sel-left',   onEdge && c === b.c1);
+      td.classList.toggle('sel-right',  onEdge && c === b.c2);
+    }
+    headRow.querySelectorAll('th.colhead').forEach(th=>{
+      const c = +th.dataset.c; th.classList.toggle('hl', c>=b.c1 && c<=b.c2);
+    });
+    tbody.querySelectorAll('th.rownum').forEach(th=>{
+      const r = +th.dataset.r; th.classList.toggle('hl', r>=b.r1 && r<=b.r2);
+    });
+    if (!editing){
+      const br = cells[b.r2+','+b.c2];
+      if (br){ const h = document.createElement('div'); h.className = 'fill-handle'; h.title = 'Tarik ke bawah untuk menyalin rumus'; br.appendChild(h); }
+      if (!keepFx){
+        fxIn.value = rawOf(act.r, act.c);
+        fxCell = {r:act.r, c:act.c};
+        fxDirty = false;
+      }
+      fxIn.disabled = !isEd(fxCell.r, fxCell.c);
+      fxIn.placeholder = isEd(act.r,act.c) ? ('Ketik formula, contoh: ' + hint) : 'Sel ini hanya bisa dibaca — pilih sel hijau untuk mengisi';
+    }
+    refEl.textContent = (b.r1===b.r2 && b.c1===b.c2) ? refOf(act.r,act.c) : (refOf(b.r1,b.c1)+':'+refOf(b.r2,b.c2));
+
+    updateSelSummary(b, isMulti);
+  }
+
+  function updateSelSummary(b, isMulti){
+    if (!isMulti){ selSummary.innerHTML=''; selSummary.style.display='none'; return; }
+    const nums = [];
+    let countA = 0;
+    for (let r=b.r1;r<=b.r2;r++) for (let c=b.c1;c<=b.c2;c++){
+      const v = sheet.displayValue(r,c);
+      if (v !== '' && v !== undefined && v !== null) countA++;
+      if (typeof v === 'number') nums.push(v);
+    }
+    const sum = nums.reduce((x,y)=>x+y,0);
+    const avg = nums.length ? sum/nums.length : 0;
+    selSummary.style.display='flex';
+    selSummary.innerHTML =
+      '<span>Sel terisi: <b>'+countA+'</b></span>'+
+      (nums.length ? '<span>Jumlah: <b>'+fmtVal(sum)+'</b></span><span>Rata-rata: <b>'+fmtVal(Math.round(avg*100)/100)+'</b></span>' : '');
+  }
+
+  function select(r,c,extend){
+    if (editing) commit(0,0,'nav');
+    r = Math.max(0, Math.min(sheet.rows-1, r));
+    c = Math.max(0, Math.min(sheet.cols-1, c));
+    while (hidden.has(r) && r < sheet.rows-1) r++;
+    if (!exists(r,c)) return;
+    act = {r:r,c:c};
+    if (!extend) anc = {r:r,c:c};
+    paint();
+    wrap.focus({preventScroll:true});
+    const td = cells[r+','+c];
+    if (td && td.scrollIntoView) td.scrollIntoView({block:'nearest', inline:'nearest'});
+  }
+
+  function selectRow(r, extend){
+    if (editing) commit(0,0,'nav');
+    if (!exists(r,0)) return;
+    act = {r:r, c:0};
+    if (!extend) anc = {r:r, c:sheet.cols-1}; else anc = {r:anc.r, c:sheet.cols-1};
+    paint(); wrap.focus({preventScroll:true});
+  }
+  function selectCol(c, extend){
+    if (editing) commit(0,0,'nav');
+    let lastVisible = 0;
+    for (let r=0;r<sheet.rows;r++) if (!hidden.has(r)) lastVisible = r;
+    act = {r:0, c:c};
+    if (!extend) anc = {r:lastVisible, c:c}; else anc = {r:lastVisible, c:anc.c};
+    paint(); wrap.focus({preventScroll:true});
+  }
+
+  function startEdit(initial){
+    if (editing || !isEd(act.r, act.c)) return;
+    editing = true;
+    clearRangeVisuals();   // Fix: hilangkan border blok seleksi lama saat mulai mengedit/mengetik
+    clearPointRange();
+    pointCtx = null;
+    const td = cells[act.r+','+act.c];
+    const cv = td.querySelector('.cv'); if (cv) cv.style.visibility = 'hidden';
+    const h = td.querySelector('.fill-handle'); if (h) h.remove();
+    editInput = document.createElement('input');
+    editInput.type = 'text'; editInput.className = 'cell-input';
+    editInput.spellcheck = false; editInput.autocomplete = 'off'; editInput.autocapitalize = 'off';
+    editInput.value = (initial === undefined || initial === null) ? rawOf(act.r, act.c) : initial;
+    td.appendChild(editInput);
+    editInput.focus();
+    const L = editInput.value.length;
+    editInput.setSelectionRange(L, L);
+    fxIn.value = editInput.value;
+    fxIn.disabled = false;
+    editInput.addEventListener('input', ()=>{
+      fxIn.value = editInput.value;
+      if (pointCtx && pointCtx.el === editInput) pointCtx = null;
+      // Border hijau blok referensi terakhir (lihat paintPointRange) sengaja
+      // DIBIARKAN menyala selagi mengetik, supaya sel yang baru saja dipilih
+      // lewat klik tetap terlihat jelas — hanya diganti saat menunjuk
+      // referensi baru, dan dibersihkan otomatis saat edit selesai/batal.
+    });
+    editInput.addEventListener('click', ()=>{ if (pointCtx && pointCtx.el === editInput) pointCtx = null; });
+    editInput.addEventListener('keydown', onEditKey);
+    editInput.addEventListener('blur', ()=>{ if (editing && !closing) commit(0,0,'nav'); });
+  }
+
+  function closeEditor(keepValue){
+    if (closing) return null;
+    closing = true;
+    const td = cells[act.r+','+act.c];
+    const value = editInput ? editInput.value : null;
+    if (pointCtx && pointCtx.el === editInput) pointCtx = null;
+    if (editInput){ const el = editInput; editInput = null; el.remove(); }
+    editing = false; closing = false;
+    const cv = td ? td.querySelector('.cv') : null; if (cv) cv.style.visibility = '';
+    return keepValue ? value : null;
+  }
+
+  function warnIncomplete(r,c){
+    setWarn('Rumus di '+refOf(r,c)+' belum lengkap, jadi belum disimpan. Periksa tanda kurung dan tanda kutipnya — Enter untuk tetap menyimpan, Esc untuk membatalkan.');
+  }
+
+  /* mode: 'force' (Enter/Tab) menyimpan apa adanya, walau rumus salah — itu
+     umpan balik belajar yang disengaja.
+     Mode lain (pindah sel, klik header, keluar grid) TIDAK PERNAH memblokir
+     perpindahan: rumus yang belum lengkap dibuang, sel kembali ke nilai
+     sebelumnya, dan peringatan singkat menyebut sel asalnya. */
+  function commit(dr, dc, mode){
+    if (!editing){ if (dr||dc) select(act.r+dr, act.c+dc); return true; }
+    const value = editInput ? editInput.value : '';
+    const t = {r:act.r, c:act.c};
+    const prev = sheet.getRaw(t.r, t.c);
+    sheet.setRaw(t.r, t.c, value);
+    refreshValues();
+    const broken = String(value).trim().charAt(0) === '=' && isBroken(t.r, t.c);
+
+    if (broken && mode !== 'force'){
+      sheet.setRaw(t.r, t.c, prev);
+      closeEditor(false);
+      refreshValues();
+      warnIncomplete(t.r, t.c);
+      return true;
+    }
+    closeEditor(false);
+    fxDirty = false; setWarn('');
+    refreshValues();
+    if (dr || dc) select(act.r+dr, act.c+dc); else { paint(); wrap.focus({preventScroll:true}); }
+    return true;
+  }
+  function cancelEdit(){
+    if (!editing) return;
+    closeEditor(false);
+    paint(); wrap.focus({preventScroll:true});
+  }
+
+  function onEditKey(e){
+    e.stopPropagation();
+    if (e.key === 'Enter'){ e.preventDefault(); commit(1,0,'force'); }
+    else if (e.key === 'Tab'){ e.preventDefault(); commit(0, e.shiftKey ? -1 : 1, 'force'); }
+    else if (e.key === 'Escape'){ e.preventDefault(); cancelEdit(); }
+  }
+
+  function clearRange(){
+    const b = box(); let touched = false;
+    for (let r=b.r1;r<=b.r2;r++) for (let c=b.c1;c<=b.c2;c++){ if (isEd(r,c)){ sheet.setRaw(r,c,''); touched = true; } }
+    if (touched){ refreshValues(); paint(); }
+  }
+
+  function fillRange(sourceRow, fromRow, toRow, c1, c2){
+    for (let c=c1;c<=c2;c++){
+      const src = sheet.getRaw(sourceRow, c);
+      for (let r=fromRow;r<=toRow;r++){
+        if (!isEd(r,c) || hidden.has(r)) continue;
+        sheet.setRaw(r, c, copyFormulaDown(src, r - sourceRow));
+      }
+    }
+    refreshValues();
+  }
+
+  function fillDownShortcut(){
+    const b = box();
+    if (b.r1 === b.r2){
+      if (b.r1 === 0) return;
+      fillRange(b.r1-1, b.r1, b.r2, b.c1, b.c2);
+    } else {
+      fillRange(b.r1, b.r1+1, b.r2, b.c1, b.c2);
+    }
+    paint();
+  }
+
+  wrap.addEventListener('keydown', (e)=>{
+    if (editing) return;
+    setWarn('');
+    const k = e.key;
+    if (k === 'ArrowUp'){ e.preventDefault(); select(act.r-1, act.c, e.shiftKey); }
+    else if (k === 'ArrowDown'){ e.preventDefault(); select(act.r+1, act.c, e.shiftKey); }
+    else if (k === 'ArrowLeft'){ e.preventDefault(); select(act.r, act.c-1, e.shiftKey); }
+    else if (k === 'ArrowRight'){ e.preventDefault(); select(act.r, act.c+1, e.shiftKey); }
+    else if (k === 'Tab'){ e.preventDefault(); select(act.r, act.c + (e.shiftKey?-1:1)); }
+    else if (k === 'Enter' || k === 'F2'){ e.preventDefault(); startEdit(); }
+    else if (k === 'Delete' || k === 'Backspace'){ e.preventDefault(); clearRange(); }
+    else if ((e.ctrlKey||e.metaKey) && (k === 'd' || k === 'D')){ e.preventDefault(); fillDownShortcut(); }
+    else if (!e.ctrlKey && !e.metaKey && !e.altKey && k.length === 1){ e.preventDefault(); startEdit(k); }
+  });
+
+  function cellAtPoint(x,y){
+    const el = document.elementFromPoint(x,y);
+    return (el && el.closest) ? el.closest('td.cell') : null;
+  }
+  function onMove(e){
+    const p = e.touches ? e.touches[0] : e;
+    const td = cellAtPoint(p.clientX, p.clientY);
+    if (!td) return;
+    const r = +td.dataset.r, c = +td.dataset.c;
+    if (dragging){ act = {r:r, c:c}; paint(); }
+    else if (filling){
+      const b = box();
+      fillTo = Math.max(b.r2, r);
+      clearPreview();
+      for (let rr=b.r2+1; rr<=fillTo; rr++) for (let cc=b.c1; cc<=b.c2; cc++){
+        const t = cells[rr+','+cc]; if (t) t.classList.add('fill-preview');
+      }
+    }
+  }
+  function onUp(){
+    if (filling){
+      const b = box();
+      if (fillTo > b.r2){ fillRange(b.r1, b.r2+1, fillTo, b.c1, b.c2); anc = {r:b.r1, c:b.c1}; act = {r:fillTo, c:b.c2}; }
+    }
+    dragging = false; filling = false;
+    clearPreview(); paint();
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+  }
+  function listenDrag(){
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, {passive:true});
+    document.addEventListener('touchend', onUp);
+  }
+
+  function setWarn(msg){
+    if (msg){ warn.textContent = msg; warn.hidden = false; }
+    else { warn.textContent = ''; warn.hidden = true; }
+  }
+  function isBroken(r,c){
+    const v = sheet.displayValue(r,c);
+    return typeof v === 'string' && (v === '#ERROR!' || v === '#CIRCULAR!' || v === '#NAME?');
+  }
+  /* Menulis isi bilah formula ke SEL ASALNYA (fxCell), bukan ke sel yang
+     sedang aktif — itulah sumber #ERROR! lama saat pengguna memilih baris
+     di tengah pengetikan. Rumus yang belum lengkap dibuang, bukan diblokir:
+     klik tetap berpindah, hanya isinya yang tidak disimpan. */
+  function writeFx(force){
+    if (editing || !fxDirty) return true;
+    const t = fxCell;
+    if (!isEd(t.r, t.c)){ fxDirty = false; return true; }
+    const prev = sheet.getRaw(t.r, t.c);
+    const value = fxIn.value;
+    sheet.setRaw(t.r, t.c, value);
+    refreshValues();
+    fxDirty = false;
+    if (!force && String(value).trim().charAt(0) === '=' && isBroken(t.r, t.c)){
+      sheet.setRaw(t.r, t.c, prev);
+      refreshValues();
+      warnIncomplete(t.r, t.c);
+      return true;
+    }
+    setWarn('');
+    return true;
+  }
+
+  function onPointDragMove(e){
+    if (!pointAnchor) return;
+    const p = e.touches ? e.touches[0] : e;
+    const td = cellAtPoint(p.clientX, p.clientY);
+    if (!td) return;
+    const r = +td.dataset.r, c = +td.dataset.c;
+    const a = pointAnchor;
+    const r1 = Math.min(a.r,r), r2 = Math.max(a.r,r), c1 = Math.min(a.c,c), c2 = Math.max(a.c,c);
+    const ref = (r===a.r && c===a.c) ? refOf(a.r, a.c) : refOf(r1,c1) + ':' + refOf(r2,c2);
+    insertReference(ref);
+    paintPointRange(r1,c1,r2,c2);
+  }
+  function onPointDragEnd(){
+    pointAnchor = null;
+    document.removeEventListener('mousemove', onPointDragMove);
+    document.removeEventListener('mouseup', onPointDragEnd);
+    document.removeEventListener('touchmove', onPointDragMove);
+    document.removeEventListener('touchend', onPointDragEnd);
+  }
+
+  wrap.addEventListener('mousedown', (e)=>{
+    const onHandle = e.target.classList && e.target.classList.contains('fill-handle');
+    const tdT = e.target.closest ? e.target.closest('td.cell') : null;
+    const rnT = e.target.closest ? e.target.closest('th.rownum') : null;
+    const chT = e.target.closest ? e.target.closest('th.colhead') : null;
+    if (!onHandle && !tdT && !rnT && !chT) return;
+
+    // Klik di dalam kotak edit yang sedang terbuka = menaruh kursor teks
+    // biasa, bukan navigasi ataupun penyisipan referensi.
+    if (editing && editInput && (e.target === editInput || editInput.contains(e.target))) return;
+
+    // Mode tunjuk-klik: sedang mengetik rumus (diawali "="), klik sel/baris/
+    // kolom menyisipkan referensinya di posisi kursor — seleksi TIDAK
+    // berpindah dan editor TIDAK ditutup, persis seperti di Excel/Sheets.
+    const fEl = activeFormulaInput();
+    if (fEl && isFormulaInProgress(fEl) && !onHandle){
+      if (tdT){
+        const r = +tdT.dataset.r, c = +tdT.dataset.c;
+        e.preventDefault();
+        pointAnchor = {r:r, c:c};
+        insertReference(refOf(r,c));
+        paintPointRange(r,c,r,c);
+        document.addEventListener('mousemove', onPointDragMove);
+        document.addEventListener('mouseup', onPointDragEnd);
+        document.addEventListener('touchmove', onPointDragMove, {passive:true});
+        document.addEventListener('touchend', onPointDragEnd);
+        return;
+      }
+      if (rnT && rnT.dataset.r !== undefined){
+        e.preventDefault();
+        const r = +rnT.dataset.r;
+        insertReference((r+1)+':'+(r+1));
+        paintPointRange(r, 0, r, sheet.cols-1);
+        return;
+      }
+      if (chT){
+        e.preventDefault();
+        const c = +chT.dataset.c;
+        insertReference(colLetter(c)+':'+colLetter(c));
+        let lastVisible = 0;
+        for (let r=0;r<sheet.rows;r++) if (!hidden.has(r)) lastVisible = r;
+        paintPointRange(0, c, lastVisible, c);
+        return;
+      }
+    }
+
+    e.preventDefault();
+    setWarn('');
+    writeFx();
+
+    if (onHandle){
+      filling = true; fillTo = box().r2; listenDrag(); return;
+    }
+    const td = tdT;
+    if (td){
+      const r = +td.dataset.r, c = +td.dataset.c;
+      if (!e.shiftKey && r === act.r && c === act.c && isEd(r,c) && !editing){ startEdit(); return; }
+      select(r, c, e.shiftKey);
+      dragging = true; listenDrag();
+      return;
+    }
+    if (rnT && rnT.dataset.r !== undefined){ selectRow(+rnT.dataset.r, e.shiftKey); return; }
+    if (chT){ selectCol(+chT.dataset.c, e.shiftKey); }
+  });
+
+  wrap.addEventListener('dblclick', (e)=>{
+    if (e.target.classList && e.target.classList.contains('fill-handle')){
+      const b = box();
+      const last = lastEditableInCol(b.c1, b.r2);
+      if (last > b.r2){ fillRange(b.r1, b.r2+1, last, b.c1, b.c2); anc = {r:b.r1,c:b.c1}; act = {r:last,c:b.c2}; paint(); }
+      return;
+    }
+    const td = e.target.closest ? e.target.closest('td.cell') : null;
+    if (td){ const r=+td.dataset.r, c=+td.dataset.c; if (isEd(r,c)){ select(r,c); startEdit(); } }
+  });
+
+  fxIn.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      if (editing){ editInput.value = fxIn.value; commit(1,0,'force'); return; }
+      const t = fxCell;
+      fxDirty = true;
+      writeFx(true);           // Enter = simpan apa adanya, error pun ditampilkan
+      act = {r:t.r, c:t.c}; anc = {r:t.r, c:t.c};
+      select(t.r+1, t.c);
+    } else if (e.key === 'Escape'){
+      e.preventDefault();
+      if (editing){ cancelEdit(); return; }
+      fxDirty = false; setWarn('');
+      act = {r:fxCell.r, c:fxCell.c}; anc = {r:act.r, c:act.c};
+      paint(); wrap.focus({preventScroll:true});
+    }
+  });
+  fxIn.addEventListener('input', ()=>{
+    fxDirty = true; setWarn('');
+    if (editing && editInput) editInput.value = fxIn.value;
+    if (pointCtx && pointCtx.el === fxIn) pointCtx = null;
+    // Border hijau blok referensi terakhir dibiarkan menyala selagi mengetik
+    // di bilah ƒx — lihat catatan yang sama di listener input pada editInput.
+  });
+  fxIn.addEventListener('click', ()=>{ if (pointCtx && pointCtx.el === fxIn) pointCtx = null; });
+  fxIn.addEventListener('blur', ()=>{ writeFx(); });
+
+  // init
+  refreshValues();
+  const start = firstEditable();
+  act = {r:start.r, c:start.c}; anc = {r:start.r, c:start.c};
+  paint();
+
+  return {
+    commitPending(){ if (editing) commit(0,0,'force'); else writeFx(true); },
+    applyDown(sourceRef, targetRefs){
+      this.commitPending();
+      const src = sheet.parseRef(sourceRef);
+      targetRefs.forEach(t=>{
+        const p = sheet.parseRef(t);
+        sheet.setRaw(p.row, p.col, copyFormulaDown(sheet.getRaw(src.row, src.col), p.row - src.row));
+      });
+      refreshValues();
+      anc = {r:src.row, c:src.col};
+      const lastT = sheet.parseRef(targetRefs[targetRefs.length-1]);
+      act = {r:lastT.row, c:lastT.col};
+      paint();
+    },
+    focusCell(ref){ const p = sheet.parseRef(ref); select(p.row, p.col); }
+  };
+}
+
+/* ============================= APP STATE ============================= */
+const STATE_KEY = 'ela_progress_v2';
+function defaultState(){ return { unlockedLevel:1, levelDone:{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false,9:false,10:false}, quizScore:{}, certName:'', pesan:'' }; }
+let state = loadState();
+function loadState(){ try{ const s = JSON.parse(localStorage.getItem(STATE_KEY)); return s || defaultState(); }catch(e){ return defaultState(); } }
+function saveState(){ try{ localStorage.setItem(STATE_KEY, JSON.stringify(state)); }catch(e){} }
+
+let currentLevel = null;
+let currentStepIndex = 0;
+let currentGrid = null;
+
+/* ============================= LEVEL DATA ============================= */
+const LEVELS = [
+{
+  id:1, title:'Fondasi Logika Data', tagline:'Referensi sel, SUM/AVERAGE, IF dasar',
+  narrative:[
+    {who:'client', name:'Pak Joko (Wali Kelas)', text:'Saya butuh rekap nilai ujian 5 siswa. Tolong hitung totalnya, rata-ratanya, dan tentukan siapa yang lulus.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini kasus bagus untuk mulai. Kita akan pakai referensi sel dan tiga fungsi paling dasar di Excel: SUM, AVERAGE, dan IF.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Siap, ayo kita mulai dari data mentahnya.'}
+  ],
+  concepts:[
+    {title:'Referensi Sel', formula:'A1, B2, C3 ...', desc:'Setiap kotak di spreadsheet punya alamat: kolom (huruf) + baris (angka). Formula bisa "menunjuk" ke sel lain.'},
+    {title:'SUM & AVERAGE', formula:'=SUM(B2:C2)  |  =AVERAGE(B2:C2)', desc:'SUM menjumlahkan angka dalam rentang sel. AVERAGE menghitung rata-ratanya.'},
+    {title:'IF Dasar', formula:'=IF(kondisi, "jika benar", "jika salah")', desc:'IF mengambil keputusan otomatis berdasarkan sebuah kondisi logika.'}
+  ],
+  exercises:[
+    {
+      id:'l1e1', title:'Lab 1 — Hitung Total & Rata-rata',
+      instruction:'Isi kolom Total (D2) dengan menjumlahkan UTS+UAS, dan Rata-rata (E2) dengan AVERAGE. Lalu salin ke semua baris — tarik kotak hijau di pojok sel ke bawah.',
+      fx:'Contoh: =B2+C2   dan   =AVERAGE(B2:C2)',
+      buildSheet(){
+        const s = new Sheet(6,5);
+        const headers=['Nama','UTS','UAS','Total','Rata-rata'];
+        headers.forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',80,90],['Budi',70,65],['Citra',95,88],['Dedi',60,55],['Eka',85,92]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        return s;
+      },
+      editable:['D2','E2','D3','E3','D4','E4','D5','E5','D6','E6'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5','D6'], label:'Salin D2 ke seluruh kolom Total'},{source:'E2', targets:['E3','E4','E5','E6'], label:'Salin E2 ke seluruh kolom Rata-rata'}],
+      expected:[
+        {ref:'D2',type:'num',value:170,label:'Total Andi (D2)'},
+        {ref:'E2',type:'num',value:85,label:'Rata-rata Andi (E2)'},
+        {ref:'D6',type:'num',value:177,label:'Total Eka (D6)'},
+        {ref:'E6',type:'num',value:88.5,label:'Rata-rata Eka (E6)'}
+      ]
+    },
+    {
+      id:'l1e2', title:'Lab 2 — Tentukan Status Kelulusan',
+      instruction:'Isi kolom Status (F2) dengan IF: jika Rata-rata (kolom E) ≥ 75 maka "Lulus", jika tidak "Tidak Lulus". Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =IF(E2>=75,"Lulus","Tidak Lulus")',
+      buildSheet(){
+        const s = new Sheet(6,6);
+        const headers=['Nama','UTS','UAS','Total','Rata-rata','Status'];
+        headers.forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',80,90],['Budi',70,65],['Citra',95,88],['Dedi',60,55],['Eka',85,92]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); s.setRaw(i+1,3,'=B'+(i+2)+'+C'+(i+2)); s.setRaw(i+1,4,'=AVERAGE(B'+(i+2)+':C'+(i+2)+')'); });
+        return s;
+      },
+      editable:['F2','F3','F4','F5','F6'],
+      applyGroups:[{source:'F2', targets:['F3','F4','F5','F6'], label:'Salin F2 ke seluruh kolom Status'}],
+      expected:[
+        {ref:'F2',type:'text',value:'Lulus',label:'Status Andi (F2)'},
+        {ref:'F3',type:'text',value:'Tidak Lulus',label:'Status Budi (F3)'},
+        {ref:'F4',type:'text',value:'Lulus',label:'Status Citra (F4)'},
+        {ref:'F5',type:'text',value:'Tidak Lulus',label:'Status Dedi (F5)'}
+      ]
+    }
+  ],
+  quiz:[
+    {q:'Apa fungsi dari =SUM(B2:B6)?', opts:['Menghitung rata-rata sel B2 sampai B6','Menjumlahkan seluruh nilai dari sel B2 sampai B6','Menghitung jumlah sel yang terisi','Mencari nilai tertinggi'], correct:1, explain:'SUM menjumlahkan semua angka dalam rentang sel yang ditentukan.'},
+    {q:'Formula =AVERAGE(B2:C2) menghasilkan apa?', opts:['Total dari B2 dan C2','Nilai tengah (median)','Rata-rata dari B2 dan C2','Selisih B2 dan C2'], correct:2, explain:'AVERAGE menjumlahkan lalu membagi dengan banyaknya data — menghasilkan rata-rata.'},
+    {q:'Pada =IF(E2>=75,"Lulus","Tidak Lulus"), apa yang terjadi jika E2 berisi 74?', opts:['Hasilnya "Lulus"','Hasilnya "Tidak Lulus"','Terjadi error','Sel dikosongkan'], correct:1, explain:'Karena 74 tidak memenuhi kondisi >=75, IF mengembalikan nilai FALSE yaitu "Tidak Lulus".'},
+    {q:'Apa itu "referensi sel" dalam Excel?', opts:['Nama file spreadsheet','Alamat unik sebuah sel, misalnya A1 atau D5','Warna latar sebuah sel','Jenis data dalam sel'], correct:1, explain:'Referensi sel adalah alamat kolom+baris yang menunjuk lokasi spesifik di spreadsheet.'},
+    {q:'Mengapa kita perlu menyalin formula ke semua baris alih-alih mengetik ulang satu-satu?', opts:['Karena Excel mewajibkannya','Supaya file lebih besar','Karena formula bisa otomatis menyesuaikan referensi baris (efisien & konsisten)','Tidak ada alasan khusus'], correct:2, explain:'Ini prinsip inti logika data: satu formula yang benar bisa disalin untuk ratusan baris tanpa menghitung manual.'}
+  ]
+},
+{
+  id:2, title:'Logika Bertingkat', tagline:'Nested IF, AND/OR/NOT, COUNTIF',
+  narrative:[
+    {who:'client', name:'Bu Sari (Koordinator Beasiswa)', text:'Sekarang saya butuh sistem penilaian yang lebih rinci: predikat huruf, kelayakan beasiswa, dan total siswa yang layak.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini saatnya belajar logika bertingkat — IF di dalam IF, dan menggabungkan beberapa syarat sekaligus dengan AND/OR.'}
+  ],
+  concepts:[
+    {title:'Nested IF (IF Bertingkat)', formula:'=IF(A>=90,"A",IF(A>=80,"B",IF(A>=70,"C","D")))', desc:'IF bisa diletakkan di dalam IF lain untuk menangani lebih dari 2 kemungkinan hasil.'},
+    {title:'AND / OR / NOT', formula:'=AND(A>=85,B>=90)   |   =OR(A>=85,B>=90)', desc:'AND benar jika SEMUA syarat terpenuhi. OR benar jika SALAH SATU syarat terpenuhi. NOT membalik nilai logika.'},
+    {title:'COUNTIF', formula:'=COUNTIF(range,"kriteria")', desc:'Menghitung berapa banyak sel dalam rentang yang memenuhi kriteria tertentu.'}
+  ],
+  exercises:[
+    {
+      id:'l2e1', title:'Lab 1 — Predikat Nilai (Nested IF)',
+      instruction:'Isi Predikat (C2): A jika Nilai≥90, B jika ≥80, C jika ≥70, selain itu D. Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =IF(B2>=90,"A",IF(B2>=80,"B",IF(B2>=70,"C","D")))',
+      buildSheet(){
+        const s = new Sheet(6,3);
+        ['Nama','Nilai','Predikat'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',92],['Budi',81],['Citra',74],['Dedi',65],['Eka',88]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); });
+        return s;
+      },
+      editable:['C2','C3','C4','C5','C6'],
+      applyGroups:[{source:'C2', targets:['C3','C4','C5','C6'], label:'Salin C2 ke semua baris'}],
+      expected:[
+        {ref:'C2',type:'text',value:'A',label:'Predikat Andi (92)'},
+        {ref:'C3',type:'text',value:'B',label:'Predikat Budi (81)'},
+        {ref:'C4',type:'text',value:'C',label:'Predikat Citra (74)'},
+        {ref:'C5',type:'text',value:'D',label:'Predikat Dedi (65)'}
+      ]
+    },
+    {
+      id:'l2e2', title:'Lab 2 — Kelayakan Beasiswa (AND)',
+      instruction:'Isi Kelayakan (D2): "Layak" jika Nilai≥85 DAN Kehadiran≥90, selain itu "Tidak Layak". Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =IF(AND(B2>=85,C2>=90),"Layak","Tidak Layak")',
+      buildSheet(){
+        const s = new Sheet(6,4);
+        ['Nama','Nilai','Kehadiran (%)','Kelayakan'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',92,95],['Budi',81,85],['Citra',74,92],['Dedi',88,91],['Eka',90,99]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        return s;
+      },
+      editable:['D2','D3','D4','D5','D6'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5','D6'], label:'Salin D2 ke semua baris'}],
+      expected:[
+        {ref:'D2',type:'text',value:'Layak',label:'Kelayakan Andi'},
+        {ref:'D3',type:'text',value:'Tidak Layak',label:'Kelayakan Budi'},
+        {ref:'D4',type:'text',value:'Tidak Layak',label:'Kelayakan Citra'},
+        {ref:'D5',type:'text',value:'Layak',label:'Kelayakan Dedi'},
+        {ref:'D6',type:'text',value:'Layak',label:'Kelayakan Eka'}
+      ]
+    },
+    {
+      id:'l2e3', title:'Lab 3 — Hitung Total yang Layak (COUNTIF)',
+      instruction:'Di sel F2, hitung berapa banyak siswa berstatus "Layak" pada kolom Kelayakan (D2:D6).',
+      fx:'Contoh: =COUNTIF(D2:D6,"Layak")',
+      buildSheet(){
+        const s = new Sheet(6,6);
+        ['Nama','Nilai','Kehadiran (%)','Kelayakan','','Total Layak'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',92,95,'Layak'],['Budi',81,85,'Tidak Layak'],['Citra',74,92,'Tidak Layak'],['Dedi',88,91,'Layak'],['Eka',90,99,'Layak']];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); s.setRaw(i+1,3,row[3]); });
+        return s;
+      },
+      editable:['F2'],
+      applyGroups:[],
+      expected:[{ref:'F2',type:'num',value:3,label:'Total Layak (F2)'}]
+    }
+  ],
+  quiz:[
+    {q:'Pada nested IF =IF(B2>=90,"A",IF(B2>=80,"B","C")), jika B2=85 hasilnya?', opts:['A','B','C','Error'], correct:1, explain:'85 tidak ≥90 (lewati IF pertama), tapi ≥80, sehingga hasilnya "B".'},
+    {q:'Kapan AND(kondisi1,kondisi2) bernilai TRUE?', opts:['Jika salah satu kondisi benar','Jika kedua kondisi benar','Jika kedua kondisi salah','Selalu TRUE'], correct:1, explain:'AND membutuhkan SEMUA kondisi terpenuhi untuk menghasilkan TRUE.'},
+    {q:'Kapan OR(kondisi1,kondisi2) bernilai TRUE?', opts:['Hanya jika keduanya benar','Jika minimal salah satu kondisi benar','Tidak pernah','Jika keduanya salah'], correct:1, explain:'OR bernilai TRUE jika minimal satu dari kondisinya terpenuhi.'},
+    {q:'Fungsi apa yang tepat untuk menghitung "berapa banyak siswa berstatus Lulus"?', opts:['SUM','AVERAGE','COUNTIF','VLOOKUP'], correct:2, explain:'COUNTIF menghitung jumlah sel dalam rentang yang memenuhi kriteria tertentu.'},
+    {q:'Fungsi NOT(TRUE) menghasilkan?', opts:['TRUE','FALSE','1','Error'], correct:1, explain:'NOT membalik nilai logika: NOT(TRUE) = FALSE.'}
+  ]
+},
+{
+  id:3, title:'Pencarian & Analisis Data', tagline:'VLOOKUP, INDEX-MATCH, referensi absolut ($), array formula',
+  narrative:[
+    {who:'client', name:'Pak Yanto (Pemilik Toko)', text:'Saya punya daftar harga barang terpisah. Saya ingin sistem otomatis mencari harga dan menghitung total penjualan tanpa copy-paste manual.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini area favorit saya: fungsi pencarian data. Kita pakai VLOOKUP dan INDEX-MATCH, plus konsep referensi absolut ($) agar tabel acuan tidak ikut bergeser saat disalin.'}
+  ],
+  concepts:[
+    {title:'VLOOKUP', formula:'=VLOOKUP(nilai_cari, tabel, no_kolom)', desc:'Mencari nilai pada kolom pertama sebuah tabel, lalu mengambil nilai dari kolom lain di baris yang sama.'},
+    {title:'Referensi Absolut ($)', formula:'$B$2:$D$4', desc:'Tanda $ mengunci baris/kolom agar tidak ikut berubah saat formula disalin — penting untuk tabel acuan VLOOKUP.'},
+    {title:'INDEX & MATCH', formula:'=INDEX(range, MATCH(nilai_cari, range_cari, 0))', desc:'MATCH mencari posisi sebuah nilai. INDEX mengambil nilai berdasarkan posisi itu — kombinasi ini lebih fleksibel dari VLOOKUP.'},
+    {title:'Array Formula — SUMPRODUCT', formula:'=SUMPRODUCT(range1, range2)', desc:'Mengalikan dua rentang sel secara berpasangan lalu menjumlahkan semua hasilnya sekaligus, tanpa kolom bantu.'}
+  ],
+  exercises:[
+    {
+      id:'l3e1', title:'Lab 1 — VLOOKUP Harga Barang',
+      instruction:'Tabel acuan ada di H2:J5 (Kode, Nama, Harga). Isi Harga (C2) dengan VLOOKUP berdasar Kode (A2), kunci tabel dengan $. Lalu salin ke baris transaksi lainnya.',
+      fx:'Contoh: =VLOOKUP(A2,$H$2:$J$5,3)',
+      buildSheet(){
+        const s = new Sheet(6,10);
+        ['Kode','Qty','Harga','','','','','Kode','Nama','Harga'].forEach((h,c)=>s.setRaw(0,c,h));
+        const trx=[['K2',3],['K1',5],['K4',2],['K3',10]];
+        trx.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); });
+        const ref=[['K1','Pulpen',15000],['K2','Buku Tulis',5000],['K3','Pensil',3000],['K4','Penghapus',2000]];
+        ref.forEach((row,i)=>{ s.setRaw(i+1,7,row[0]); s.setRaw(i+1,8,row[1]); s.setRaw(i+1,9,row[2]); });
+        return s;
+      },
+      editable:['C2','C3','C4','C5'],
+      applyGroups:[{source:'C2', targets:['C3','C4','C5'], label:'Salin C2 ke semua baris transaksi'}],
+      expected:[
+        {ref:'C2',type:'num',value:5000,label:'Harga transaksi 1 (Kode K2)'},
+        {ref:'C3',type:'num',value:15000,label:'Harga transaksi 2 (Kode K1)'},
+        {ref:'C4',type:'num',value:2000,label:'Harga transaksi 3 (Kode K4)'},
+        {ref:'C5',type:'num',value:3000,label:'Harga transaksi 4 (Kode K3)'}
+      ]
+    },
+    {
+      id:'l3e2', title:'Lab 2 — INDEX-MATCH Dua Arah',
+      instruction:'Cari Nilai Ujian berdasarkan Nama yang ada di F2, hasil ditaruh di G2. Gunakan INDEX-MATCH terhadap tabel A2:B5 (jangan lupa $).',
+      fx:'Contoh: =INDEX($B$2:$B$5,MATCH(F2,$A$2:$A$5,0))',
+      buildSheet(){
+        const s = new Sheet(6,7);
+        ['Nama','Nilai','','','','Cari Nama','Hasil Nilai'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',88],['Budi',75],['Citra',95],['Dedi',68]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); });
+        s.setRaw(1,5,'Citra');
+        return s;
+      },
+      editable:['G2'],
+      applyGroups:[],
+      expected:[{ref:'G2',type:'num',value:95,label:'Hasil pencarian nilai "Citra"'}]
+    },
+    {
+      id:'l3e3', title:'Lab 3 — Total Penjualan (Array Formula)',
+      instruction:'Di sel C7, hitung Total Penjualan = jumlah dari (Qty × Harga) semua baris, dalam SATU formula tanpa kolom bantu, pakai SUMPRODUCT.',
+      fx:'Contoh: =SUMPRODUCT(A2:A5,C2:C5)',
+      buildSheet(){
+        const s = new Sheet(7,3);
+        ['Qty','Kode','Harga'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[[3,'K2',5000],[5,'K1',15000],[2,'K4',2000],[10,'K3',3000]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        s.setRaw(6,0,'Total →');
+        return s;
+      },
+      editable:['C7'],
+      applyGroups:[],
+      expected:[{ref:'C7',type:'num',value:124000,label:'Total Penjualan (C7)'}]
+    }
+  ],
+  quiz:[
+    {q:'Apa fungsi tanda $ pada $B$2:$D$4 dalam formula?', opts:['Menandakan mata uang saja','Mengunci referensi agar tidak berubah saat formula disalin','Menghapus isi sel','Membuat sel jadi read-only permanen'], correct:1, explain:'$ adalah referensi absolut — mengunci baris/kolom supaya tabel acuan tidak ikut bergeser saat disalin ke sel lain.'},
+    {q:'Pada =VLOOKUP(A2,$H$2:$J$5,3), apa arti angka 3?', opts:['Jumlah baris yang dicari','Kolom ke-3 dari tabel acuan yang nilainya diambil','Jumlah kriteria','Toleransi error'], correct:1, explain:'Angka itu adalah nomor kolom (dihitung dari kolom pertama tabel) tempat nilai hasil diambil.'},
+    {q:'Kenapa INDEX-MATCH dianggap lebih fleksibel daripada VLOOKUP?', opts:['Karena lebih pendek diketik','Karena bisa mencari ke kolom manapun (kiri atau kanan), tidak hanya ke kanan seperti VLOOKUP','Karena tidak butuh tabel acuan','Keduanya sama saja'], correct:1, explain:'VLOOKUP hanya bisa mengambil nilai di kanan kolom kunci; INDEX-MATCH bisa ke arah manapun.'},
+    {q:'Apa yang dilakukan SUMPRODUCT(A2:A5,C2:C5)?', opts:['Menjumlahkan A2:A5 saja','Mengalikan A2*C2, A3*C3, dst lalu menjumlahkan semuanya','Mencari nilai maksimum','Menghitung rata-rata gabungan'], correct:1, explain:'SUMPRODUCT mengalikan elemen-elemen sepasang dari dua rentang, lalu menjumlahkan seluruh hasil kali tersebut.'},
+    {q:'Jika VLOOKUP tidak menemukan kecocokan, apa yang biasanya ditampilkan?', opts:['0 (nol)','Sel kosong','#N/A (nilai tidak ditemukan)','Nilai baris pertama tabel'], correct:2, explain:'#N/A menandakan nilai yang dicari tidak ada dalam tabel acuan.'}
+  ]
+},
+{
+  id:4, title:'Otomatisasi & Studi Kasus Master', tagline:'Kombinasi fungsi, dasar Macro/VBA, studi kasus payroll',
+  narrative:[
+    {who:'client', name:'Bu Melati (HRD)', text:'Ini tantangan besar terakhir: bikin sistem gaji otomatis untuk beberapa karyawan, sekaligus saya ingin laporan bulanan tidak perlu diformat manual tiap bulan.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Level Master menggabungkan semua yang sudah kamu pelajari — IF, VLOOKUP, SUM — dalam satu kasus nyata. Kita juga akan kenalan dengan Macro/VBA untuk otomatisasi tugas berulang.'}
+  ],
+  concepts:[
+    {title:'Menggabungkan Fungsi', formula:'=Gaji_Pokok*(1-VLOOKUP(Golongan,tabel,2))', desc:'Kasus nyata jarang memakai satu fungsi saja — logika data yang matang menggabungkan IF, VLOOKUP, dan aritmatika sekaligus.'},
+    {title:'Apa itu Macro / VBA?', formula:'Sub CetakLaporan() ... End Sub', desc:'Macro adalah rekaman langkah-langkah kerja di Excel yang bisa dijalankan ulang otomatis. VBA (Visual Basic for Applications) adalah bahasa di baliknya. Kamu tidak perlu jago coding untuk mulai — Excel bisa "merekam" aksi mouse & keyboardmu menjadi macro.'},
+    {title:'Alur Merekam Macro', formula:'Record → Aksi → Stop → Simpan → Jalankan', desc:'Proses dasarnya selalu sama: mulai rekam, lakukan pekerjaan yang berulang, hentikan rekam, lalu macro itu bisa dipanggil kapan saja.'}
+  ],
+  exercises:[
+    {
+      id:'l4e1', title:'Lab 1 — Studi Kasus: Sistem Gaji Otomatis',
+      instruction:'Isi Gaji Bersih (D2) = Gaji Pokok − (Gaji Pokok × Persen Potongan dari tabel golongan G2:H4, cari via VLOOKUP, kunci dengan $). Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =B2-(B2*VLOOKUP(C2,$G$2:$H$4,2))',
+      buildSheet(){
+        const s = new Sheet(5,9);
+        ['Nama','Gaji Pokok','Golongan','Gaji Bersih','','','Golongan','% Potongan'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',5000000,'A'],['Budi',4000000,'B'],['Citra',6000000,'C'],['Dedi',4500000,'A']];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        const golongan=[['A',0.05],['B',0.08],['C',0.1]];
+        golongan.forEach((row,i)=>{ s.setRaw(i+1,6,row[0]); s.setRaw(i+1,7,row[1]); });
+        return s;
+      },
+      editable:['D2','D3','D4','D5'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5'], label:'Salin D2 ke semua baris'}],
+      expected:[
+        {ref:'D2',type:'num',value:4750000,label:'Gaji Bersih Andi'},
+        {ref:'D3',type:'num',value:3680000,label:'Gaji Bersih Budi'},
+        {ref:'D4',type:'num',value:5400000,label:'Gaji Bersih Citra'},
+        {ref:'D5',type:'num',value:4275000,label:'Gaji Bersih Dedi'}
+      ]
+    }
+  ],
+  macroSteps:[
+    'Buka menu Developer → klik "Record Macro" (Rekam Makro)',
+    'Beri nama macro & (opsional) tentukan shortcut keyboard',
+    'Lakukan aksi yang ingin diotomatiskan, misalnya format tabel atau hitung total',
+    'Klik "Stop Recording" (Berhenti Merekam)',
+    'Jalankan macro kapan saja lewat tombol atau shortcut yang tadi dibuat'
+  ],
+  quiz:[
+    {q:'Dalam studi kasus gaji, mengapa tabel golongan (G2:H4) perlu dikunci dengan $ saat formula disalin ke bawah?', opts:['Supaya warnanya tidak berubah','Supaya semua baris tetap merujuk ke tabel golongan yang sama, bukan bergeser','Karena wajib menurut Excel','Tidak ada alasan, hanya kebiasaan'], correct:1, explain:'Tanpa $, saat formula disalin ke bawah, rentang tabel golongan akan ikut bergeser dan hasilnya salah.'},
+    {q:'Apa itu Macro dalam konteks Excel?', opts:['Jenis grafik khusus','Rekaman langkah kerja yang bisa dijalankan ulang otomatis','Nama lain dari VLOOKUP','Format angka besar'], correct:1, explain:'Macro merekam aksi yang kamu lakukan agar bisa diputar ulang otomatis kapan saja dibutuhkan.'},
+    {q:'Bahasa pemrograman di balik Macro Excel disebut?', opts:['Python','VBA (Visual Basic for Applications)','SQL','JavaScript'], correct:1, explain:'VBA adalah bahasa scripting bawaan Microsoft Office yang menjalankan macro.'},
+    {q:'Urutan dasar membuat macro adalah?', opts:['Simpan → Rekam → Hentikan → Buka','Rekam → Lakukan Aksi → Stop → Simpan/Jalankan','Hentikan → Rekam → Aksi','Tidak ada urutan tertentu'], correct:1, explain:'Proses standarnya: mulai rekam, lakukan aksinya, hentikan rekaman, lalu macro siap dijalankan ulang.'},
+    {q:'Kombinasi fungsi mana yang paling cocok untuk kasus "gaji bersih berdasar golongan yang bisa berubah"?', opts:['Hanya SUM saja','IF sederhana tanpa tabel','Aritmatika + VLOOKUP ke tabel referensi','COUNTIF saja'], correct:2, explain:'Menggabungkan aritmatika dengan VLOOKUP ke tabel referensi membuat sistem mudah diperbarui tanpa mengubah tiap formula satu-satu.'}
+  ]
+},
+{
+  id:5, title:'Studi Kasus Dunia Kerja', tagline:'20 latihan logika lintas divisi — Retail, Gudang, Sales & Customer Care',
+  narrative:[
+    {who:'client', name:'Pak Rudi (Manajer Operasional)', text:'Logika yang kamu pelajari sejauh ini sudah bagus. Sekarang saya ingin kamu uji dengan kasus-kasus asli dari berbagai divisi kami: toko, gudang, tim sales, dan customer care.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Level ini berbeda dari sebelumnya — tidak ada lab spreadsheet baru, tapi 20 soal latihan yang menggabungkan semua logika yang sudah kamu kuasai: IF, nested IF, AND/OR, COUNTIF, SUMIF, VLOOKUP, dan INDEX-MATCH.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Siap. Anggap saja ini simulasi wawancara kerja — saatnya membuktikan logikanya benar-benar nempel.'}
+  ],
+  concepts:[
+    {title:'Retail — Diskon & Kategori Harga', formula:'=IF(B2<50000,"Murah",IF(B2<=150000,"Sedang","Mahal"))', desc:'Di kasir dan katalog produk, logika bertingkat dipakai untuk menentukan diskon otomatis dan mengelompokkan produk berdasarkan rentang harga.'},
+    {title:'Gudang — Stok & Restock', formula:'=IF(AND(C2<5,D2="Aktif"),"Restock","Aman")', desc:'Tim gudang mengandalkan SUMIF/COUNTIF untuk rekap stok per lokasi, dan AND/OR untuk menentukan kapan barang perlu dipesan ulang.'},
+    {title:'Sales — Komisi & Target', formula:'=IF(B2<10000000,B2*0.02,IF(B2<=25000000,B2*0.05,B2*0.08))', desc:'Skema komisi bertingkat dan pencapaian target biasanya memakai nested IF, dipadukan VLOOKUP untuk mengambil tier performa dari tabel acuan.'},
+    {title:'Customer Care — Prioritas & SLA', formula:'=IF(OR(C2<=2,D2>48),"Eskalasi","Normal")', desc:'Tim layanan pelanggan memakai IF dan OR untuk menentukan prioritas tiket serta kapan sebuah kasus harus dieskalasi karena melanggar SLA.'}
+  ],
+  exercises:[],
+  quiz:[
+    {q:'[Retail] Toko memberikan diskon 10% untuk pembeli dengan total belanja di sel B2 minimal Rp500.000, dan tidak ada diskon jika kurang dari itu. Formula mana yang tepat?', opts:['=IF(B2<=500000,B2*0.1,0)','=B2*0.1','=IF(B2>=500000,B2*0.1,0)','=IF(B2>=500000,0,B2*0.1)'], correct:2, explain:'Syarat total belanja minimal 500.000 memakai >=; jika benar hitung 10% dari B2, jika tidak hasilnya 0.'},
+    {q:'[Retail] Kasir ingin mencari harga produk dari tabel master $F$2:$H$10 (kolom 1=Kode, kolom 3=Harga) berdasarkan kode di sel A2. Formula yang benar?', opts:['=VLOOKUP(A2,$F$2:$H$10,3)','=VLOOKUP(A2,$F$2:$H$10,2)','=VLOOKUP(F2,$A$2:$H$10,3)','=VLOOKUP(A2,F2:H10,3)'], correct:0, explain:'Kolom Harga adalah kolom ke-3 dari tabel acuan, dan tabel dikunci dengan $ agar tidak bergeser saat formula disalin.'},
+    {q:'[Retail] Manajer toko ingin tahu berapa banyak produk dengan stok di bawah 10 unit, dari rentang C2:C50. Formula yang tepat?', opts:['=SUMIF(C2:C50,"<10")','=COUNTIF(C2:C50,">10")','=COUNTIF(C2:C50,"<10")','=COUNT(C2:C50)'], correct:2, explain:'COUNTIF dengan kriteria "<10" menghitung berapa sel dalam rentang yang nilainya kurang dari 10.'},
+    {q:'[Retail] Sebuah toko mengelompokkan produk: "Murah" jika harga di B2 kurang dari 50.000, "Sedang" jika 50.000 sampai 150.000, dan "Mahal" jika lebih dari 150.000. Formula mana yang benar?', opts:['=IF(B2<50000,"Murah","Sedang","Mahal")','=IF(B2>150000,"Murah","Mahal")','=IF(B2<50000,IF(B2<=150000,"Sedang","Mahal"),"Murah")','=IF(B2<50000,"Murah",IF(B2<=150000,"Sedang","Mahal"))'], correct:3, explain:'Nested IF mengecek syarat dari yang terkecil dulu: jika bukan "Murah", baru dicek apakah "Sedang", sisanya otomatis "Mahal".'},
+    {q:'[Retail] Produk perlu direstock hanya jika stoknya (C2) kurang dari 5 DAN statusnya (D2) masih "Aktif" dijual. Formula yang tepat?', opts:['=IF(OR(C2<5,D2="Aktif"),"Restock","Aman")','=IF(C2<5,"Restock","Aman")','=IF(AND(C2<5,D2="Aktif"),"Restock","Aman")','=IF(AND(C2<5,D2="Aktif"),"Aman","Restock")'], correct:2, explain:'AND memastikan KEDUA syarat terpenuhi sekaligus — stok rendah maupun status aktif — baru dianggap perlu restock.'},
+    {q:'[Gudang] Tim gudang ingin menjumlahkan qty barang keluar khusus dari "Gudang A" (kolom gudang B2:B100, qty di C2:C100). Formula yang tepat?', opts:['=SUMIF(B2:B100,"Gudang A",C2:C100)','=SUMIF(C2:C100,"Gudang A",B2:B100)','=COUNTIF(B2:B100,"Gudang A")','=SUM(C2:C100)'], correct:0, explain:'SUMIF(rentang_kriteria, kriteria, rentang_jumlah) — kriteria dicek di kolom gudang, tapi yang dijumlahkan adalah kolom qty.'},
+    {q:'[Gudang] Barang perlu dipesan ulang jika stok saat ini (C2) sudah sama atau lebih rendah dari reorder point (D2). Formula yang tepat?', opts:['=IF(C2>=D2,"Order Sekarang","Cukup")','=IF(C2<=D2,"Order Sekarang","Cukup")','=IF(C2=D2,"Order Sekarang","Cukup")','=IF(C2<D2,"Order Sekarang","Cukup")'], correct:1, explain:'Syarat "sama atau lebih rendah" memakai <=, membandingkan stok saat ini terhadap batas reorder point.'},
+    {q:'[Gudang] Gudang ingin menghitung berapa banyak barang yang sisa masa simpannya (kolom D2:D200) 30 hari atau kurang. Formula yang tepat?', opts:['=COUNTIF(D2:D200,">=30")','=SUMIF(D2:D200,"<=30")','=COUNT(D2:D200)','=COUNTIF(D2:D200,"<=30")'], correct:3, explain:'Kriteria "<=30" menghitung sel dengan nilai 30 atau kurang — sesuai definisi "30 hari atau kurang".'},
+    {q:'[Gudang] Cari lokasi rak (kolom $E$2:$E$50) berdasarkan kode barang yang dicari di A2, dicocokkan terhadap daftar kode $D$2:$D$50. Formula yang tepat?', opts:['=INDEX($D$2:$D$50,MATCH(A2,$E$2:$E$50,0))','=MATCH(A2,$D$2:$D$50,0)','=INDEX($E$2:$E$50,MATCH(A2,$D$2:$D$50,0))','=VLOOKUP(A2,$D$2:$E$50,1)'], correct:2, explain:'MATCH mencari posisi kode barang di daftar kode, lalu INDEX mengambil nilai lokasi rak pada posisi yang sama.'},
+    {q:'[Gudang] Barang perlu dicek ulang jika kondisinya "Rusak" ATAU statusnya "Expired" (kolom C2 dan D2). Formula yang tepat?', opts:['=IF(OR(C2="Rusak",D2="Expired"),"Cek Ulang","OK")','=IF(AND(C2="Rusak",D2="Expired"),"Cek Ulang","OK")','=IF(C2="Rusak",D2="Expired","OK")','=IF(NOT(C2="Rusak"),"Cek Ulang","OK")'], correct:0, explain:'OR membuat hasil TRUE jika SALAH SATU syarat terpenuhi — cukup rusak atau expired saja untuk perlu dicek ulang.'},
+    {q:'[Sales] Skema komisi sales: di bawah Rp10 juta = 2%, Rp10–25 juta = 5%, di atas Rp25 juta = 8%, dari nilai penjualan di B2. Formula yang tepat?', opts:['=IF(B2<10000000,B2*0.08,IF(B2<=25000000,B2*0.05,B2*0.02))','=IF(B2<10000000,B2*0.02,IF(B2<=25000000,B2*0.05,B2*0.08))','=IF(B2>10000000,B2*0.02,B2*0.08)','=B2*0.05'], correct:1, explain:'Nested IF mengecek tingkat terendah dulu (2%), lalu tingkat menengah (5%), sisanya otomatis tingkat tertinggi (8%).'},
+    {q:'[Sales] Cari tier performa seorang sales dari tabel $G$2:$H$20 (kolom 1=Nama, kolom 2=Tier) berdasarkan nama di A2. Formula yang tepat?', opts:['=VLOOKUP(A2,$G$2:$H$20,1)','=VLOOKUP(G2,$A$2:$H$20,2)','=INDEX($G$2:$H$20,2)','=VLOOKUP(A2,$G$2:$H$20,2)'], correct:3, explain:'Tier berada di kolom ke-2 tabel acuan, jadi angka kolom pada VLOOKUP harus 2.'},
+    {q:'[Sales] Status "Tercapai" muncul jika realisasi penjualan (B2) sudah sama atau melebihi target (C2). Formula yang tepat?', opts:['=IF(B2<=C2,"Tercapai","Belum")','=IF(C2>=B2,"Tercapai","Belum")','=IF(B2>=C2,"Tercapai","Belum")','=IF(B2=C2,"Tercapai","Belum")'], correct:2, explain:'Syarat "sama atau melebihi target" memakai >=, membandingkan realisasi terhadap target.'},
+    {q:'[Sales] Hitung total penjualan khusus wilayah "Jawa Barat" (kolom wilayah B2:B100, nilai penjualan C2:C100). Formula yang tepat?', opts:['=SUMIF(B2:B100,"Jawa Barat",C2:C100)','=SUMIF(C2:C100,"Jawa Barat",B2:B100)','=COUNTIF(B2:B100,"Jawa Barat")','=SUM(B2:B100)'], correct:0, explain:'Kriteria wilayah dicek di kolom B, tapi yang dijumlahkan adalah nilai penjualan di kolom C.'},
+    {q:'[Sales] Cari nilai penjualan tertinggi dari seluruh tim sales pada rentang B2:B30. Formula yang tepat?', opts:['=MIN(B2:B30)','=MAX(B2:B30)','=SUM(B2:B30)','=AVERAGE(B2:B30)'], correct:1, explain:'MAX mengembalikan nilai tertinggi dari sekumpulan angka dalam rentang yang dipilih.'},
+    {q:'[Customer Care] Tingkat urgensi tiket berupa angka di B2: 1=Tinggi, 2=Sedang, selain itu Rendah. Formula yang tepat?', opts:['=IF(B2=1,"Rendah",IF(B2=2,"Sedang","Tinggi"))','=IF(B2<1,"Tinggi","Rendah")','=IF(B2=1,"Tinggi","Sedang")','=IF(B2=1,"Tinggi",IF(B2=2,"Sedang","Rendah"))'], correct:3, explain:'Nested IF mengecek nilai 1 dulu untuk "Tinggi", lalu nilai 2 untuk "Sedang", sisanya otomatis "Rendah".'},
+    {q:'[Customer Care] Hitung berapa kali ID pelanggan "C105" muncul di daftar komplain (kolom A2:A200), untuk mendeteksi komplain berulang. Formula yang tepat?', opts:['=SUMIF(A2:A200,"C105")','=MATCH("C105",A2:A200,0)','=COUNTIF(A2:A200,"C105")','=COUNT(A2:A200)'], correct:2, explain:'COUNTIF menghitung berapa kali sebuah nilai (ID pelanggan tertentu) muncul dalam sebuah rentang.'},
+    {q:'[Customer Care] Waktu respon tiket dalam jam ada di B2. SLA maksimal 24 jam. Status "Lewat SLA" muncul jika waktu respon lebih dari 24 jam. Formula yang tepat?', opts:['=IF(B2>24,"Lewat SLA","Tepat Waktu")','=IF(B2<24,"Lewat SLA","Tepat Waktu")','=IF(B2>=24,"Tepat Waktu","Lewat SLA")','=IF(B2=24,"Lewat SLA","Tepat Waktu")'], correct:0, explain:'Syarat "lebih dari 24 jam" memakai operator ">" murni, bukan ">=" karena tepat 24 jam masih dianggap tepat waktu.'},
+    {q:'[Customer Care] Tiket perlu dieskalasi jika rating kepuasan (C2) 2 atau kurang, ATAU waktu tunggu (D2) lebih dari 48 jam. Formula yang tepat?', opts:['=IF(AND(C2<=2,D2>48),"Eskalasi","Normal")','=IF(OR(C2<=2,D2>48),"Eskalasi","Normal")','=IF(C2<=2,"Eskalasi",D2>48)','=IF(OR(C2>2,D2<=48),"Eskalasi","Normal")'], correct:1, explain:'OR menghasilkan TRUE jika salah satu dari dua syarat terpenuhi — rating rendah saja atau waktu tunggu lama saja sudah cukup untuk eskalasi.'},
+    {q:'[Customer Care] Hitung rata-rata rating kepuasan pelanggan dari kolom C2:C150, dibulatkan ke 2 angka desimal. Formula yang tepat?', opts:['=AVERAGE(ROUND(C2:C150,2))','=ROUND(SUM(C2:C150),2)','=AVERAGE(C2:C150)','=ROUND(AVERAGE(C2:C150),2)'], correct:3, explain:'AVERAGE menghitung rata-rata dulu, kemudian ROUND membulatkan hasilnya menjadi 2 angka desimal.'}
+  ]
+},
+{
+  id:6, title:'Logika Berbasis Waktu', tagline:'Aging piutang, denda otomatis & logika jatuh tempo',
+  narrative:[
+    {who:'client', name:'Bu Ratna (Staff Keuangan)', text:'Saya kewalahan mengecek piutang pelanggan satu per satu. Saya butuh kategori otomatis: piutang ini lancar, macet 1-30 hari, 31-60 hari, atau sudah parah di atas 60 hari — plus denda otomatis untuk yang lewat jatuh tempo.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Logika waktu sebenarnya logika angka biasa. Di Excel sungguhan kita pakai fungsi tanggal seperti TODAY() dan DATEDIF, tapi prinsipnya identik: ubah selisih waktu jadi angka, lalu serahkan ke nested IF.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Jadi kuncinya adalah satu kolom angka "hari lewat tempo", lalu semua keputusan mengikuti angka itu. Saya kerjakan.'}
+  ],
+  concepts:[
+    {title:'Waktu = Angka', formula:'Hari Lewat = hari_ini - tanggal_jatuh_tempo', desc:'Excel menyimpan tanggal sebagai angka di balik layar. Selisih dua tanggal adalah angka biasa, jadi IF bekerja persis seperti pada angka lain.'},
+    {title:'Fungsi Tanggal di Excel Asli', formula:'=TODAY()  |  =DATEDIF(tgl1,tgl2,"d")', desc:'Di Excel sungguhan, TODAY() memberi tanggal hari ini dan DATEDIF menghitung selisih hari. Modul ini mensimulasikannya dengan kolom angka siap pakai.'},
+    {title:'Aging Analysis (Kategori Piutang)', formula:'=IF(C2<=0,"Lancar",IF(C2<=30,"1-30 Hari",...))', desc:'Teknik wajib di finance: mengelompokkan piutang berdasarkan umur keterlambatan untuk menentukan prioritas penagihan.'},
+    {title:'Denda Otomatis', formula:'=IF(C2>0, B2*0.02, 0)', desc:'Logika kondisional klasik: kenakan biaya hanya jika syarat terpenuhi (piutang lewat jatuh tempo), nol jika tidak.'}
+  ],
+  exercises:[
+    {
+      id:'l6e1', title:'Lab 1 — Kategori Aging Piutang',
+      instruction:'Isi Kategori (D2): "Lancar" jika Hari Lewat Tempo ≤ 0, "1-30 Hari" jika ≤ 30, "31-60 Hari" jika ≤ 60, selain itu ">60 Hari". Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =IF(C2<=0,"Lancar",IF(C2<=30,"1-30 Hari",IF(C2<=60,"31-60 Hari",">60 Hari")))',
+      buildSheet(){
+        const s = new Sheet(6,4);
+        ['Pelanggan','Nilai Piutang','Hari Lewat Tempo','Kategori'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['PT Aman',5000000,-5],['CV Bintang',2300000,12],['Toko Cerah',4100000,45],['UD Damai',1200000,90],['PT Energi',6800000,30]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        return s;
+      },
+      editable:['D2','D3','D4','D5','D6'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5','D6'], label:'Salin D2 ke semua baris'}],
+      expected:[
+        {ref:'D2',type:'text',value:'Lancar',label:'Kategori PT Aman (-5 hari)'},
+        {ref:'D3',type:'text',value:'1-30 Hari',label:'Kategori CV Bintang (12 hari)'},
+        {ref:'D4',type:'text',value:'31-60 Hari',label:'Kategori Toko Cerah (45 hari)'},
+        {ref:'D5',type:'text',value:'>60 Hari',label:'Kategori UD Damai (90 hari)'}
+      ]
+    },
+    {
+      id:'l6e2', title:'Lab 2 — Denda Otomatis',
+      instruction:'Isi Denda (D2): jika Hari Lewat Tempo (C2) lebih dari 0, kenakan denda 2% dari Nilai Piutang (B2); jika tidak, denda 0. Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =IF(C2>0,B2*0.02,0)',
+      buildSheet(){
+        const s = new Sheet(6,4);
+        ['Pelanggan','Nilai Piutang','Hari Lewat Tempo','Denda'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['PT Aman',5000000,-5],['CV Bintang',2300000,12],['Toko Cerah',4100000,45],['UD Damai',1200000,90],['PT Energi',6800000,30]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        return s;
+      },
+      editable:['D2','D3','D4','D5','D6'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5','D6'], label:'Salin D2 ke semua baris'}],
+      expected:[
+        {ref:'D2',type:'num',value:0,label:'Denda PT Aman (masih lancar)'},
+        {ref:'D3',type:'num',value:46000,label:'Denda CV Bintang (2% dari 2.300.000)'},
+        {ref:'D5',type:'num',value:24000,label:'Denda UD Damai (2% dari 1.200.000)'},
+        {ref:'D6',type:'num',value:136000,label:'Denda PT Energi (2% dari 6.800.000)'}
+      ]
+    },
+    {
+      id:'l6e3', title:'Lab 3 — Rekap Piutang Macet',
+      instruction:'Di sel E2, jumlahkan seluruh Nilai Piutang yang lewat jatuh tempo (Hari Lewat > 0). Di F2, hitung berapa banyak pelanggan yang macet.',
+      fx:'Contoh: =SUMIF(C2:C6,">0",B2:B6)   dan   =COUNTIF(C2:C6,">0")',
+      buildSheet(){
+        const s = new Sheet(6,6);
+        ['Pelanggan','Nilai Piutang','Hari Lewat Tempo','','Total Piutang Macet','Jumlah Pelanggan Macet'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['PT Aman',5000000,-5],['CV Bintang',2300000,12],['Toko Cerah',4100000,45],['UD Damai',1200000,90],['PT Energi',6800000,30]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        return s;
+      },
+      editable:['E2','F2'],
+      applyGroups:[],
+      expected:[
+        {ref:'E2',type:'num',value:14400000,label:'Total Piutang Macet (E2)'},
+        {ref:'F2',type:'num',value:4,label:'Jumlah Pelanggan Macet (F2)'}
+      ]
+    }
+  ],
+  quiz:[
+    {q:'Pada formula aging, piutang dikategorikan "Lancar" jika Hari Lewat Tempo...', opts:['Lebih dari 30','Sama dengan nol atau negatif (belum jatuh tempo)','Lebih dari 60','Selalu lancar'], correct:1, explain:'Hari lewat tempo ≤ 0 berarti belum lewat jatuh tempo, sehingga kategorinya "Lancar".'},
+    {q:'Kenapa logika tanggal di Excel pada dasarnya sama dengan logika angka biasa?', opts:['Karena tanggal tidak bisa dihitung','Karena Excel menyimpan tanggal sebagai angka di balik layar, jadi selisih tanggal adalah angka yang bisa dibandingkan dengan IF','Karena tanggal hanya untuk tampilan','Tidak ada hubungannya'], correct:1, explain:'Tanggal di Excel adalah angka seri; mengurangi dua tanggal menghasilkan angka hari yang langsung bisa masuk ke nested IF.'},
+    {q:'Apa arti formula =IF(C2>0,B2*0.02,0)?', opts:['Selalu kenakan denda 2%','Kenakan denda 2% dari nilai piutang HANYA jika lewat jatuh tempo, kalau tidak denda nol','Kenakan denda 2 rupiah','Mengosongkan sel C2'], correct:1, explain:'Kondisi C2>0 artinya piutang lewat jatuh tempo; jika benar hitung 2% dari B2, jika salah hasilnya 0.'},
+    {q:'Formula =SUMIF(C2:C6,">0",B2:B6) menghitung apa?', opts:['Menjumlahkan semua nilai piutang','Menjumlahkan nilai piutang yang hari lewat temponya lebih dari 0 saja','Menghitung jumlah pelanggan','Mencari nilai piutang terbesar'], correct:1, explain:'Kriteria ">0" disaring di kolom C (hari lewat), tapi yang dijumlahkan adalah kolom B (nilai piutang).'},
+    {q:'Fungsi COUNTIF(C2:C6,">0") pada kolom Hari Lewat Tempo menghasilkan?', opts:['Total hari keterlambatan','Jumlah pelanggan yang piutangnya lewat jatuh tempo','Rata-rata keterlambatan','Nilai piutang terkecil'], correct:1, explain:'COUNTIF menghitung berapa sel yang memenuhi kriteria — di sini jumlah pelanggan macet.'}
+  ]
+},
+{
+  id:7, title:'Logika Gabungan & Kriteria Dinamis', tagline:'SUMIF kriteria dari sel, deteksi duplikat & kriteria ganda',
+  narrative:[
+    {who:'client', name:'Pak Hendra (Kepala Cabang)', text:'Laporan saya ribet. Setiap kali direksi minta rekap "penjualan Jawa Barat tahun ini", tim saya menghitung manual. Saya yakin ini bisa otomatis — bahkan kalau datanya ada dobel sekalipun.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Tiga senjata hari ini: kriteria dari sel (bukan diketik manual), deteksi duplikat dengan COUNTIF, dan trik kolom kunci untuk kriteria ganda.'}
+  ],
+  concepts:[
+    {title:'SUMIF dengan Kriteria dari Sel', formula:'=SUMIF($A$2:$A$7, E2, $C$2:$C$7)', desc:'Kriteria tidak harus diketik di formula — bisa dirujuk dari sel. Ini membuat rekap mudah diubah: ganti isi sel, hasil ikut berubah.'},
+    {title:'Referensi Absolut + Kriteria Dinamis', formula:'$A$2:$A$7 (dikunci) vs E2 (bebas)', desc:'Rentang data dikunci dengan $ agar tidak bergeser; kriteria dibiarkan bebas agar bisa diganti-ganti.'},
+    {title:'Deteksi Duplikat', formula:'=IF(COUNTIF($A$2:$A$8,A2)>1,"Dobel","Unik")', desc:'Jika sebuah nilai muncul lebih dari satu kali di rentang, COUNTIF mengembalikan angka lebih dari 1 — itu sinyal duplikat.'},
+    {title:'Kriteria Ganda via Kolom Kunci', formula:'=A2&"-"&B2  lalu  =SUMIF(kunci, "K1-Aktif", nilai)', desc:'Engine sederhana belum punya SUMIFS, jadi gabungkan dua kolom jadi satu kunci unik dengan &, lalu rekap dengan SUMIF. Prinsipnya sama dengan SUMIFS di Excel asli.'}
+  ],
+  exercises:[
+    {
+      id:'l7e1', title:'Lab 1 — Rekap Penjualan per Wilayah',
+      instruction:'Isi F2 dan F3: jumlahkan Nilai Penjualan (C2:C7) untuk wilayah yang tertulis di E2 dan E3. Kunci rentang datanya dengan $, biarkan kriteria dari sel E tetap bebas.',
+      fx:'Contoh: =SUMIF($A$2:$A$7,E2,$C$2:$C$7)',
+      buildSheet(){
+        const s = new Sheet(7,6);
+        ['Wilayah','Sales','Nilai Penjualan','','Wilayah Cari','Total'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Jawa Barat','Andi',12000000],['Jawa Timur','Budi',8000000],['Jawa Barat','Citra',15000000],['Jawa Tengah','Dedi',9000000],['Jawa Timur','Eka',11000000],['Jawa Barat','Fajar',7000000]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        s.setRaw(1,4,'Jawa Barat'); s.setRaw(2,4,'Jawa Timur');
+        return s;
+      },
+      editable:['F2','F3'],
+      applyGroups:[],
+      expected:[
+        {ref:'F2',type:'num',value:34000000,label:'Total Jawa Barat (12jt + 15jt + 7jt)'},
+        {ref:'F3',type:'num',value:19000000,label:'Total Jawa Timur (8jt + 11jt)'}
+      ]
+    },
+    {
+      id:'l7e2', title:'Lab 2 — Deteksi Duplikat',
+      instruction:'Isi Status Cek (B2): "Dobel" jika Kode Barang (A2) muncul lebih dari satu kali di kolom A2:A8, selain itu "Unik". Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =IF(COUNTIF($A$2:$A$8,A2)>1,"Dobel","Unik")',
+      buildSheet(){
+        const s = new Sheet(8,2);
+        ['Kode Barang','Status Cek'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=['K1','K2','K3','K2','K4','K1','K5'];
+        data.forEach((v,i)=>s.setRaw(i+1,0,v));
+        return s;
+      },
+      editable:['B2','B3','B4','B5','B6','B7','B8'],
+      applyGroups:[{source:'B2', targets:['B3','B4','B5','B6','B7','B8'], label:'Salin B2 ke semua baris'}],
+      expected:[
+        {ref:'B2',type:'text',value:'Dobel',label:'K1 muncul 2 kali'},
+        {ref:'B4',type:'text',value:'Unik',label:'K3 hanya muncul 1 kali'},
+        {ref:'B8',type:'text',value:'Unik',label:'K5 hanya muncul 1 kali'}
+      ]
+    },
+    {
+      id:'l7e3', title:'Lab 3 — Kriteria Ganda via Kolom Kunci',
+      instruction:'Isi kolom Kunci (D2): gabungkan Produk dan Status dengan tanda "-" (pakai &). Lalu di G2, jumlahkan Nilai khusus kunci yang tertulis di F2.',
+      fx:'Contoh: =A2&"-"&B2   dan   =SUMIF($D$2:$D$7,F2,$C$2:$C$7)',
+      buildSheet(){
+        const s = new Sheet(7,7);
+        ['Produk','Status','Nilai','Kunci','','Cari Kunci','Total'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['K1','Aktif',5000000],['K1','Nonaktif',3000000],['K2','Aktif',4000000],['K1','Aktif',2000000],['K3','Aktif',1000000],['K2','Nonaktif',1500000]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        s.setRaw(1,5,'K1-Aktif');
+        return s;
+      },
+      editable:['D2','D3','D4','D5','D6','D7','G2'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5','D6','D7'], label:'Salin D2 ke semua baris'}],
+      expected:[
+        {ref:'D2',type:'text',value:'K1-Aktif',label:'Kunci baris pertama'},
+        {ref:'G2',type:'num',value:7000000,label:'Total produk K1 yang Aktif (5jt + 2jt)'}
+      ]
+    }
+  ],
+  quiz:[
+    {q:'Pada =SUMIF($A$2:$A$7,E2,$C$2:$C$7), apa peran sel E2?', opts:['Rentang yang dijumlahkan','Kriteria pencarian yang bisa diganti-ganti tanpa mengubah formula','Nomor kolom hasil','Sel kosong pembatas'], correct:1, explain:'Kriteria dirujuk dari sel, jadi untuk rekap wilayah lain cukup mengganti isi E2.'},
+    {q:'Mengapa rentang $A$2:$A$7 dikunci dengan $ tapi E2 tidak?', opts:['Tanpa alasan, hanya gaya penulisan','Agar rentang data tidak bergeser saat formula disalin, sementara kriteria tetap bisa diubah','Agar E2 ikut terkunci juga','Karena SUMIF menolak kriteria berupa sel'], correct:1, explain:'Ini kombinasi referensi absolut (data) dan relatif (kriteria) — pola paling sering dipakai di laporan rekap.'},
+    {q:'Formula mana yang mendeteksi duplikat di kolom A2:A8?', opts:['=IF(COUNTIF($A$2:$A$8,A2)>1,"Dobel","Unik")','=IF(SUM(A2:A8)>1,"Dobel","Unik")','=COUNTIF(A2:A8,"Dobel")','=VLOOKUP(A2,A2:A8,1)'], correct:0, explain:'COUNTIF menghitung kemunculan nilai A2 di seluruh rentang; lebih dari 1 berarti duplikat.'},
+    {q:'Jika A2="K1" dan B2="Aktif", apa hasil =A2&"-"&B2?', opts:['K1 Aktif','K1-Aktif','K1Aktif','Error'], correct:1, explain:'Operator & menggabungkan teks persis seperti tertulis, termasuk tanda "-" yang kita sisipkan di antaranya.'},
+    {q:'Kenapa kriteria ganda butuh kolom kunci gabungan (misal "K1-Aktif")?', opts:['Agar tabel lebih panjang','Karena SUMIF hanya menerima satu kriteria, jadi dua syarat digabung jadi satu kunci unik','Agar warna sel berubah','Supaya COUNTIF berjalan lebih cepat'], correct:1, explain:'Dengan menggabungkan dua kolom jadi satu kunci, satu SUMIF bisa menyaring dua syarat sekaligus. Di Excel asli, ini peran SUMIFS.'}
+  ]
+},
+{
+  id:8, title:'Analisis & Rangking', tagline:'Ranking dengan tie-breaker, gap performa & running total',
+  narrative:[
+    {who:'client', name:'Bu Sinta (HRD)', text:'Evaluasi tim sales besok pagi. Saya butuh peringkat otomatis — walau ada dua orang nilainya sama — plus selisih tiap orang dari yang tertinggi, dan stok barang yang berjalan dari hari ke hari.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini level yang paling terasa "analis"-nya. Tiga teknik: rangking pakai COUNTIF, selisih ke nilai tertinggi pakai MAX, dan running total pakai rentang yang mengembang.'}
+  ],
+  concepts:[
+    {title:'Ranking Tanpa Fungsi RANK', formula:'=COUNTIF($B$2:$B$6,">"&B2)+1', desc:'Berpikir logika: peringkatmu = berapa banyak orang yang skornya di atas kamu, ditambah satu. Dua orang bernilai sama otomatis dapat peringkat sama.'},
+    {title:'Kriteria Dinamis ">"&B2', formula:'">"&B2  menghasilkan misal ">92"', desc:'Operator perbandingan bisa digabung dengan isi sel memakai &, sehingga COUNTIF bisa membandingkan tiap baris dengan nilainya sendiri.'},
+    {title:'Gap ke Nilai Tertinggi', formula:'=MAX($B$2:$B$6)-B2', desc:'MAX mencari nilai tertinggi; dikurangi nilai sendiri menghasilkan selisih atau "jarak" ke posisi teratas.'},
+    {title:'Running Total (Rentang Mengembang)', formula:'=SUM($B$2:B2)  disalin ke bawah', desc:'Kunci awal rentang ($B$2) tapi biarkan akhirnya bebas (B2) — saat disalin, rentang ikut "memanjang", menghasilkan total kumulatif.'}
+  ],
+  exercises:[
+    {
+      id:'l8e1', title:'Lab 1 — Ranking Otomatis',
+      instruction:'Isi Rank (C2): hitung berapa banyak skor di B2:B6 yang LEBIH BESAR dari skor baris ini, lalu tambah 1. Kunci rentangnya dengan $. Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =COUNTIF($B$2:$B$6,">"&B2)+1',
+      buildSheet(){
+        const s = new Sheet(6,3);
+        ['Nama','Skor','Rank'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',88],['Budi',92],['Citra',75],['Dedi',92],['Eka',88]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); });
+        return s;
+      },
+      editable:['C2','C3','C4','C5','C6'],
+      applyGroups:[{source:'C2', targets:['C3','C4','C5','C6'], label:'Salin C2 ke semua baris'}],
+      expected:[
+        {ref:'C2',type:'num',value:3,label:'Rank Andi (skor 88, dua orang di atasnya)'},
+        {ref:'C3',type:'num',value:1,label:'Rank Budi (skor tertinggi 92)'},
+        {ref:'C4',type:'num',value:5,label:'Rank Citra (skor terendah 75)'},
+        {ref:'C5',type:'num',value:1,label:'Rank Dedi (sama 92, rank sama juga)'}
+      ]
+    },
+    {
+      id:'l8e2', title:'Lab 2 — Jarak ke Posisi Teratas',
+      instruction:'Isi Selisih (C2): nilai tertinggi di B2:B6 dikurangi penjualan baris ini. Isi Status (D2): "Juara 1" jika penjualannya sama dengan nilai tertinggi, selain itu "Belum". Salin ke bawah.',
+      fx:'Contoh: =MAX($B$2:$B$6)-B2   dan   =IF(B2=MAX($B$2:$B$6),"Juara 1","Belum")',
+      buildSheet(){
+        const s = new Sheet(6,4);
+        ['Nama','Penjualan','Selisih ke Teratas','Status'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['Andi',12000000],['Budi',25000000],['Citra',18000000],['Dedi',25000000],['Eka',9000000]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); });
+        return s;
+      },
+      editable:['C2','D2','C3','D3','C4','D4','C5','D5','C6','D6'],
+      applyGroups:[{source:'C2', targets:['C3','C4','C5','C6'], label:'Salin C2 ke semua baris'},{source:'D2', targets:['D3','D4','D5','D6'], label:'Salin D2 ke semua baris'}],
+      expected:[
+        {ref:'C2',type:'num',value:13000000,label:'Selisih Andi (25jt - 12jt)'},
+        {ref:'C3',type:'num',value:0,label:'Selisih Budi (sudah tertinggi)'},
+        {ref:'D3',type:'text',value:'Juara 1',label:'Status Budi'},
+        {ref:'D5',type:'text',value:'Juara 1',label:'Status Dedi (juara bersama)'},
+        {ref:'D2',type:'text',value:'Belum',label:'Status Andi'}
+      ]
+    },
+    {
+      id:'l8e3', title:'Lab 3 — Running Total Stok',
+      instruction:'Isi Sisa Stok (D2): total Masuk (B) kumulatif sampai baris ini MINUS total Keluar (C) kumulatif. Kunci AWAL rentang saja. Isi Status (E2): "Restock" jika Sisa Stok di bawah 8, selainnya "Aman".',
+      fx:'Contoh: =SUM($B$2:B2)-SUM($C$2:C2)   dan   =IF(D2<8,"Restock","Aman")',
+      buildSheet(){
+        const s = new Sheet(6,5);
+        ['Hari','Stok Masuk','Stok Keluar','Sisa Stok','Status'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[[1,10,0],[2,0,3],[3,5,0],[4,0,2],[5,8,0]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        return s;
+      },
+      editable:['D2','E2','D3','E3','D4','E4','D5','E5','D6','E6'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5','D6'], label:'Salin D2 ke semua baris'},{source:'E2', targets:['E3','E4','E5','E6'], label:'Salin E2 ke semua baris'}],
+      expected:[
+        {ref:'D2',type:'num',value:10,label:'Sisa stok hari 1'},
+        {ref:'D3',type:'num',value:7,label:'Sisa stok hari 2 (10 - 3)'},
+        {ref:'E3',type:'text',value:'Restock',label:'Status hari 2 (stok 7 di bawah 8)'},
+        {ref:'D6',type:'num',value:18,label:'Sisa stok hari 5 (10-3+5-2+8)'},
+        {ref:'E6',type:'text',value:'Aman',label:'Status hari 5'}
+      ]
+    }
+  ],
+  quiz:[
+    {q:'Pada =COUNTIF($B$2:$B$6,">"&B2)+1, apa arti tanda & di ">"&B2?', opts:['Penjumlahan angka','Penggabungan teks: membentuk kriteria seperti ">92" dari isi sel B2','Perkalian','Tidak berarti apa-apa'], correct:1, explain:'& merangkai operator ">" dengan nilai B2 menjadi satu string kriteria yang bisa dibaca COUNTIF.'},
+    {q:'Data skor: 92, 92, 88, 75, 60. Hasil formula ranking untuk skor 92?', opts:['1','2','3','5'], correct:0, explain:'Tidak ada skor di atas 92, jadi COUNTIF ">92" bernilai 0, ditambah 1 = rank 1. Dua orang dengan 92 sama-sama rank 1.'},
+    {q:'Apa yang terjadi pada rentang $B$2:B2 saat formula disalin dari baris 2 ke baris 5?', opts:['Tetap $B$2:B2','$B$2 terkunci, ujungnya mengembang menjadi B3, B4, B5','Semua berubah jadi B5','Menjadi error'], correct:1, explain:'Tanda $ hanya mengunci B2 di awal; ujung rentang bebas bergeser — inilah trik running total.'},
+    {q:'Running total hari ini 7 dan batas restock 8. Hasil =IF(D2<8,"Restock","Aman")?', opts:['Aman','Restock','Error','7'], correct:1, explain:'7 kurang dari 8, kondisi benar, hasilnya "Restock".'},
+    {q:'Formula =MAX($B$2:$B$6)-B2 menghitung?', opts:['Rata-rata penjualan','Selisih nilai baris ini terhadap nilai tertinggi di rentang','Total penjualan','Peringkat baris ini'], correct:1, explain:'MAX mengambil nilai tertinggi rentang; dikurangi nilai sendiri menghasilkan "jarak" ke posisi teratas.'}
+  ]
+},
+{
+  id:9, title:'Teks & Pembersihan Data', tagline:'ID unik, validasi duplikat & lookup berbasis teks',
+  narrative:[
+    {who:'client', name:'Pak Dodi (Admin Gudang)', text:'Data dari tiga cabang digabung asal-asalan: kode barang bentrok, ID pelanggan dobel, dan harga nyasar ke baris yang salah. Sebelum bisa dianalisis, datanya harus dibersihkan dulu.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Analis data menghabiskan 60-80% waktu untuk pembersihan data — dan ini pekerjaan yang paling logis untuk diautomasi. Kita bangun ID unik, validasi duplikat, dan lookup yang aman.'}
+  ],
+  concepts:[
+    {title:'Menggabungkan Teks', formula:'=A2&"-"&B2&"-"&C2', desc:'Operator & menyambung isi beberapa sel jadi satu teks — fondasi membangun kode/ID unik tanpa mengetik manual.'},
+    {title:'Kunci Unik & VLOOKUP', formula:'=VLOOKUP(F2, $A$2:$C$6, 3)', desc:'Lookup berbasis teks hanya akurat jika kuncinya unik. Makanya langkah pertama pembersihan data selalu memastikan tidak ada kunci dobel.'},
+    {title:'Validasi Duplikat', formula:'=IF(COUNTIF($A$2:$A$8,A2)>1,"Dobel","Valid")', desc:'Satu kolom cek otomatis menandai seluruh baris bermasalah — lebih cepat dan konsisten daripada mengecek mata satu per satu.'},
+    {title:'Di Excel Asli: LEFT/MID/FIND', formula:'=LEFT(A2,2)  |  =MID(A2,4,3)', desc:'Fungsi pemotong teks memecah kode gabungan jadi bagian-bagian. Konsepnya sama: perlakukan teks sebagai data yang bisa diolah logika.'}
+  ],
+  exercises:[
+    {
+      id:'l9e1', title:'Lab 1 — Bangun ID Unik',
+      instruction:'Isi ID Gabungan (D2): gabungkan Kode, Wilayah, dan Tahun dengan tanda "-" di antaranya. Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =A2&"-"&B2&"-"&C2',
+      buildSheet(){
+        const s = new Sheet(6,4);
+        ['Kode','Wilayah','Tahun','ID Gabungan'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['K1','JKT',2026],['K2','BDG',2026],['K3','SBY',2026],['K4','JKT',2026],['K5','MDN',2026]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        return s;
+      },
+      editable:['D2','D3','D4','D5','D6'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5','D6'], label:'Salin D2 ke semua baris'}],
+      expected:[
+        {ref:'D2',type:'text',value:'K1-JKT-2026',label:'ID baris pertama'},
+        {ref:'D4',type:'text',value:'K3-SBY-2026',label:'ID baris ketiga'},
+        {ref:'D6',type:'text',value:'K5-MDN-2026',label:'ID baris kelima'}
+      ]
+    },
+    {
+      id:'l9e2', title:'Lab 2 — Validasi Duplikat ID',
+      instruction:'Isi Validasi (B2): "Dobel" jika ID Pelanggan (A2) muncul lebih dari satu kali di A2:A8, selain itu "Valid". Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =IF(COUNTIF($A$2:$A$8,A2)>1,"Dobel","Valid")',
+      buildSheet(){
+        const s = new Sheet(8,2);
+        ['ID Pelanggan','Validasi'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=['C105','C210','C105','C330','C210','C455','C105'];
+        data.forEach((v,i)=>s.setRaw(i+1,0,v));
+        return s;
+      },
+      editable:['B2','B3','B4','B5','B6','B7','B8'],
+      applyGroups:[{source:'B2', targets:['B3','B4','B5','B6','B7','B8'], label:'Salin B2 ke semua baris'}],
+      expected:[
+        {ref:'B2',type:'text',value:'Dobel',label:'C105 muncul 3 kali'},
+        {ref:'B5',type:'text',value:'Valid',label:'C330 muncul 1 kali'},
+        {ref:'B8',type:'text',value:'Dobel',label:'C105 baris terakhir juga terflag'}
+      ]
+    },
+    {
+      id:'l9e3', title:'Lab 3 — Lookup Berdasarkan ID',
+      instruction:'Di G2, cari Harga produk berdasarkan ID yang tertulis di F2, dari tabel A2:C6. Kunci tabelnya dengan $.',
+      fx:'Contoh: =VLOOKUP(F2,$A$2:$C$6,3)',
+      buildSheet(){
+        const s = new Sheet(6,7);
+        ['ID Produk','Nama','Harga','','','Cari ID','Hasil'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['K1-JKT-2026','Pulpen',15000],['K2-BDG-2026','Buku Tulis',12000],['K3-SBY-2026','Pensil',18000],['K4-JKT-2026','Penghapus',20000],['K5-MDN-2026','Spidol',9000]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        s.setRaw(1,5,'K3-SBY-2026');
+        return s;
+      },
+      editable:['G2'],
+      applyGroups:[],
+      expected:[{ref:'G2',type:'num',value:18000,label:'Harga produk K3-SBY-2026 (Pensil)'}]
+    }
+  ],
+  quiz:[
+    {q:'Jika A2="K1", B2="JKT", C2=2026, hasil =A2&"-"&B2&"-"&C2 adalah?', opts:['K1 JKT 2026','K1-JKT-2026','K1JKT2026','Error'], correct:1, explain:'Operator & menggabungkan semua bagian persis seperti tertulis, termasuk dua tanda "-".'},
+    {q:'Mengapa lookup berbasis teks menuntut kunci yang unik?', opts:['Agar teksnya lebih panjang','Jika ada kunci dobel, VLOOKUP hanya menemukan yang pertama dan data lainnya tertukar/terlewat','Agar COUNTIF lebih cepat','Tidak ada alasan'], correct:1, explain:'VLOOKUP berhenti di kecocokan pertama. Kunci dobel membuat hasil lookup tidak bisa dipercaya.'},
+    {q:'Formula mana yang menandai baris duplikat?', opts:['=IF(COUNTIF($A$2:$A$8,A2)>1,"Dobel","Valid")','=SUMIF(A2:A8,"Dobel")','=IF(A2>1,"Dobel","Valid")','=VLOOKUP(A2,A2:A8,1)'], correct:0, explain:'COUNTIF menghitung kemunculan nilai di rentang; lebih dari satu artinya dobel.'},
+    {q:'Sebelum melakukan VLOOKUP pada data hasil gabungan, langkah pembersihan yang paling penting adalah?', opts:['Mengubah warna kolom','Memastikan kolom kunci bebas duplikat','Menghapus baris pertama','Memperbesar ukuran font'], correct:1, explain:'Kunci duplikat merusak akurasi lookup — itulah yang dicek di Lab 2 sebelum lookup di Lab 3.'},
+    {q:'Di Excel asli, fungsi apa yang memecah teks "K1-JKT-2026" untuk mengambil bagian "JKT"?', opts:['=SUM(A2:A2)','=MID(A2,4,3)','=MAX(A2)','=COUNTIF(A2,"JKT")'], correct:1, explain:'MID mengambil 3 karakter mulai dari posisi ke-4, yaitu "JKT". Konsepnya: teks adalah data yang bisa dipotong-potong pakai logika.'}
+  ]
+},
+{
+  id:10, title:'Capstone: Sistem Rekrutmen Otomatis', tagline:'End-to-end: pembersihan, skor, status, rekap & pencarian juara',
+  narrative:[
+    {who:'client', name:'Bu Melati (HRD)', text:'Ini proyek nyata: 6 pelamar masuk, datanya kotor (ada email dobel), skornya tersebar, dan direksi minta ringkasan lolos/cadangan dalam 1 jam. Kerjakan dari nol sampai laporan jadi.'},
+    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini ujian akhirmu. Semua yang sudah kita pelajari — COUNTIF, SUM, nested IF, SUMIF, INDEX-MATCH-MAX — dipakai berurutan dalam satu alur kerja nyata. Kerjakan pelan-pelan, satu lab satu masalah.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Alurnya jelas: bersihkan duplikat → hitung total skor → tentukan status → rekap → cari peringkat teratas. Gas.'}
+  ],
+  concepts:[
+    {title:'Alur Kerja Analis: Bersih → Hitung → Putus → Rekap', formula:'COUNTIF → B2+C2 → nested IF → COUNTIF → INDEX/MATCH/MAX', desc:'Kasus nyata bukan satu formula besar, melainkan rangkaian kolom kecil yang masing-masing menyelesaikan satu masalah.'},
+    {title:'Skor Komposit', formula:'=B2+C2', desc:'Menggabungkan dua penilaian (tes + wawancara) jadi satu angka keputusan yang adil dan transparan.'},
+    {title:'Status Bertingkat', formula:'=IF(D2>=150,"Lolos",IF(D2>=120,"Cadangan","Tidak Lolos"))', desc:'Satu kolom status otomatis memberi tiga kelompok hasil sekaligus — tanpa penimbangan manual.'},
+    {title:'Pencarian Peringkat Teratas', formula:'=INDEX(nama,MATCH(MAX(skor),skor,0))', desc:'Menggabungkan MAX, MATCH, dan INDEX untuk menjawab pertanyaan laporan paling umum: "siapa yang terbaik?" — bahkan untuk mengambil namanya, bukan cuma angkanya.'}
+  ],
+  exercises:[
+    {
+      id:'l10e1', title:'Lab 1 — Bersihkan Data Pelamar',
+      instruction:'Isi Cek Duplikat (B2): "Dobel" jika Email (A2) muncul lebih dari satu kali di A2:A8, selain itu "Valid". Lalu salin ke baris di bawahnya.',
+      fx:'Contoh: =IF(COUNTIF($A$2:$A$8,A2)>1,"Dobel","Valid")',
+      buildSheet(){
+        const s = new Sheet(8,2);
+        ['Email Pelamar','Cek Duplikat'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=['rina@mail.com','budi@mail.com','citra@mail.com','dedi@mail.com','eka@mail.com','rina@mail.com','fajar@mail.com'];
+        data.forEach((v,i)=>s.setRaw(i+1,0,v));
+        return s;
+      },
+      editable:['B2','B3','B4','B5','B6','B7','B8'],
+      applyGroups:[{source:'B2', targets:['B3','B4','B5','B6','B7','B8'], label:'Salin B2 ke semua baris'}],
+      expected:[
+        {ref:'B2',type:'text',value:'Dobel',label:'Email rina@mail.com muncul 2 kali'},
+        {ref:'B3',type:'text',value:'Valid',label:'Email budi@mail.com unik'},
+        {ref:'B7',type:'text',value:'Dobel',label:'Email rina@mail.com (baris kedua) juga terflag'}
+      ]
+    },
+    {
+      id:'l10e2', title:'Lab 2 — Skor & Status Kelulusan',
+      instruction:'Isi Total (D2): Tes (B2) + Wawancara (C2). Isi Status (E2): "Lolos" jika Total ≥ 150, "Cadangan" jika ≥ 120, selain itu "Tidak Lolos". Salin keduanya ke bawah.',
+      fx:'Contoh: =B2+C2   dan   =IF(D2>=150,"Lolos",IF(D2>=120,"Cadangan","Tidak Lolos"))',
+      buildSheet(){
+        const s = new Sheet(7,5);
+        ['Email','Tes','Wawancara','Total','Status'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['rina@mail.com',85,70],['budi@mail.com',60,55],['citra@mail.com',90,80],['dedi@mail.com',75,65],['eka@mail.com',85,85],['rina@mail.com',40,30]];
+        data.forEach((row,i)=>{ s.setRaw(i+1,0,row[0]); s.setRaw(i+1,1,row[1]); s.setRaw(i+1,2,row[2]); });
+        return s;
+      },
+      editable:['D2','E2','D3','E3','D4','E4','D5','E5','D6','E6','D7','E7'],
+      applyGroups:[{source:'D2', targets:['D3','D4','D5','D6','D7'], label:'Salin D2 ke semua baris'},{source:'E2', targets:['E3','E4','E5','E6','E7'], label:'Salin E2 ke semua baris'}],
+      expected:[
+        {ref:'D2',type:'num',value:155,label:'Total rina (85 + 70)'},
+        {ref:'E2',type:'text',value:'Lolos',label:'Status rina'},
+        {ref:'E3',type:'text',value:'Tidak Lolos',label:'Status budi (115)'},
+        {ref:'E5',type:'text',value:'Cadangan',label:'Status dedi (140)'},
+        {ref:'E6',type:'text',value:'Lolos',label:'Status eka (170)'}
+      ]
+    },
+    {
+      id:'l10e3', title:'Lab 3 — Rekap untuk Direksi',
+      instruction:'Kolom Total dan Status sudah terisi. Di G2, G3, G4: hitung berapa pelamar Lolos, Cadangan, dan Tidak Lolos dari kolom Status (E2:E7).',
+      fx:'Contoh: =COUNTIF($E$2:$E$7,"Lolos")',
+      buildSheet(){
+        const s = new Sheet(7,7);
+        ['Email','Tes','Wawancara','Total','Status','','Rekap'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['rina@mail.com',85,70],['budi@mail.com',60,55],['citra@mail.com',90,80],['dedi@mail.com',75,65],['eka@mail.com',85,85],['rina@mail.com',40,30]];
+        data.forEach((row,i)=>{
+          const r = i+1;
+          s.setRaw(r,0,row[0]); s.setRaw(r,1,row[1]); s.setRaw(r,2,row[2]);
+          s.setRaw(r,3,'=B'+(r+1)+'+C'+(r+1));
+          s.setRaw(r,4,'=IF(D'+(r+1)+'>=150,"Lolos",IF(D'+(r+1)+'>=120,"Cadangan","Tidak Lolos"))');
+        });
+        s.setRaw(1,6,'Jumlah Lolos'); s.setRaw(2,6,'Jumlah Cadangan'); s.setRaw(3,6,'Jumlah Tidak Lolos');
+        return s;
+      },
+      editable:['G2','G3','G4'],
+      applyGroups:[],
+      expected:[
+        {ref:'G2',type:'num',value:3,label:'Jumlah Lolos (rina, citra, eka)'},
+        {ref:'G3',type:'num',value:1,label:'Jumlah Cadangan (dedi)'},
+        {ref:'G4',type:'num',value:2,label:'Jumlah Tidak Lolos (budi, rina-duplikat)'}
+      ]
+    },
+    {
+      id:'l10e4', title:'Lab 4 — Siapa Pelamar Terbaik?',
+      instruction:'Di G2, tampilkan EMAIL pelamar dengan Total (D2:D7) tertinggi — cari nilai tertinggi dulu, temukan posisinya, lalu ambil emailnya.',
+      fx:'Contoh: =INDEX($A$2:$A$7,MATCH(MAX($D$2:$D$7),$D$2:$D$7,0))',
+      buildSheet(){
+        const s = new Sheet(7,7);
+        ['Email','Tes','Wawancara','Total','Status','','Pelamar Terbaik'].forEach((h,c)=>s.setRaw(0,c,h));
+        const data=[['rina@mail.com',85,70],['budi@mail.com',60,55],['citra@mail.com',90,80],['dedi@mail.com',75,65],['eka@mail.com',85,85],['rina@mail.com',40,30]];
+        data.forEach((row,i)=>{
+          const r = i+1;
+          s.setRaw(r,0,row[0]); s.setRaw(r,1,row[1]); s.setRaw(r,2,row[2]);
+          s.setRaw(r,3,'=B'+(r+1)+'+C'+(r+1));
+          s.setRaw(r,4,'=IF(D'+(r+1)+'>=150,"Lolos",IF(D'+(r+1)+'>=120,"Cadangan","Tidak Lolos"))');
+        });
+        return s;
+      },
+      editable:['G2'],
+      applyGroups:[],
+      expected:[{ref:'G2',type:'text',value:'citra@mail.com',label:'Email pelamar terbaik (total 170, ditemukan pertama)'}]
+    }
+  ],
+  quiz:[
+    {q:'Mengapa sistem rekrutmen ini pecah menjadi beberapa kolom kecil alih-alih satu formula raksasa?', opts:['Karena Excel membatasi panjang formula','Setiap kolom menyelesaikan satu masalah: lebih mudah dicek, diperbaiki, dan diaudit','Agar file lebih berat','Tidak ada alasan'], correct:1, explain:'Pola satu kolom satu tanggung jawab membuat sistem mudah diverifikasi — jumlah status salah tinggal cek kolom Status saja.'},
+    {q:'Pada =INDEX($A$2:$A$7,MATCH(MAX($D$2:$D$7),$D$2:$D$7,0)), apa yang terjadi jika dua pelamar punya Total sama-sama 170?', opts:['Error','Yang muncul adalah pelamar pertama dengan skor 170','Keduanya muncul berurutan','Muncul angka 170'], correct:1, explain:'MATCH mengembalikan kecocokan pertama, sehingga INDEX mengambil email pelamar pertama yang mencapai nilai tertinggi.'},
+    {q:'Kenapa email duplikat (rina@mail.com muncul 2 kali) tetap keduanya terflag "Dobel"?', opts:['Karena baris pertama selalu salah','COUNTIF menghitung kemunculan di SELURUH rentang — setiap baris yang kodenya muncul >1 kali ikut terflag','Karena IF bekerja per kolom','Itu bug formula'], correct:1, explain:'Kriteria A2 (relatif) dihitung terhadap rentang penuh $A$2:$A$8 — semua kemunculan kode dobel ditandai, bukan hanya yang kedua.'},
+    {q:'Nested IF status =IF(D2>=150,"Lolos",IF(D2>=120,"Cadangan","Tidak Lolos")) — pelamar dengan total 120 dapat status?', opts:['Lolos','Cadangan','Tidak Lolos','Error'], correct:1, explain:'120 tidak ≥150, tapi ≥120 — jadi masuk kategori "Cadangan".'},
+    {q:'Pelajaran terbesar dari capstone ini?', opts:['Hafal semua nama fungsi','Logika data adalah RANGKAIAN keputusan kecil yang bersih, bukan formula ajaib satu baris','Formula harus selalu pendek','Pivot table menggantikan semua formula'], correct:1, explain:'Kerja analis nyata = merancang alur: bersihkan → hitung → putuskan → rekap. Menguasai alur inilah yang membuat skill-mu transfer ke kasus apa pun.'}
+  ]
+}
+
+];
+
+/* ============================= NAVIGATION ============================= */
+function goToMap(){
+  currentGrid = null;
+  showScreen('screen-map');
+  renderMap();
+}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  updateTopbar();
+}
+function updateTopbar(){
+  const doneCount = Object.values(state.levelDone).filter(Boolean).length;
+  document.getElementById('topProgressPill').textContent = 'Level ' + doneCount + '/' + LEVELS.length;
+}
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm('Hapus semua progres belajar? Tindakan ini tidak bisa dibatalkan.')){
+    state = defaultState(); saveState();
+    currentGrid = null;
+    showScreen('screen-name');
+  }
+});
+
+(function(){
+  const nameInput = document.getElementById('startNameInput');
+  const nameBtn = document.getElementById('startNameBtn');
+  function trySubmit(){
+    const val = nameInput.value.trim();
+    if(val.length < 3) return;
+    state.certName = val;
+    saveState();
+    goToMap();
+  }
+  nameInput.addEventListener('input', ()=>{ nameBtn.disabled = nameInput.value.trim().length < 3; });
+  nameInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') trySubmit(); });
+  nameBtn.addEventListener('click', trySubmit);
+})();
+
+(function(){
+  var THEME_KEY = 'ela_theme';
+  var input = document.getElementById('themeToggleInput');
+  var current = document.documentElement.getAttribute('data-theme') || 'dark';
+  if(input) input.checked = (current === 'light');
+  if(input){
+    input.addEventListener('change', function(){
+      var theme = input.checked ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
+    });
+  }
+})();
+
+function renderMap(){
+  const wrap = document.getElementById('roadmapList');
+  wrap.innerHTML='';
+  LEVELS.forEach(lv=>{
+    const done = !!state.levelDone[lv.id];
+    const locked = lv.id > state.unlockedLevel;
+    const current = !done && !locked;
+    const div = document.createElement('div');
+    div.className = 'node ' + (done?'done':(current?'current':'locked'));
+    div.innerHTML = '<div class="num">'+String(lv.id).padStart(2,'0')+'</div>'+
+      '<div class="info"><h3>'+lv.title+'</h3><p>'+lv.tagline+'</p></div>'+
+      '<div class="status">'+(done?'✓ Selesai':(current?'Lanjutkan':'🔒 Terkunci'))+'</div>';
+    if(!locked) div.addEventListener('click', ()=> openLevel(lv.id));
+    wrap.appendChild(div);
+  });
+  const pct = Math.round((Object.values(state.levelDone).filter(Boolean).length/LEVELS.length)*100);
+  document.getElementById('overallFill').style.width = pct+'%';
+  document.getElementById('overallLabel').textContent = pct+'% selesai';
+  if(pct===100){
+    const certNode = document.createElement('div');
+    certNode.className='node current';
+certNode.innerHTML=
+  '<div class="num">' +
+    '<span class="material-symbols-rounded">workspace_premium</span>' +
+  '</div>' +
+  '<div class="info">' +
+    '<h3>Dokumen Lampiran CV</h3>' +
+    '<p>Semua level selesai — unduh hasil penilaian kompetensimu untuk CV.</p>' +
+  '</div>' +
+  '<div class="status">Buka</div>';
+    certNode.addEventListener('click', ()=>{ showScreen('screen-cert'); showCertificate(); });
+    wrap.appendChild(certNode);
+  }
+  renderMapTipCoffee(pct===100);
+  saveState();
+}
+
+/* Tombol "Buy me a coffee" di Peta Pembelajaran — hanya muncul jika SEMUA
+   level sudah selesai (pct===100). Memakai URL & ikon yang sama dengan
+   tombol di halaman sertifikat (COFFEE_TIP_URL / COFFEE_ICON_SVG), supaya
+   satu sumber konfigurasi dan satu modal in-page yang sama (openTipModal). */
+function renderMapTipCoffee(allDone){
+  const wrap = document.getElementById('mapTipCoffeeWrap');
+  if(!wrap) return;
+  if(!allDone || !COFFEE_TIP_URL){ wrap.innerHTML=''; return; }
+  wrap.innerHTML = '<button type="button" class="tip-coffee-btn" id="mapTipCoffeeBtn" style="--excited-img:url('+TIP_EXCITED_IMG+')">'+COFFEE_ICON_SVG+' Buy me a coffee</button>';
+  const btn = document.getElementById('mapTipCoffeeBtn');
+  if(btn) btn.addEventListener('click', openTipModal);
+}
+
+/* level internal steps: intro, concept, exercise_0..n, [macro for lvl4], quiz, summary */
+function levelSteps(lv){
+  const steps = ['intro','concept'];
+  lv.exercises.forEach((_,i)=>steps.push('ex'+i));
+  if(lv.macroSteps) steps.push('macro');
+  steps.push('quiz');
+  steps.push('summary');
+  return steps;
+}
+function openLevel(id){
+  currentLevel = LEVELS.find(l=>l.id===id);
+  currentStepIndex = 0;
+  showScreen('screen-level');
+  renderLevelStep();
+}
+function renderStepsNav(){
+  const steps = levelSteps(currentLevel);
+  const nav = document.getElementById('stepsNav');
+  nav.innerHTML = steps.map((s,i)=>{
+    let label = s==='intro'?'Skenario':s==='concept'?'Konsep':s==='macro'?'Macro':s==='quiz'?'Kuis':s==='summary'?'Selesai':'Lab '+(parseInt(s.replace('ex',''))+1);
+    const cls = i<currentStepIndex?'past':(i===currentStepIndex?'active':'');
+    return '<span class="step-chip '+cls+'">'+label+'</span>';
+  }).join('');
+}
+function renderLevelStep(){
+  currentGrid = null;
+  renderStepsNav();
+  const steps = levelSteps(currentLevel);
+  const step = steps[currentStepIndex];
+  const el = document.getElementById('levelContent');
+  el.innerHTML='';
+  if(step==='intro') renderIntro(el);
+  else if(step==='concept') renderConcept(el);
+  else if(step.startsWith('ex')) renderExercise(el, currentLevel.exercises[parseInt(step.replace('ex',''))]);
+  else if(step==='macro') renderMacro(el);
+  else if(step==='quiz') renderQuiz(el);
+  else if(step==='summary') renderSummary(el);
+}
+function nextStep(){ currentStepIndex++; renderLevelStep(); }
+
+function renderIntro(el){
+  const lv = currentLevel;
+  let html = '<div class="card"><h2>Level '+lv.id+' — '+lv.title+'</h2><p class="dim">'+lv.tagline+'</p><div style="margin-top:18px;">';
+  lv.narrative.forEach(n=>{
+    const avClass = n.who==='client'?'av-client':(n.who==='mentor'?'av-mentor':'av-you');
+    const initial = n.name.trim().charAt(0);
+    html += '<div class="dialog"><div class="avatar '+avClass+'">'+initial+'</div><div class="bubble"><span class="name">'+n.name+'</span>'+n.text+'</div></div>';
+  });
+  html += '</div><div class="action-row"><button class="btn" onclick="nextStep()">Lanjut</button></div></div>';
+  el.innerHTML = html;
+}
+function renderConcept(el){
+  const lv = currentLevel;
+let html = '<div class="card"><h2><span class="material-symbols-rounded">menu_book</span> Materi Konsep</h2><p class="dim" style="margin-bottom:16px;">Pahami dulu konsep ini sebelum masuk ke lab interaktif.</p>';
+  lv.concepts.forEach(c=>{
+    html += '<div class="concept-item"><h4>'+c.title+'</h4><p style="margin-bottom:6px;"><code>'+c.formula+'</code></p><p>'+c.desc+'</p></div>';
+  });
+  html += '<div class="action-row"><button class="btn" onclick="nextStep()">Mulai lab interaktif</button></div></div>';
+  el.innerHTML = html;
+}
+
+function renderExercise(el, ex){
+  const sheet = ex.buildSheet();
+  sheet.recalcAll();
+
+  const card = document.createElement('div'); card.className = 'card';
+  const head = document.createElement('div');
+  head.innerHTML = '<h2><span class="material-symbols-rounded">science</span> '+ex.title+'</h2><p>'+ex.instruction+'</p>'+
+    '<div class="fx-hint"><span>ƒx</span><span><b>Tips:</b> '+ex.fx+'</span></div>';
+  card.appendChild(head);
+
+  const mount = document.createElement('div');
+  card.appendChild(mount);
+
+  const actions = document.createElement('div'); actions.className = 'action-row';
+  card.appendChild(actions);
+  const feedback = document.createElement('div'); feedback.id = 'feedbackArea';
+  card.appendChild(feedback);
+  el.appendChild(card);
+
+  const grid = createSpreadsheet(mount, sheet, ex.editable, { formulaHint: ex.fx });
+  currentGrid = grid;
+
+  (ex.applyGroups||[]).forEach(g=>{
+    const b = document.createElement('button');
+    b.className = 'btn secondary small'; b.textContent = '⤓ ' + g.label;
+    b.addEventListener('click', ()=> grid.applyDown(g.source, g.targets));
+    actions.appendChild(b);
+  });
+
+  const checkBtn = document.createElement('button');
+  checkBtn.className = 'btn'; checkBtn.textContent = '✓ Cek jawaban';
+  actions.appendChild(checkBtn);
+
+  checkBtn.addEventListener('click', ()=>{
+    grid.commitPending();
+    sheet.recalcAll();
+    let allOk = true, rowsHtml = '';
+    ex.expected.forEach(exp=>{
+      const p = sheet.parseRef(exp.ref);
+      const actual = sheet.displayValue(p.row, p.col);
+      const ok = exp.type==='num' ? checkNumeric(actual, exp.value) : checkText(actual, exp.value);
+      if(!ok) allOk = false;
+      rowsHtml += '<div class="check-row '+(ok?'ok':'fail')+'"><span class="ico">'+(ok?'✓':'✕')+'</span><span>'+exp.label+' — '+(ok?'Benar':'Belum tepat')+'</span></div>';
+    });
+    feedback.innerHTML = '<div class="feedback-box '+(allOk?'success':'fail')+'">'+rowsHtml+
+      (allOk ? '<div class="action-row"><button class="btn small" onclick="nextStep()">Lanjut</button></div>'
+             : '<p class="dim" style="margin-top:8px; font-size:12.5px;">Periksa lagi formulanya di bilah ƒx, lalu klik "Cek jawaban".</p>')+
+      '</div>';
+  });
+}
+
+function renderMacro(el){
+  const lv = currentLevel;
+  const steps = lv.macroSteps.slice();
+  const shuffled = steps.map((s,i)=>({text:s, idx:i})).sort(()=>Math.random()-0.5);
+  let expectedNext = 0;
+  let html = '<div class="card"><h2><span class="material-symbols-rounded">settings</span> Simulasi: Merekam Macro</h2><p>Klik langkah-langkah di bawah sesuai urutan yang benar untuk merekam sebuah macro.</p>';
+  html += '<div class="macro-pool" id="macroPool">'+shuffled.map((s,i)=>'<div class="macro-chip" data-idx="'+s.idx+'" data-pos="'+i+'">'+s.text+'</div>').join('')+'</div>';
+  html += '<div class="dim mono" style="font-size:11px; margin-bottom:6px;">Urutan yang kamu susun:</div>';
+  html += '<div class="macro-seq" id="macroSeq"><span class="macro-seq-placeholder">Belum ada langkah dipilih…</span></div>';
+  html += '<div id="macroFeedback"></div>';
+  html += '</div>';
+  el.innerHTML = html;
+
+  const pool = document.getElementById('macroPool');
+  const seq = document.getElementById('macroSeq');
+  pool.querySelectorAll('.macro-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      const idx = parseInt(chip.getAttribute('data-idx'));
+      if(idx === expectedNext){
+        if(expectedNext===0) seq.innerHTML='';
+        const item = document.createElement('div');
+        item.className='macro-seq-item';
+        item.innerHTML = '<span class="n">'+(expectedNext+1)+'.</span><span>'+steps[idx]+'</span>';
+        seq.appendChild(item);
+        chip.classList.add('used');
+        expectedNext++;
+        if(expectedNext === steps.length){
+          document.getElementById('macroFeedback').innerHTML = '<div class="feedback-box success"><div class="check-row ok"><span class="ico">✓</span><span>Urutan macro benar! Kamu paham alur dasar otomatisasi di Excel.</span></div><div class="action-row"><button class="btn small" onclick="nextStep()">Lanjut</button></div></div>';
+        }
+      } else {
+        chip.classList.add('shake');
+        setTimeout(()=>chip.classList.remove('shake'), 300);
+      }
+    });
+  });
+}
+
+function renderQuiz(el){
+  const lv = currentLevel;
+  let qIndex = 0;
+  let score = 0;
+  function renderQ(){
+    if(qIndex >= lv.quiz.length){
+      state.quizScore[lv.id] = score;
+      saveState();
+      const pct = Math.round((score/lv.quiz.length)*100);
+      el.innerHTML = '<div class="card"><h2><span class="material-symbols-rounded">bar_chart</span> Hasil Kuis Level '+lv.id+'</h2>'+
+        '<p style="font-size:32px; font-family:var(--mono); color:'+(pct>=60?'var(--ok)':'var(--danger)')+';">'+score+' / '+lv.quiz.length+' <span style="font-size:14px; color:var(--text-dim);">('+pct+'%)</span></p>'+
+        '<p class="dim">'+(pct>=60?'Bagus! Kamu sudah memahami materi level ini.':'Skor masih di bawah 60%. Kamu tetap bisa lanjut, tapi disarankan mengulang materi konsep.')+'</p>'+
+        '<div class="action-row"><button class="btn" onclick="nextStep()">Lanjut</button></div></div>';
+      return;
+    }
+    const q = lv.quiz[qIndex];
+    let html = '<div class="card">';
+    html += '<div class="quiz-progress">Pertanyaan '+(qIndex+1)+' dari '+lv.quiz.length+'</div>';
+    html += '<div class="quiz-q">'+q.q+'</div>';
+    q.opts.forEach((opt,i)=>{ html += '<button class="quiz-opt" data-i="'+i+'">'+opt+'</button>'; });
+    html += '<div id="quizExplain"></div>';
+    html += '</div>';
+    el.innerHTML = html;
+    el.querySelectorAll('.quiz-opt').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = parseInt(btn.getAttribute('data-i'));
+        el.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+        if(i===q.correct){ btn.classList.add('correct'); score++; }
+        else {
+          btn.classList.add('wrong');
+          el.querySelectorAll('.quiz-opt')[q.correct].classList.add('correct');
+        }
+        document.getElementById('quizExplain').innerHTML = '<div class="quiz-explain">'+q.explain+'</div><div class="action-row"><button class="btn small" id="quizNextBtn">'+(qIndex+1<lv.quiz.length?'Pertanyaan berikutnya':'Lihat hasil')+'</button></div>';
+        document.getElementById('quizNextBtn').addEventListener('click', ()=>{ qIndex++; renderQ(); });
+      });
+    });
+  }
+  renderQ();
+}
+
+function renderSummary(el){
+  const lv = currentLevel;
+  const isLast = lv.id === LEVELS.length;
+  state.levelDone[lv.id] = true;
+  if(lv.id === state.unlockedLevel && !isLast){ state.unlockedLevel = lv.id+1; }
+  saveState();
+  const score = state.quizScore[lv.id] || 0;
+  let html = '<div class="card glow" style="text-align:center;">';
+  html += '<img class="level-complete-badge" src="' + LEVEL_COMPLETE_IMG + '" alt="Level selesai">';
+html += '<h2>Level '+lv.id+' Selesai!</h2>';
+  html += '<p class="dim">Kamu sudah menuntaskan "'+lv.title+'" dengan skor kuis '+score+'/'+lv.quiz.length+'.</p>';
+  if(isLast){
+    html += '<div id="reviewWrap" style="text-align:left; margin-top:18px;">'+
+      '<h3 style="font-size:14px;">⭐ Review & Masukan</h3>'+
+      '<p class="dim" style="font-size:13px;">Kasih bintang untuk manfaat yang kamu rasakan dari Excel Logic Academy, dan tulis masukan singkat (opsional) supaya modul ini makin baik ke depannya.</p>'+
+      '<div class="star-rating" id="starRating">'+[1,2,3,4,5].map(n=>'<button type="button" class="star-btn" data-star="'+n+'" aria-label="'+n+' bintang">★</button>').join('')+'</div>'+
+      '<textarea class="reflect" id="reviewText" placeholder="Manfaat yang kamu rasakan, atau masukan untuk perbaikan… (opsional)"></textarea>'+
+      '<div class="action-row"><button class="btn small" id="reviewBtn" disabled>Selesaikan &amp; Lihat Dokumen CV</button></div>'+
+      '</div>';
+    html += '</div>';
+    el.innerHTML = html;
+    let rating = 0;
+    const starBtns = Array.from(el.querySelectorAll('.star-btn'));
+    const reviewBtn = document.getElementById('reviewBtn');
+    starBtns.forEach(sb=>{
+      sb.addEventListener('click', ()=>{
+        rating = parseInt(sb.getAttribute('data-star'));
+        starBtns.forEach(b=> b.classList.toggle('active', parseInt(b.getAttribute('data-star')) <= rating));
+        reviewBtn.disabled = rating < 1;
+      });
+    });
+    reviewBtn.addEventListener('click', ()=>{
+      const text = document.getElementById('reviewText').value.trim();
+      state.pesan = 'Rating: '+rating+'/5' + (text ? ' — '+text : '');
+      saveState();
+      showScreen('screen-cert');
+      showCertificate();
+      const summary = computeFinalSummary();
+      submitResultToServer({
+        nama: state.certName || '',
+        nilaifinal: summary.nilaifinal,
+        pesan: state.pesan,
+        tips: summary.tips
+      });
+    });
+  } else {
+    html += '<div class="action-row" style="justify-content:center;"><button class="btn" onclick="goToMap()">Kembali ke peta</button></div></div>';
+    el.innerHTML = html;
+  }
+}
+
+/* ============================= CERTIFICATE ============================= */
+/* Menghitung skor akhir gabungan (nilaifinal) dari seluruh kuis level, plus
+   satu baris tips singkat berdasarkan skor akhir dan level dengan skor
+   terendah — dipakai untuk baris yang dikirim ke Google Sheet. */
+function computeFinalSummary(){
+  let totalCorrect = 0, totalQuestions = 0;
+  let weakest = null;
+  LEVELS.forEach(lv=>{
+    const total = lv.quiz.length;
+    const score = state.quizScore[lv.id] || 0;
+    totalCorrect += score;
+    totalQuestions += total;
+    const pct = total ? Math.round((score/total)*100) : 0;
+    if(!weakest || pct < weakest.pct) weakest = { title: lv.title, pct: pct };
+  });
+  const nilaifinal = totalQuestions ? Math.round((totalCorrect/totalQuestions)*100) : 0;
+
+  let tips;
+  if(nilaifinal >= 90){
+    tips = 'Luar biasa! Logika datamu sudah setara kebutuhan kerja profesional — pertahankan konsistensi ini.';
+  } else if(nilaifinal >= 75){
+    tips = 'Bagus! Tinggal perbanyak jam terbang menerapkan logika ini pada kasus nyata sehari-hari.';
+  } else if(nilaifinal >= 60){
+    tips = 'Sudah paham dasarnya. Coba ulangi materi "'+(weakest?weakest.title:'yang skornya paling rendah')+'" supaya makin mantap.';
+  } else {
+    tips = 'Masih perlu banyak latihan. Ulangi materi "'+(weakest?weakest.title:'level dengan skor terendah')+'" dari awal sebelum lanjut ke kasus yang lebih kompleks.';
+  }
+
+  return { nilaifinal, tips };
+}
+
+/* Mengirim hasil (nama, nilai akhir, jurnal refleksi, tips) ke backend
+   Apps Script supaya tersimpan sebagai satu baris di Google Sheet.
+   Best-effort: kalau gagal (mis. sedang dibuka di luar deployment Apps
+   Script, atau tidak ada akses jaringan), sertifikat tetap tampil normal —
+   hanya status penyimpanan di bawah tombol cetak yang berubah. */
+function submitResultToServer(payload){
+  const statusEl = document.getElementById('certSaveStatus');
+  if (!(window.google && google.script && google.script.run)){
+    if (statusEl) statusEl.textContent = '';
+    return;
+  }
+  if (statusEl) statusEl.textContent = 'Menyimpan hasil…';
+  google.script.run
+    .withSuccessHandler((res)=>{
+      if (!statusEl) return;
+      statusEl.textContent = (res && res.ok) ? '✓ Hasil tersimpan.' : '';
+    })
+    .withFailureHandler((err)=>{
+      console.error('Gagal menyimpan hasil ke server:', err);
+      if (statusEl) statusEl.textContent = '';
+    })
+    .saveCertificateResult(payload);
+}
+
+/* Menampilkan sertifikat berdasarkan nama yang sudah diisi di awal (gerbang
+   nama sebelum Level 1) — tidak perlu input nama lagi di sini. Dipanggil
+   otomatis begitu review Level 5 selesai, atau saat node "Ambil
+   Sertifikatmu" di peta diklik. */
+const COFFEE_TIP_URL = '<?= coffeeTipUrl ?>'; // dikirim dari code.gs (template.coffeeTipUrl) — ubah nilainya di sana, bukan di sini
+
+
+const COFFEE_ICON_SVG = '<svg class="coffee-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M463.52993 521.415858c-1.878162 0-3.758455-0.241965-5.588651-0.716302l-10.725348-2.786331c-11.84457-3.076263-18.978814-15.215029-15.902551-27.059599l123.151769-474.233707c2.541168-9.785201 11.372365-16.619919 21.47308-16.619919 1.878162 0 3.759521 0.240899 5.588651 0.715236l10.724282 2.785265a22.05401 22.05401 0 0 1 13.55858 10.236088 22.045483 22.045483 0 0 1 2.347169 16.824577L485.001945 504.794873c-2.541168 9.786267-11.371299 16.620985-21.472015 16.620985z" fill="currentColor"/><path d="M274.613721 323.819813l45.209122 581.254815c0 30.001555 22.949388 54.320658 51.258253 54.320659H594.057907c28.30993 0 51.259319-24.319103 51.259318-54.320659l45.206991-581.254815H274.613721z" fill="#E33E3D"/><path d="M655.845377 323.389179l21.178885-150.273192c0-9.601862-10.081529-17.387386-22.51449-17.387386H289.197721c-12.432962 0-22.512359 7.785524-22.512359 17.387386l21.178885 150.273192h367.98113z" fill="#FFFFFF"/><path d="M485.901586 557.608312c-96.667769 0-179.500884-13.127945-197.428695-38.955334-2.052974 4.73591 0.510579 9.616785 0.689654 14.596791 1.922931 53.082052 88.081735 61.608395 196.739041 61.608395 108.655174 0 196.739041-16.453635 196.739041-61.608395 0-4.982138-1.074453-9.860882-3.131691-14.596791-29.346011 34.782234-96.937449 38.955334-193.60735 38.955334z" fill="#FDFAED"/><path d="M427.801154 574.716425a57.9075 56.064514 0 1 0 115.814999 0 57.9075 56.064514 0 1 0-115.814999 0Z" fill="#FDFAED"/><path d="M650.534934 323.27619l-45.205925 581.254816c0 30.003687-22.953652 54.320658-51.260385 54.320659h39.989283c28.307799 0 51.260385-24.316971 51.260384-54.320659l45.205925-581.254816h-39.989282z" fill="#9D1F24"/></svg>';
+
+const LEVEL_COMPLETE_IMG = 'data:image/png;base64,PLACEHOLDER_LEVEL_COMPLETE';
+
+const TIP_EXCITED_IMG = 'data:image/png;base64,PLACEHOLDER_TIP_EXCITED';
+
+/* ===================== DOKUMEN LAMPIRAN CV ===================== */
+const CV_GROUPS = [
+  { title:'Logika Dasar & Pengambilan Keputusan', items:[
+    {lv:1,  name:'Fondasi Logika Data',       desc:'Referensi sel, SUM, AVERAGE, IF dasar'},
+    {lv:2,  name:'Logika Bertingkat',         desc:'Nested IF, AND/OR/NOT, COUNTIF'}
+  ]},
+  { title:'Pencarian, Analisis & Pelaporan Data', items:[
+    {lv:3,  name:'Pencarian Data',            desc:'VLOOKUP, INDEX-MATCH, SUMPRODUCT, referensi absolut'},
+    {lv:7,  name:'Kriteria Dinamis & Duplikat', desc:'SUMIF kriteria sel, deteksi duplikat, kolom kunci'},
+    {lv:8,  name:'Analisis & Perangkingan',   desc:'Ranking, gap performa, running total'}
+  ]},
+  { title:'Penerapan Kasus Kerja & Otomatisasi', items:[
+    {lv:4,  name:'Otomatisasi & Payroll',     desc:'Kombinasi fungsi, dasar Macro/VBA'},
+    {lv:5,  name:'Studi Kasus Lintas Divisi', desc:'Retail, gudang, sales, customer care'},
+    {lv:6,  name:'Logika Berbasis Waktu',     desc:'Aging piutang, denda & jatuh tempo'},
+    {lv:9,  name:'Pembersihan Data Teks',     desc:'ID unik, validasi duplikat, lookup teks'},
+    {lv:10, name:'Capstone: Sistem Rekrutmen', desc:'Alur end-to-end bersih → hitung → rekap'}
+  ]}
+];
+
+function cvRating(p){ return p>=90?'Sangat Baik':(p>=75?'Baik':(p>=60?'Cukup':'Perlu Latihan')); }
+function cvEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function cvHash(str){
+  let h = 5381;
+  for(let i=0;i<str.length;i++){ h = ((h<<5)+h+str.charCodeAt(i))>>>0; }
+  return ('000000'+h.toString(36).toUpperCase()).slice(-6);
+}
+
+function cvData(){
+  if(!state.certDate){ state.certDate = new Date().toISOString(); saveState(); }   // tanggal terbit tetap
+  const dt = new Date(state.certDate);
+  const dateStr = dt.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  const ymd = dt.getFullYear()+('0'+(dt.getMonth()+1)).slice(-2)+('0'+dt.getDate()).slice(-2);
+
+  let totC = 0, totQ = 0;
+  const skills = [];
+  const groups = CV_GROUPS.map(function(g){
+    let gc = 0, gq = 0;
+    const items = g.items.map(function(it){
+      const lv = LEVELS.find(function(l){ return l.id === it.lv; });
+      const total = lv.quiz.length;
+      const c = Math.min(state.quizScore[it.lv] || 0, total);
+      const pct = total ? Math.round(c/total*100) : 0;
+      gc += c; gq += total;
+      const o = {name:it.name, desc:it.desc, correct:c, total:total, pct:pct, rating:cvRating(pct)};
+      skills.push(o);
+      return o;
+    });
+    totC += gc; totQ += gq;
+    return {title:g.title, items:items, pct: gq ? Math.round(gc/gq*100) : 0};
+  });
+
+  const overall = totQ ? Math.round(totC/totQ*100) : 0;
+  const done = Object.values(state.levelDone).filter(Boolean).length;
+  const sorted = skills.slice().sort(function(a,b){ return b.pct - a.pct; });
+  const best = sorted[0], weak = sorted[sorted.length-1];
+  let strongest, focus;
+  if(best.pct === weak.pct){ strongest = 'Merata di seluruh area'; focus = '—'; }
+  else { strongest = best.name; focus = weak.pct >= 90 ? 'Tidak ada (semua area kuat)' : weak.name; }
+
+  const name = state.certName || '—';
+  return {
+    name:name, dateStr:dateStr, overall:overall, rating:cvRating(overall),
+    done:done, levels:LEVELS.length, totC:totC, totQ:totQ, groups:groups,
+    skillCount:skills.length, strongest:strongest, focus:focus,
+    docNo:'ELA-'+ymd+'-'+cvHash(name+'|'+overall+'|'+state.certDate)
+  };
+}
+
+function cvBar(p){ return '<div class="cv-bar"><i style="width:'+p+'%"></i></div>'; }
+
+function buildCvHtml(d){
+  const logo = '<svg xmlns="http://www.w3.org/2000/svg" width="486" height="500" viewBox="0 0 486 500" role="img" aria-label="Logo Microsoft Excel">'+
+    '<defs><style>'+
+    '.cvl1{fill:#fff;}'+
+    '.cvm1{fill:url(#cvd1);}'+
+    '.cvn1{fill:url(#cvh1);}'+
+    '.cvo1{fill:url(#cvj1);}'+
+    '.cvp1{fill:url(#cvg1);}'+
+    '.cvq1{fill:url(#cvk1);}'+
+    '.cvq1,.cvr1{fill-opacity:.3;}'+
+    '.cvs1{fill:url(#cvi1);}'+
+    '.cvt1{fill:url(#cvf1);}'+
+    '.cvu1{fill:url(#cvb1);}'+
+    '.cvr1{fill:url(#cve1);}'+
+    '.cvv1{fill:url(#cvc1);fill-opacity:.7;}'+
+    '</style>'+
+    '<radialGradient id="cvb1" cx="-746.66" cy="781.44" fx="-746.66" fy="781.44" r="13.89" gradientTransform="translate(-2596.39 -38900.31) rotate(-133.54) scale(41.12 -31.9) skewX(-.01)" gradientUnits="userSpaceOnUse"><stop offset=".06" stop-color="#379539"/><stop offset=".42" stop-color="#297c2d"/><stop offset=".7" stop-color="#15561c"/></radialGradient>'+
+    '<radialGradient id="cvc1" cx="-773.19" cy="771.25" fx="-773.19" fy="771.25" r="13.89" gradientTransform="translate(-2155.12 -15858.88) rotate(-135.96) scale(16.66 -12.89) skewX(-.01)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#073b10"/><stop offset=".99" stop-color="#084a13" stop-opacity="0"/></radialGradient>'+
+    '<linearGradient id="cvd1" x1="69.43" y1="210.33" x2="260.84" y2="210.33" gradientTransform="translate(0 502) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#52d17c"/><stop offset=".33" stop-color="#4aa647"/></linearGradient>'+
+    '<linearGradient id="cve1" x1="194.4" y1="335.33" x2="194.4" y2="161.68" gradientTransform="translate(0 502) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#29852f"/><stop offset=".5" stop-color="#4aa647" stop-opacity="0"/></linearGradient>'+
+    '<linearGradient id="cvf1" x1="80.49" y1="297.22" x2="311.45" y2="497.54" gradientTransform="translate(0 502) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#66d052"/><stop offset="1" stop-color="#85e972"/></linearGradient>'+
+    '<radialGradient id="cvg1" cx="-824.11" cy="810.99" fx="-824.11" fy="810.99" r="13.89" gradientTransform="translate(-7120.4 -15378.69) rotate(-180) scale(9.02 -19.09)" gradientUnits="userSpaceOnUse"><stop offset=".29" stop-color="#4eb43b"/><stop offset="1" stop-color="#72cc61" stop-opacity="0"/></radialGradient>'+
+    '<linearGradient id="cvh1" x1="182.11" y1="377" x2="69.43" y2="377" gradientTransform="translate(0 502) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".18" stop-color="#c0e075" stop-opacity="0"/><stop offset="1" stop-color="#d1eb95"/></linearGradient>'+
+    '<radialGradient id="cvi1" cx="-769.14" cy="808.9" fx="-769.14" fy="808.9" r="13.89" gradientTransform="translate(-23523.37 3309.71) rotate(-141.02) scale(21.75 21.69) skewX(.01)" gradientUnits="userSpaceOnUse"><stop offset=".44" stop-color="#79e96d"/><stop offset="1" stop-color="#d0eb76"/></radialGradient>'+
+    '<radialGradient id="cvj1" cx="-675.64" cy="793.28" fx="-675.64" fy="793.28" r="13.89" gradientTransform="translate(-25315.85 47178.18) rotate(45.01) scale(22.62 -64.41) skewX(-.04)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#20a85e"/><stop offset=".94" stop-color="#09442a"/></radialGradient>'+
+    '<radialGradient id="cvk1" cx="-657.62" cy="853.99" fx="-657.62" fy="853.99" r="13.89" gradientTransform="translate(-10902.85 7734.8) rotate(90) scale(11.2 -12.9)" gradientUnits="userSpaceOnUse"><stop offset=".58" stop-color="#33a662" stop-opacity="0"/><stop offset=".97" stop-color="#98f0b0"/></radialGradient>'+
+    '</defs>'+
+    '<path class="cvu1" d="M69.43,159.72c0-34.52,27.98-62.5,62.49-62.5h354.09v361.11c0,23.01-18.65,41.67-41.66,41.67H152.74c-46.01,0-83.31-37.31-83.31-83.33V159.72Z"/>'+
+    '<path class="cvv1" d="M69.43,159.72c0-34.52,27.98-62.5,62.49-62.5h354.09v361.11c0,23.01-18.65,41.67-41.66,41.67H152.74c-46.01,0-83.31-37.31-83.31-83.33V159.72Z"/>'+
+    '<path class="cvm1" d="M69.43,229.17c0-34.52,27.98-62.5,62.49-62.5h187.46c-23.01,0-41.66,18.66-41.66,41.67v83.33c0,23.01-18.65,41.67-41.66,41.67h-83.31c-46.01,0-83.31,37.31-83.31,83.33v-187.5Z"/>'+
+    '<path class="cvr1" d="M69.43,229.17c0-34.52,27.98-62.5,62.49-62.5h187.46c-23.01,0-41.66,18.66-41.66,41.67v83.33c0,23.01-18.65,41.67-41.66,41.67h-83.31c-46.01,0-83.31,37.31-83.31,83.33v-187.5Z"/>'+
+    '<path class="cvt1" d="M69.43,83.33C69.43,37.31,106.73,0,152.74,0h166.63v166.67h-166.63c-46.01,0-83.31,37.31-83.31,83.33V83.33Z"/>'+
+    '<path class="cvp1" d="M69.43,83.33C69.43,37.31,106.73,0,152.74,0h166.63v166.67h-166.63c-46.01,0-83.31,37.31-83.31,83.33V83.33Z"/>'+
+    '<path class="cvn1" d="M69.43,83.33C69.43,37.31,106.73,0,152.74,0h166.63v166.67h-166.63c-46.01,0-83.31,37.31-83.31,83.33V83.33Z"/>'+
+    '<rect class="cvs1" x="277.71" width="208.29" height="166.67" rx="41.66" ry="41.66"/>'+
+    '<rect class="cvo1" y="236.11" width="222.17" height="222.22" rx="45.13" ry="45.13"/>'+
+    '<rect class="cvq1" y="236.11" width="222.17" height="222.22" rx="45.13" ry="45.13"/>'+
+    '<path class="cvl1" d="M169.48,410.71h-34.25l-21.5-40.47c-.77-1.42-1.36-2.54-1.77-3.37-.35-.88-.74-1.89-1.15-3.01h-.35c-.53,1.42-1.03,2.57-1.5,3.45-.47.89-1.03,1.98-1.68,3.28l-22.3,40.11h-32.3l38.76-63.58-36.1-63.4h33.8l19.11,36.13c.77,1.48,1.42,2.78,1.95,3.9.59,1.06,1.18,2.33,1.77,3.81h.35c.82-1.71,1.47-3.07,1.95-4.07.53-1,1.24-2.33,2.12-3.98l19.82-35.77h32.21l-36.63,62.43,37.7,64.55Z"/>'+
+    '</svg>';
+  let h = '';
+  h += '<div class="cv-head"><div class="cv-brand">'+logo+'<div><div class="cv-brand-name">Excel Logic Academy</div><div class="cv-brand-sub">Penilaian Kompetensi Logika Data &amp; Excel</div></div></div>';
+  h += '<div class="cv-meta">No. Dokumen<br><b>'+d.docNo+'</b><br>Tanggal terbit<br><b>'+cvEsc(d.dateStr)+'</b></div></div>';
+  h += '<p class="cv-title">LAMPIRAN CV — HASIL PENILAIAN KOMPETENSI</p><p class="cv-given">Diberikan kepada</p>';
+  h += '<h2 class="cv-name">'+cvEsc(d.name)+'</h2>';
+  h += '<p class="cv-lead">Dokumen ini merangkum hasil penilaian kompetensi logika data dan Microsoft Excel yang diselesaikan melalui program pelatihan interaktif Excel Logic Academy, sebagai lampiran curriculum vitae.</p>';
+
+  h += '<div class="cv-scores">';
+  h += '<div class="cv-score main"><div class="cv-score-label">Skor Kompetensi Keseluruhan</div><div class="cv-score-num">'+d.overall+'%</div><div class="cv-score-rate">'+d.rating+'</div>'+cvBar(d.overall)+'</div>';
+  h += '<div class="cv-score"><div class="cv-score-label">Level Diselesaikan</div><div class="cv-score-num">'+d.done+'/'+d.levels+'</div><div class="cv-score-rate">'+(d.done>=d.levels?'Program tuntas':'Sebagian')+'</div>'+cvBar(Math.round(d.done/d.levels*100))+'</div>';
+  h += '<div class="cv-score"><div class="cv-score-label">Jawaban Kuis Benar</div><div class="cv-score-num">'+d.totC+'/'+d.totQ+'</div><div class="cv-score-rate">dari seluruh soal</div>'+cvBar(d.overall)+'</div>';
+  h += '</div>';
+
+  d.groups.forEach(function(g){
+    h += '<div class="cv-group"><div class="cv-group-head"><h3>'+cvEsc(g.title)+'</h3><span>'+g.pct+'%</span></div>';
+    g.items.forEach(function(s){
+      h += '<div class="cv-skill"><div class="cv-skill-info"><div class="cv-skill-name">'+cvEsc(s.name)+'</div><div class="cv-skill-desc">'+cvEsc(s.desc)+'</div></div>'+cvBar(s.pct)+
+           '<div class="cv-skill-val"><b>'+s.pct+'%</b><small>'+s.correct+'/'+s.total+' · '+s.rating+'</small></div></div>';
+    });
+    h += '</div>';
+  });
+
+  h += '<dl class="cv-facts"><div><dt>Kompetensi terkuat</dt><dd>'+cvEsc(d.strongest)+'</dd></div>'+
+       '<div><dt>Area pengembangan</dt><dd>'+cvEsc(d.focus)+'</dd></div>'+
+       '<div><dt>Area kompetensi dinilai</dt><dd>'+d.skillCount+' area</dd></div></dl>';
+  h += '<p class="cv-highlight"><b>Ringkasan:</b> Menyelesaikan '+d.done+' dari '+d.levels+' level pelatihan logika data dan Excel dengan skor keseluruhan '+d.overall+'% (predikat '+d.rating+'). Kompetensi terkuat: '+cvEsc(d.strongest)+'.</p>';
+  h += '<div class="cv-foot"><p><b>Metode penilaian:</b> skor tiap kompetensi adalah persentase jawaban kuis yang benar pada level terkait; setiap level juga mewajibkan lab praktik spreadsheet dijawab benar sebelum lanjut. Skala: ≥90 Sangat Baik · 75–89 Baik · 60–74 Cukup · &lt;60 Perlu Latihan.</p>'+
+       '<p>Dokumen ini adalah hasil penilaian mandiri dari platform pembelajaran dan bukan sertifikasi resmi Microsoft.</p></div>';
+  return h;
+}
+
+/* ---------- Versi Word: memakai tabel + gaya inline (Word tidak mengerti CSS grid/flex) ---------- */
+function wordBar(p){
+  const f = Math.max(0, Math.min(100, p));
+  const t = '<table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;"><tr>';
+  const cell = function(w,c){ return '<td width="'+w+'%" height="8" bgcolor="'+c+'" style="font-size:1pt;line-height:1pt;">&nbsp;</td>'; };
+  if(f <= 0) return t+cell(100,'#e4eadf')+'</tr></table>';
+  if(f >= 100) return t+cell(100,'#2f6b1f')+'</tr></table>';
+  return t+cell(f,'#2f6b1f')+cell(100-f,'#e4eadf')+'</tr></table>';
+}
+function buildWordHtml(d){
+  const G='#2f6b1f', MUTED='#5b6b5f', RULE='#d8dfd2';
+  let b = '';
+  b += '<table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border-bottom:2pt solid '+G+';"><tr>'+
+       '<td style="padding-bottom:8pt;"><b style="font-size:14pt;">Excel Logic Academy</b><br><span style="color:'+MUTED+';font-size:9.5pt;">Penilaian Kompetensi Logika Data &amp; Excel</span></td>'+
+       '<td align="right" style="padding-bottom:8pt;color:'+MUTED+';font-size:9pt;">No. Dokumen: <b style="color:#1c2a1f;">'+d.docNo+'</b><br>Tanggal terbit: <b style="color:#1c2a1f;">'+cvEsc(d.dateStr)+'</b></td></tr></table>';
+  b += '<p style="margin:16pt 0 0;color:'+G+';font-weight:bold;font-size:11pt;">LAMPIRAN CV — HASIL PENILAIAN KOMPETENSI</p>';
+  b += '<p style="margin:2pt 0 0;color:'+MUTED+';font-size:9pt;">Diberikan kepada</p>';
+  b += '<p style="margin:0 0 6pt;font-size:24pt;font-weight:bold;">'+cvEsc(d.name)+'</p>';
+  b += '<p style="margin:0 0 12pt;color:'+MUTED+';font-size:9.5pt;">Dokumen ini merangkum hasil penilaian kompetensi logika data dan Microsoft Excel yang diselesaikan melalui program pelatihan interaktif Excel Logic Academy, sebagai lampiran curriculum vitae.</p>';
+
+  const sc = function(label,num,rate,pct,main){
+    return '<td width="33%" valign="top" style="padding:8pt 10pt;border:1pt solid '+RULE+';'+(main?'background:#eef4e8;':'')+'">'+
+      '<span style="color:'+MUTED+';font-size:9pt;">'+label+'</span><br>'+
+      '<b style="font-size:'+(main?'26':'20')+'pt;'+(main?'color:'+G+';':'')+'">'+num+'</b><br>'+
+      '<b style="font-size:9pt;">'+rate+'</b>'+wordBar(pct)+'</td>';
+  };
+  b += '<table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin-bottom:12pt;"><tr>'+
+       sc('Skor Kompetensi Keseluruhan', d.overall+'%', d.rating, d.overall, true)+
+       sc('Level Diselesaikan', d.done+'/'+d.levels, d.done>=d.levels?'Program tuntas':'Sebagian', Math.round(d.done/d.levels*100), false)+
+       sc('Jawaban Kuis Benar', d.totC+'/'+d.totQ, 'dari seluruh soal', d.overall, false)+'</tr></table>';
+
+  d.groups.forEach(function(g){
+    b += '<table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin-top:10pt;"><tr>'+
+         '<td style="border-bottom:1pt solid #1c2a1f;padding-bottom:3pt;"><b style="font-size:11pt;">'+cvEsc(g.title)+'</b></td>'+
+         '<td align="right" style="border-bottom:1pt solid #1c2a1f;padding-bottom:3pt;"><b style="font-size:11pt;color:'+G+';">'+g.pct+'%</b></td></tr></table>';
+    b += '<table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">';
+    g.items.forEach(function(s){
+      b += '<tr><td width="46%" style="padding:4pt 0;border-bottom:1pt solid #e9eee4;"><b style="font-size:10pt;">'+cvEsc(s.name)+'</b><br><span style="color:'+MUTED+';font-size:8.5pt;">'+cvEsc(s.desc)+'</span></td>'+
+           '<td width="34%" style="padding:4pt 8pt;border-bottom:1pt solid #e9eee4;">'+wordBar(s.pct)+'</td>'+
+           '<td width="20%" align="right" style="padding:4pt 0;border-bottom:1pt solid #e9eee4;"><b style="font-size:11pt;">'+s.pct+'%</b><br><span style="color:'+MUTED+';font-size:8pt;">'+s.correct+'/'+s.total+' · '+s.rating+'</span></td></tr>';
+    });
+    b += '</table>';
+  });
+
+  const fact = function(t,v){ return '<td width="33%" valign="top" style="padding:6pt 0;border-top:1pt solid '+RULE+';border-bottom:1pt solid '+RULE+';"><span style="color:'+MUTED+';font-size:8.5pt;">'+t+'</span><br><b style="font-size:10.5pt;">'+cvEsc(v)+'</b></td>'; };
+  b += '<table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin-top:12pt;"><tr>'+
+       fact('Kompetensi terkuat', d.strongest)+fact('Area pengembangan', d.focus)+fact('Area kompetensi dinilai', d.skillCount+' area')+'</tr></table>';
+  b += '<p style="margin:8pt 0 0;font-size:9.5pt;"><b>Ringkasan:</b> Menyelesaikan '+d.done+' dari '+d.levels+' level pelatihan logika data dan Excel dengan skor keseluruhan '+d.overall+'% (predikat '+d.rating+'). Kompetensi terkuat: '+cvEsc(d.strongest)+'.</p>';
+  b += '<p style="margin:10pt 0 2pt;color:'+MUTED+';font-size:8pt;"><b>Metode penilaian:</b> skor tiap kompetensi adalah persentase jawaban kuis yang benar pada level terkait; setiap level juga mewajibkan lab praktik spreadsheet dijawab benar sebelum lanjut. Skala: ≥90 Sangat Baik · 75–89 Baik · 60–74 Cukup · &lt;60 Perlu Latihan.</p>';
+  b += '<p style="margin:0;color:'+MUTED+';font-size:8pt;">Dokumen ini adalah hasil penilaian mandiri dari platform pembelajaran dan bukan sertifikasi resmi Microsoft.</p>';
+
+  return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
+    '<head><meta charset="utf-8"><title>Lampiran CV - '+cvEsc(d.name)+'</title>'+
+    '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->'+
+    '<style>@page{size:21cm 29.7cm;margin:1.5cm;} body{font-family:Calibri,Arial,sans-serif;font-size:10.5pt;color:#1c2a1f;} p{margin:0;}</style></head><body>'+b+'</body></html>';
+}
+
+/* ---------- Unduh: PNG / PDF / Word ---------- */
+const _scriptCache = {};
+function loadScript(src){
+  if(_scriptCache[src]) return _scriptCache[src];
+  _scriptCache[src] = new Promise(function(res, rej){
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = function(){ delete _scriptCache[src]; rej(new Error('Gagal memuat '+src)); };
+    document.head.appendChild(s);
+  });
+  return _scriptCache[src];
+}
+const LIB_H2C = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+const LIB_PDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+
+function cvFileBase(){
+  const n = (state.certName || 'peserta').trim().replace(/\s+/g,'_').replace(/[^\w\-]/g,'');
+  return 'Lampiran-CV-Kompetensi-Excel-' + (n || 'peserta');
+}
+function saveBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
+}
+function setCvStatus(msg){ const el = document.getElementById('cvDlStatus'); if(el) el.textContent = msg || ''; }
+
+/* Menangkap dokumen sebagai canvas pada lebar A4 tetap (794px), lewat salinan
+   di luar layar supaya hasilnya sama di HP maupun desktop. */
+async function captureCv(){
+  await loadScript(LIB_H2C);
+  if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+  const holder = document.createElement('div');
+  holder.style.cssText = 'position:absolute;left:-10000px;top:0;width:794px;background:#fff;';
+  const clone = document.getElementById('cvDoc').cloneNode(true);
+  clone.removeAttribute('id'); clone.classList.add('cv-fixed');
+  holder.appendChild(clone); document.body.appendChild(holder);
+  try{
+    return await html2canvas(clone, {scale:2, backgroundColor:'#ffffff', useCORS:true, logging:false, windowWidth:794});
+  } finally { holder.remove(); }
+}
+
+async function downloadCv(type){
+  const btns = ['dlPngBtn','dlPdfBtn','dlDocBtn'].map(function(id){ return document.getElementById(id); });
+  btns.forEach(function(b){ if(b) b.disabled = true; });
+  try{
+    const base = cvFileBase();
+    if(type === 'doc'){
+      setCvStatus('Menyiapkan file Word…');
+      const html = buildWordHtml(cvData());
+      saveBlob(new Blob(['\ufeff', html], {type:'application/msword;charset=utf-8'}), base + '.doc');
+    } else if(type === 'png'){
+      setCvStatus('Membuat gambar…');
+      const canvas = await captureCv();
+      await new Promise(function(res){ canvas.toBlob(function(blob){ if(blob) saveBlob(blob, base + '.png'); res(); }, 'image/png'); });
+    } else if(type === 'pdf'){
+      setCvStatus('Membuat PDF…');
+      const canvas = await captureCv();
+      await loadScript(LIB_PDF);
+      const jsPDF = window.jspdf.jsPDF;
+      const pdf = new jsPDF({unit:'mm', format:'a4', orientation:'portrait'});
+      const pw = 210, ph = 297;
+      let w = pw, h = canvas.height * pw / canvas.width;
+      if(h > ph){ h = ph; w = canvas.width * ph / canvas.height; }   // muat 1 halaman A4
+      pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', (pw - w) / 2, 0, w, h);
+      saveBlob(pdf.output('blob'), base + '.pdf');
+    }
+    setCvStatus('✓ Unduhan dimulai. Jika tidak muncul, cek izin unduhan browser.');
+  } catch(err){
+    console.error(err);
+    setCvStatus('Gagal membuat file. Coba lagi, atau pakai tombol Cetak lalu pilih "Simpan sebagai PDF".');
+  } finally {
+    btns.forEach(function(b){ if(b) b.disabled = false; });
+  }
+}
+
+/* Menampilkan dokumen CV (dipanggil setelah review Level terakhir,
+   atau saat node "Dokumen Lampiran CV" di peta diklik). */
+function showCertificate(){
+  document.getElementById('cvDoc').innerHTML = buildCvHtml(cvData());
+  setCvStatus('');
+  const tipWrap = document.getElementById('tipCoffeeWrap');
+  if (tipWrap){
+    tipWrap.innerHTML = COFFEE_TIP_URL
+      ? '<button type="button" class="tip-coffee-btn" id="tipCoffeeBtn" style="--excited-img:url('+TIP_EXCITED_IMG+')">'+COFFEE_ICON_SVG+' Suka dengan modul ini? Traktir kopi di sini</button>'
+      : '';
+    const tipBtn = document.getElementById('tipCoffeeBtn');
+    if (tipBtn) tipBtn.addEventListener('click', openTipModal);
+  }
+}
+
+/* Modal in-page untuk tombol tip kopi — dibuka lewat iframe di dalam
+   halaman yang sama, bukan tab baru. Kalau situs tujuannya menolak
+   ditampilkan dalam iframe (kebijakan X-Frame-Options/CSP situs itu
+   sendiri), tautan cadangan "Buka di tab baru" tetap tersedia di bawahnya. */
+function openTipModal(){
+  if (!COFFEE_TIP_URL) return;
+  const overlay = document.getElementById('tipModalOverlay');
+  const frame = document.getElementById('tipModalFrame');
+  const fallbackLink = document.getElementById('tipModalFallbackLink');
+  if (!overlay || !frame) return;
+  frame.src = COFFEE_TIP_URL;
+  if (fallbackLink) fallbackLink.href = COFFEE_TIP_URL;
+  overlay.style.display = 'flex';
+}
+function closeTipModal(){
+  const overlay = document.getElementById('tipModalOverlay');
+  const frame = document.getElementById('tipModalFrame');
+  if (overlay) overlay.style.display = 'none';
+  if (frame) frame.src = ''; // hentikan iframe saat modal ditutup
+}
+(function(){
+  const closeBtn = document.getElementById('tipModalClose');
+  const overlay = document.getElementById('tipModalOverlay');
+  if (closeBtn) closeBtn.addEventListener('click', closeTipModal);
+  if (overlay) overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeTipModal(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeTipModal(); });
+})();
+
+/* ============================= INIT ============================= */
+(function init(){
+  if(!state.certName){
+    showScreen('screen-name');
+  } else {
+    renderMap();
+    showScreen('screen-map');
+  }
+  updateTopbar();
+})();
+
+</script>
+</body>
+</html>
