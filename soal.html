@@ -1639,7 +1639,7 @@ const LEVELS = [
   id:1, title:'Fondasi Logika Data', tagline:'Referensi sel, SUM/AVERAGE, IF dasar',
   narrative:[
     {who:'client', name:'Pak Joko (Wali Kelas)', text:'Saya butuh rekap nilai ujian 5 siswa. Tolong hitung totalnya, rata-ratanya, dan tentukan siapa yang lulus.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini kasus bagus untuk mulai. Kita akan pakai referensi sel dan tiga fungsi paling dasar di Excel: SUM, AVERAGE, dan IF.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Ini kasus bagus untuk mulai. Kita akan pakai referensi sel dan tiga fungsi paling dasar di Excel: SUM, AVERAGE, dan IF.'},
     {who:'you', name:'Kamu (Analis Data)', text:'Siap, ayo kita mulai dari data mentahnya.'}
   ],
   concepts:[
@@ -1703,7 +1703,7 @@ const LEVELS = [
   id:2, title:'Logika Bertingkat', tagline:'Nested IF, AND/OR/NOT, COUNTIF',
   narrative:[
     {who:'client', name:'Bu Sari (Koordinator Beasiswa)', text:'Sekarang saya butuh sistem penilaian yang lebih rinci: predikat huruf, kelayakan beasiswa, dan total siswa yang layak.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini saatnya belajar logika bertingkat — IF di dalam IF, dan menggabungkan beberapa syarat sekaligus dengan AND/OR.'}
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Ini saatnya belajar logika bertingkat — IF di dalam IF, dan menggabungkan beberapa syarat sekaligus dengan AND/OR.'}
   ],
   concepts:[
     {title:'Nested IF (IF Bertingkat)', formula:'=IF(A>=90,"A",IF(A>=80,"B",IF(A>=70,"C","D")))', desc:'IF bisa diletakkan di dalam IF lain untuk menangani lebih dari 2 kemungkinan hasil.'},
@@ -1780,7 +1780,7 @@ const LEVELS = [
   id:3, title:'Pencarian & Analisis Data', tagline:'VLOOKUP, INDEX-MATCH, referensi absolut ($), array formula',
   narrative:[
     {who:'client', name:'Pak Yanto (Pemilik Toko)', text:'Saya punya daftar harga barang terpisah. Saya ingin sistem otomatis mencari harga dan menghitung total penjualan tanpa copy-paste manual.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini area favorit saya: fungsi pencarian data. Kita pakai VLOOKUP dan INDEX-MATCH, plus konsep referensi absolut ($) agar tabel acuan tidak ikut bergeser saat disalin.'}
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Ini area favorit saya: fungsi pencarian data. Kita pakai VLOOKUP dan INDEX-MATCH, plus konsep referensi absolut ($) agar tabel acuan tidak ikut bergeser saat disalin.'}
   ],
   concepts:[
     {title:'VLOOKUP', formula:'=VLOOKUP(nilai_cari, tabel, no_kolom)', desc:'Mencari nilai pada kolom pertama sebuah tabel, lalu mengambil nilai dari kolom lain di baris yang sama.'},
@@ -1856,7 +1856,7 @@ const LEVELS = [
   id:4, title:'Otomatisasi & Studi Kasus Master', tagline:'Kombinasi fungsi, dasar Macro/VBA, studi kasus payroll',
   narrative:[
     {who:'client', name:'Bu Melati (HRD)', text:'Ini tantangan besar terakhir: bikin sistem gaji otomatis untuk beberapa karyawan, sekaligus saya ingin laporan bulanan tidak perlu diformat manual tiap bulan.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Level Master menggabungkan semua yang sudah kamu pelajari — IF, VLOOKUP, SUM — dalam satu kasus nyata. Kita juga akan kenalan dengan Macro/VBA untuk otomatisasi tugas berulang.'}
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Level Master menggabungkan semua yang sudah kamu pelajari — IF, VLOOKUP, SUM — dalam satu kasus nyata. Kita juga akan kenalan dengan Macro/VBA untuk otomatisasi tugas berulang.'}
   ],
   concepts:[
     {title:'Menggabungkan Fungsi', formula:'=Gaji_Pokok*(1-VLOOKUP(Golongan,tabel,2))', desc:'Kasus nyata jarang memakai satu fungsi saja — logika data yang matang menggabungkan IF, VLOOKUP, dan aritmatika sekaligus.'},
@@ -1906,7 +1906,7 @@ const LEVELS = [
   id:5, title:'Studi Kasus Dunia Kerja', tagline:'20 latihan logika lintas divisi — Retail, Gudang, Sales & Customer Care',
   narrative:[
     {who:'client', name:'Pak Rudi (Manajer Operasional)', text:'Logika yang kamu pelajari sejauh ini sudah bagus. Sekarang saya ingin kamu uji dengan kasus-kasus asli dari berbagai divisi kami: toko, gudang, tim sales, dan customer care.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Level ini berbeda dari sebelumnya — tidak ada lab spreadsheet baru, tapi 20 soal latihan yang menggabungkan semua logika yang sudah kamu kuasai: IF, nested IF, AND/OR, COUNTIF, SUMIF, VLOOKUP, dan INDEX-MATCH.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Level ini berbeda dari sebelumnya — tidak ada lab spreadsheet baru, tapi 20 soal latihan yang menggabungkan semua logika yang sudah kamu kuasai: IF, nested IF, AND/OR, COUNTIF, SUMIF, VLOOKUP, dan INDEX-MATCH.'},
     {who:'you', name:'Kamu (Analis Data)', text:'Siap. Anggap saja ini simulasi wawancara kerja — saatnya membuktikan logikanya benar-benar nempel.'}
   ],
   concepts:[
@@ -1943,7 +1943,7 @@ const LEVELS = [
   id:6, title:'Logika Berbasis Waktu', tagline:'Aging piutang, denda otomatis & logika jatuh tempo',
   narrative:[
     {who:'client', name:'Bu Ratna (Staff Keuangan)', text:'Saya kewalahan mengecek piutang pelanggan satu per satu. Saya butuh kategori otomatis: piutang ini lancar, macet 1-30 hari, 31-60 hari, atau sudah parah di atas 60 hari — plus denda otomatis untuk yang lewat jatuh tempo.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Logika waktu sebenarnya logika angka biasa. Di Excel sungguhan kita pakai fungsi tanggal seperti TODAY() dan DATEDIF, tapi prinsipnya identik: ubah selisih waktu jadi angka, lalu serahkan ke nested IF.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Logika waktu sebenarnya logika angka biasa. Di Excel sungguhan kita pakai fungsi tanggal seperti TODAY() dan DATEDIF, tapi prinsipnya identik: ubah selisih waktu jadi angka, lalu serahkan ke nested IF.'},
     {who:'you', name:'Kamu (Analis Data)', text:'Jadi kuncinya adalah satu kolom angka "hari lewat tempo", lalu semua keputusan mengikuti angka itu. Saya kerjakan.'}
   ],
   concepts:[
@@ -2024,7 +2024,7 @@ const LEVELS = [
   id:7, title:'Logika Gabungan & Kriteria Dinamis', tagline:'SUMIF kriteria dari sel, deteksi duplikat & kriteria ganda',
   narrative:[
     {who:'client', name:'Pak Hendra (Kepala Cabang)', text:'Laporan saya ribet. Setiap kali direksi minta rekap "penjualan Jawa Barat tahun ini", tim saya menghitung manual. Saya yakin ini bisa otomatis — bahkan kalau datanya ada dobel sekalipun.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Tiga senjata hari ini: kriteria dari sel (bukan diketik manual), deteksi duplikat dengan COUNTIF, dan trik kolom kunci untuk kriteria ganda.'}
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Tiga senjata hari ini: kriteria dari sel (bukan diketik manual), deteksi duplikat dengan COUNTIF, dan trik kolom kunci untuk kriteria ganda.'}
   ],
   concepts:[
     {title:'SUMIF dengan Kriteria dari Sel', formula:'=SUMIF($A$2:$A$7, E2, $C$2:$C$7)', desc:'Kriteria tidak harus diketik di formula — bisa dirujuk dari sel. Ini membuat rekap mudah diubah: ganti isi sel, hasil ikut berubah.'},
@@ -2103,7 +2103,7 @@ const LEVELS = [
   id:8, title:'Analisis & Rangking', tagline:'Ranking dengan tie-breaker, gap performa & running total',
   narrative:[
     {who:'client', name:'Bu Sinta (HRD)', text:'Evaluasi tim sales besok pagi. Saya butuh peringkat otomatis — walau ada dua orang nilainya sama — plus selisih tiap orang dari yang tertinggi, dan stok barang yang berjalan dari hari ke hari.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini level yang paling terasa "analis"-nya. Tiga teknik: rangking pakai COUNTIF, selisih ke nilai tertinggi pakai MAX, dan running total pakai rentang yang mengembang.'}
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Ini level yang paling terasa "analis"-nya. Tiga teknik: rangking pakai COUNTIF, selisih ke nilai tertinggi pakai MAX, dan running total pakai rentang yang mengembang.'}
   ],
   concepts:[
     {title:'Ranking Tanpa Fungsi RANK', formula:'=COUNTIF($B$2:$B$6,">"&B2)+1', desc:'Berpikir logika: peringkatmu = berapa banyak orang yang skornya di atas kamu, ditambah satu. Dua orang bernilai sama otomatis dapat peringkat sama.'},
@@ -2187,7 +2187,7 @@ const LEVELS = [
   id:9, title:'Teks & Pembersihan Data', tagline:'ID unik, validasi duplikat & lookup berbasis teks',
   narrative:[
     {who:'client', name:'Pak Dodi (Admin Gudang)', text:'Data dari tiga cabang digabung asal-asalan: kode barang bentrok, ID pelanggan dobel, dan harga nyasar ke baris yang salah. Sebelum bisa dianalisis, datanya harus dibersihkan dulu.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Analis data menghabiskan 60-80% waktu untuk pembersihan data — dan ini pekerjaan yang paling logis untuk diautomasi. Kita bangun ID unik, validasi duplikat, dan lookup yang aman.'}
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Analis data menghabiskan 60-80% waktu untuk pembersihan data — dan ini pekerjaan yang paling logis untuk diautomasi. Kita bangun ID unik, validasi duplikat, dan lookup yang aman.'}
   ],
   concepts:[
     {title:'Menggabungkan Teks', formula:'=A2&"-"&B2&"-"&C2', desc:'Operator & menyambung isi beberapa sel jadi satu teks — fondasi membangun kode/ID unik tanpa mengetik manual.'},
@@ -2263,7 +2263,7 @@ const LEVELS = [
   id:10, title:'Capstone: Sistem Rekrutmen Otomatis', tagline:'End-to-end: pembersihan, skor, status, rekap & pencarian juara',
   narrative:[
     {who:'client', name:'Bu Melati (HRD)', text:'Ini proyek nyata: 6 pelamar masuk, datanya kotor (ada email dobel), skornya tersebar, dan direksi minta ringkasan lolos/cadangan dalam 1 jam. Kerjakan dari nol sampai laporan jadi.'},
-    {who:'mentor', name:'Bu Rina (Mentor)', text:'Ini ujian akhirmu. Semua yang sudah kita pelajari — COUNTIF, SUM, nested IF, SUMIF, INDEX-MATCH-MAX — dipakai berurutan dalam satu alur kerja nyata. Kerjakan pelan-pelan, satu lab satu masalah.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Ini ujian akhirmu. Semua yang sudah kita pelajari — COUNTIF, SUM, nested IF, SUMIF, INDEX-MATCH-MAX — dipakai berurutan dalam satu alur kerja nyata. Kerjakan pelan-pelan, satu lab satu masalah.'},
     {who:'you', name:'Kamu (Analis Data)', text:'Alurnya jelas: bersihkan duplikat → hitung total skor → tentukan status → rekap → cari peringkat teratas. Gas.'}
   ],
   concepts:[
