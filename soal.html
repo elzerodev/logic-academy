@@ -674,7 +674,7 @@ textarea.reflect:focus{border-color:var(--accent);}
   <path class="l1" d="M169.48,410.71h-34.25l-21.5-40.47c-.77-1.42-1.36-2.54-1.77-3.37-.35-.88-.74-1.89-1.15-3.01h-.35c-.53,1.42-1.03,2.57-1.5,3.45-.47.89-1.03,1.98-1.68,3.28l-22.3,40.11h-32.3l38.76-63.58-36.1-63.4h33.8l19.11,36.13c.77,1.48,1.42,2.78,1.95,3.9.59,1.06,1.18,2.33,1.77,3.81h.35c.82-1.71,1.47-3.07,1.95-4.07.53-1,1.24-2.33,2.12-3.98l19.82-35.77h32.21l-36.63,62.43,37.7,64.55Z"/>
 </svg><span class="dot"></span> EXCEL LOGIC ACADEMY</div>
     <div class="actions">
-      <a class="btn-ghost no-print" href="index.html" style="text-decoration:none;">
+   <a class="btn-ghost no-print" href="index.html" style="text-decoration:none;">
   <span class="material-symbols-rounded icon-sm">home</span>
   Beranda
 </a>
@@ -3111,11 +3111,12 @@ function closeTipModal(){
 })();
 
 </script>
-
 <!-- ===========================================================================
-  MATERI LANJUTAN — Level 11–15 untuk Excel Logic Academy
-  Tempel SELURUH blok ini tepat sebelum </body> pada halaman Modul (setelah </script> utama).
-  Isi: Data Validation, Filter & Sort, Conditional Formatting, Pivot Table, Chart.
+  MATERI LANJUTAN — Level 11–18 untuk Excel Logic Academy (menggantikan versi Level 11–15)
+  Tempel SELURUH blok ini tepat sebelum </body> pada halaman soal, setelah skrip utama.
+  Bila versi sebelumnya sudah tertempel, HAPUS dulu blok lama tersebut lalu tempel yang ini.
+  Isi: Data Validation, Filter & Sort, Conditional Formatting, Pivot Table, Chart,
+       Data Error Challenge, Advanced Data Cleaning, Business Analytics.
 ============================================================================ -->
 <style>
 /* ===================== MATERI LANJUTAN (Level 11–15) ===================== */
@@ -3204,11 +3205,40 @@ td.cf-green{background:rgba(74,222,128,.28); color:var(--ok);}
   .cv-doc .cv-skill{padding:3px 0;}
   .cv-doc .cv-group{margin-bottom:8px;}
 }
+
+/* ===================== LEVEL 16–18 ===================== */
+.fb-tbl td.fb-cell{cursor:pointer; user-select:none; -webkit-user-select:none;}
+.fb-tbl td.fb-cell:hover{background:rgba(182,255,61,0.10);}
+.fb-tbl td.fb-sel{box-shadow:inset 0 0 0 2px var(--amber);}
+.fb-tbl td.fb-flag{background:rgba(255,107,92,.18);}
+.fb-tbl td.fb-flag::after{content:"⚑"; color:var(--danger); font-size:10px; margin-left:6px;}
+.fb-item{font-family:var(--mono); font-size:12px; padding:5px 0; border-bottom:1px solid var(--line); color:var(--text-dim);}
+.fb-item b{color:var(--accent);}
+.src-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:6px;}
+.src-item{display:flex; gap:8px; align-items:baseline; font-size:12px; min-width:0;}
+.src-ref{font-family:var(--mono); font-size:10.5px; color:var(--amber); flex:none;}
+.src-item code{font-family:var(--mono); color:var(--text); background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:2px 7px; white-space:pre-wrap; word-break:break-all;}
+.opt-col{display:flex; flex-direction:column; gap:8px;}
+.opt-btn{text-align:left; white-space:normal; line-height:1.45;}
+.kpi-row{display:flex; flex-wrap:wrap; gap:10px;}
+.kpi{flex:1 1 150px; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:9px 12px; font-family:var(--mono);}
+.kpi span{display:block; font-size:10.5px; color:var(--text-dim);}
+.kpi b{font-size:14px;}
+.kpi.bad b{color:var(--danger);}
+tr.dr-row{cursor:pointer;}
+tr.dr-row:hover td{background:rgba(182,255,61,0.08);}
+tr.dr-sel td{background:rgba(255,180,0,.20) !important;}
+.ev-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px;}
+.ev-box{min-width:0;}
+.step-chip{font-family:var(--mono); font-size:10.5px; padding:5px 10px; border-radius:20px; background:var(--panel-2); border:1px solid var(--line); color:var(--text-dim-2);}
+.step-chip.active{background:rgba(182,255,61,0.12); border-color:rgba(182,255,61,0.4); color:var(--accent);}
+.step-chip.past{color:var(--ok); border-color:rgba(74,222,128,0.25);}
 </style>
 <script>
 /* ==========================================================================
-   MATERI LANJUTAN — Level 11–15
+   MATERI LANJUTAN — Level 11–18
    Data Validation · Filter & Sort · Conditional Formatting · Pivot Table · Chart
+   Data Error Challenge · Advanced Data Cleaning · Business Analytics
    Ditempel SETELAH skrip utama (sebelum </body>). Tidak mengubah kode yang ada:
    level baru didaftarkan lewat LEVELS.push, dan lab bertipe baru ditangani
    lewat pembungkus renderExercise.
@@ -3219,7 +3249,7 @@ if(typeof LEVELS === 'undefined' || typeof Sheet === 'undefined' || typeof rende
   console.warn('Materi lanjutan: skrip utama belum termuat, add-on dilewati.');
   return;
 }
-if(LEVELS.some(function(l){ return l.id === 11; })) return; // sudah terpasang
+if(LEVELS.some(function(l){ return l.id === 18; })) return; // versi lengkap sudah terpasang
 
 const LAB = {};
 
@@ -3271,15 +3301,15 @@ function field(label, ctl){
 function shell(el, ex, icon){
   const card = mk('div','card');
   card.innerHTML = '<h2><span class="material-symbols-rounded">'+icon+'</span> '+ex.title+'</h2><p>'+ex.instruction+'</p>'+
-    (ex.hint ? '<div class="fx-hint"><span>💡</span><span><b>Tips:</b> '+ex.hint+'</span></div>' : '');
+    ((ex.hint || ex.fx) ? '<div class="fx-hint"><span>💡</span><span><b>Tips:</b> '+(ex.hint || ex.fx)+'</span></div>' : '');
   const body = mk('div'); card.appendChild(body);
   const actions = mk('div','action-row'); card.appendChild(actions);
   const feedback = mk('div'); card.appendChild(feedback);
   el.appendChild(card);
   return {card:card, body:body, actions:actions, feedback:feedback};
 }
-function showFeedback(box, checks, hintFail){
-  const allOk = checks.every(function(c){ return c.ok; });
+function showFeedback(box, checks, hintFail, pass){
+  const allOk = pass !== undefined ? pass : checks.every(function(c){ return c.ok; });
   let rows = '';
   checks.forEach(function(c){
     rows += '<div class="check-row '+(c.ok?'ok':'fail')+'"><span class="ico">'+(c.ok?'✓':'✕')+'</span><span>'+c.label+'</span></div>';
@@ -3293,7 +3323,7 @@ function showFeedback(box, checks, hintFail){
 function addCheckBtn(sh, fn){
   const b = mk('button','btn','✓ Cek jawaban');
   sh.actions.appendChild(b);
-  b.addEventListener('click', function(){ const r = fn(); showFeedback(sh.feedback, r.checks, r.hint); });
+  b.addEventListener('click', function(){ const r = fn(); showFeedback(sh.feedback, r.checks, r.hint, r.pass); });
   return b;
 }
 function ok(b){ return b ? 'Benar' : 'Belum tepat'; }
@@ -3303,15 +3333,15 @@ function tableHtml(cols, rows, opt){
   opt = opt || {};
   let h = '<div class="lab-tbl-wrap"><table class="lab-tbl"><thead>';
   if(opt.letters){
-    h += '<tr class="lt-letters"><th class="rn"></th>';
+    h += '<tr class="lt-letters">'+(opt.noRn ? '' : '<th class="rn"></th>');
     cols.forEach(function(c, ci){ h += '<th class="lt-l">'+String.fromCharCode(65+ci)+'</th>'; });
     h += '</tr>';
   }
-  h += '<tr><th class="rn">'+(opt.letters?'1':'')+'</th>';
+  h += '<tr>'+(opt.noRn ? '' : '<th class="rn">'+(opt.letters?'1':'')+'</th>');
   cols.forEach(function(c){ h += '<th class="'+(c.num?'num':'')+'">'+esc(c.label)+(opt.headMark?opt.headMark(c):'')+'</th>'; });
   h += '</tr></thead><tbody>';
   rows.forEach(function(row, ri){
-    h += '<tr><td class="rn">'+(opt.rowNums ? opt.rowNums[ri] : ri+2)+'</td>';
+    h += '<tr>'+(opt.noRn ? '' : '<td class="rn">'+(opt.rowNums ? opt.rowNums[ri] : ri+2)+'</td>');
     cols.forEach(function(c, ci){
       const v = row[c.key];
       const cls = (c.num?'num ':'') + (opt.cellClass ? (opt.cellClass(ri,ci,row)||'') : '');
@@ -4473,19 +4503,1124 @@ const NEW_LEVELS = [
 }
 ];
 
-/* ============================= INTEGRASI ============================= */
-NEW_LEVELS.forEach(function(l){ LEVELS.push(l); });
+/* ============================= ENGINE RUMUS TEKS (Level 17) =============================
+   Subclass Sheet dengan evaluator sendiri: TRIM, CLEAN, SUBSTITUTE, REPLACE, TEXTBEFORE,
+   TEXTAFTER, TEXTSPLIT (spill), VALUE, NUMBERVALUE, DATEVALUE, ISNUMBER, ISTEXT, IFERROR, dll.
+   Angka yang ditulis sebagai teks TETAP teks (seperti "number stored as text" di Excel asli). */
+class FxErr { constructor(code){ this.code = code; } }
+const ERR_RE = /^#(VALUE!|N\/A|NAME\?|DIV\/0!|REF!|NUM!|ERROR!|CIRCULAR!|SPILL!)$/;
+const MONTHS = {jan:1,feb:2,mar:3,apr:4,mei:5,may:5,jun:6,jul:7,agu:8,aug:8,sep:9,okt:10,oct:10,nov:11,des:12,dec:12};
+const EPOCH = Date.UTC(1899, 11, 30);
+function serialOf(y, m, d){
+  const t = Date.UTC(y, m-1, d), dt = new Date(t);
+  if(dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m-1 || dt.getUTCDate() !== d) return null;
+  return Math.round((t - EPOCH) / 86400000);
+}
+function parseDate(s){
+  s = String(s).trim();
+  let m;
+  if((m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s))) return serialOf(+m[1], +m[2], +m[3]);
+  if((m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s))) return serialOf(+m[3], +m[2], +m[1]); // dd/mm/yyyy (regional Indonesia)
+  if((m = /^(\d{1,2})[- ]([A-Za-z]{3,9})[- ](\d{4})$/.exec(s))){
+    const mo = MONTHS[m[2].slice(0,3).toLowerCase()];
+    return mo ? serialOf(+m[3], mo, +m[1]) : null;
+  }
+  return null;
+}
+function dateParts(n){ const d = new Date(EPOCH + Math.floor(n)*86400000); return {y:d.getUTCFullYear(), m:d.getUTCMonth()+1, d:d.getUTCDate()}; }
 
-CV_GROUPS.push({
-  title:'Pengelolaan Data, Pelaporan & Visualisasi',
-  items:[
-    {lv:11, name:'Validasi Data',         desc:'Data Validation: angka, dropdown, rumus kustom'},
-    {lv:12, name:'Filter & Sort',         desc:'Urutan bertingkat, filter multi-kriteria'},
-    {lv:13, name:'Conditional Formatting',desc:'Aturan sorot: nilai, duplikat, Top N, rumus'},
-    {lv:14, name:'Pivot Table',           desc:'Rows, Columns, Values, agregasi & filter'},
-    {lv:15, name:'Chart & Visualisasi',   desc:'Pilih jenis chart, sumbu & label yang jujur'}
+const isErr = function(v){ return v instanceof FxErr; };
+const E = function(c){ return new FxErr(c); };
+const scalar = function(v){ return (v && v.arr) ? v.arr[0][0] : v; };
+function fxNum(v){
+  v = scalar(v);
+  if(isErr(v)) return v;
+  if(typeof v === 'number') return v;
+  if(typeof v === 'boolean') return v ? 1 : 0;
+  if(v === '' || v == null) return 0;
+  const s = String(v).trim();
+  if(/^[+-]?\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+  return E('#VALUE!');
+}
+function fxStr(v){
+  v = scalar(v);
+  if(isErr(v)) return v;
+  if(typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
+  if(typeof v === 'number') return String(Math.round(v*1e10)/1e10);
+  return v == null ? '' : String(v);
+}
+function fxTruthy(v){ v = scalar(v); return v === true || (typeof v === 'number' && v !== 0) || (typeof v === 'string' && v.toUpperCase() === 'TRUE'); }
+function fxArith(op, a, b){
+  const x = fxNum(a); if(isErr(x)) return x;
+  const y = fxNum(b); if(isErr(y)) return y;
+  switch(op){
+    case '+': return x + y; case '-': return x - y; case '*': return x * y;
+    case '/': return y === 0 ? E('#DIV/0!') : x / y;
+    case '^': return Math.pow(x, y);
+  }
+}
+function fxCmp(a, b, op){
+  a = scalar(a); b = scalar(b);
+  if(isErr(a)) return a; if(isErr(b)) return b;
+  if(a === '' && typeof b === 'number') a = 0;
+  if(b === '' && typeof a === 'number') b = 0;
+  const rank = function(v){ return typeof v === 'number' ? 0 : (typeof v === 'boolean' ? 2 : 1); };
+  let c;
+  if(rank(a) !== rank(b)) c = rank(a) < rank(b) ? -1 : 1;
+  else if(typeof a === 'string'){ const x = a.toUpperCase(), y = b.toUpperCase(); c = x < y ? -1 : (x > y ? 1 : 0); }
+  else c = a < b ? -1 : (a > b ? 1 : 0);
+  switch(op){
+    case '=': return c === 0; case '<>': return c !== 0; case '<': return c < 0;
+    case '>': return c > 0; case '<=': return c <= 0; case '>=': return c >= 0;
+  }
+}
+function fxTextSel(a, before){
+  const t = fxStr(a[0]); if(isErr(t)) return t;
+  const d = fxStr(a[1]); if(isErr(d)) return d;
+  let inst = 1, mode = 0, mEnd = 0;
+  if(a[2] !== undefined){ inst = fxNum(a[2]); if(isErr(inst)) return inst; }
+  if(a[3] !== undefined){ mode = fxNum(a[3]); if(isErr(mode)) return mode; }
+  if(a[4] !== undefined){ mEnd = fxNum(a[4]); if(isErr(mEnd)) return mEnd; }
+  const nf = (a.length > 5 && a[5] !== undefined) ? a[5] : E('#N/A');
+  if(inst === 0 || Math.abs(inst) > t.length + 1) return E('#VALUE!');
+  if(d === '') return before ? '' : t;
+  const hay = mode ? t.toLowerCase() : t, nd = mode ? d.toLowerCase() : d;
+  const pos = []; let k = 0;
+  while((k = hay.indexOf(nd, k)) >= 0){ pos.push(k); k += nd.length; }
+  const idx = inst > 0 ? inst - 1 : pos.length + inst;
+  let at, len = nd.length;
+  if(idx >= 0 && idx < pos.length) at = pos[idx];
+  else if(mEnd && inst > 0 && idx === pos.length){ at = t.length; len = 0; }
+  else if(mEnd && inst < 0 && idx === -1){ at = 0; len = 0; }
+  else return nf;
+  return before ? t.slice(0, at) : t.slice(at + len);
+}
+function flatNums(args){
+  const out = [];
+  for(let i = 0; i < args.length; i++){
+    const x = args[i];
+    if(x === undefined) continue;
+    if(x && x.arr){
+      const vs = [].concat.apply([], x.arr);
+      for(let j = 0; j < vs.length; j++){ if(isErr(vs[j])) return vs[j]; if(typeof vs[j] === 'number') out.push(vs[j]); }
+    } else { const n = fxNum(x); if(isErr(n)) return n; out.push(n); }
+  }
+  return out;
+}
+const FXF = {
+  TRIM: function(a){ const s = fxStr(a[0]); return isErr(s) ? s : s.replace(/ +/g, ' ').replace(/^ | $/g, ''); },
+  CLEAN: function(a){ const s = fxStr(a[0]); return isErr(s) ? s : s.replace(/[\u0000-\u001F]/g, ''); },
+  CHAR: function(a){ const n = fxNum(a[0]); if(isErr(n)) return n; return (n < 1 || n > 255) ? E('#VALUE!') : String.fromCharCode(n); },
+  LEN: function(a){ const s = fxStr(a[0]); return isErr(s) ? s : s.length; },
+  UPPER: function(a){ const s = fxStr(a[0]); return isErr(s) ? s : s.toUpperCase(); },
+  LOWER: function(a){ const s = fxStr(a[0]); return isErr(s) ? s : s.toLowerCase(); },
+  PROPER: function(a){ const s = fxStr(a[0]); return isErr(s) ? s : s.toLowerCase().replace(/(^|[^A-Za-z\u00C0-\u00FF])([a-z\u00E0-\u00FF])/g, function(m, p, c){ return p + c.toUpperCase(); }); },
+  LEFT: function(a){ const s = fxStr(a[0]); const n = a[1] === undefined ? 1 : fxNum(a[1]); if(isErr(s)) return s; if(isErr(n)) return n; return n < 0 ? E('#VALUE!') : s.slice(0, n); },
+  RIGHT: function(a){ const s = fxStr(a[0]); const n = a[1] === undefined ? 1 : fxNum(a[1]); if(isErr(s)) return s; if(isErr(n)) return n; return n < 0 ? E('#VALUE!') : (n === 0 ? '' : s.slice(-n)); },
+  MID: function(a){ const s = fxStr(a[0]), st = fxNum(a[1]), n = fxNum(a[2]); if(isErr(s)) return s; if(isErr(st)) return st; if(isErr(n)) return n; return (st < 1 || n < 0) ? E('#VALUE!') : s.substr(st-1, n); },
+  SUBSTITUTE: function(a){
+    const t = fxStr(a[0]), o = fxStr(a[1]), n = fxStr(a[2]);
+    if(isErr(t)) return t; if(isErr(o)) return o; if(isErr(n)) return n;
+    if(o === '') return t;
+    if(a.length > 3 && a[3] !== undefined){
+      const k = fxNum(a[3]); if(isErr(k) || k < 1) return E('#VALUE!');
+      let idx = -1, from = 0;
+      for(let i = 0; i < k; i++){ idx = t.indexOf(o, from); if(idx < 0) return t; from = idx + o.length; }
+      return t.slice(0, idx) + n + t.slice(idx + o.length);
+    }
+    return t.split(o).join(n);
+  },
+  REPLACE: function(a){
+    const t = fxStr(a[0]), st = fxNum(a[1]), n = fxNum(a[2]), nw = fxStr(a[3]);
+    if(isErr(t)) return t; if(isErr(st)) return st; if(isErr(n)) return n; if(isErr(nw)) return nw;
+    if(st < 1 || n < 0) return E('#VALUE!');
+    return t.slice(0, st-1) + nw + t.slice(st-1+n);
+  },
+  FIND: function(a){ const f = fxStr(a[0]), w = fxStr(a[1]); if(isErr(f)) return f; if(isErr(w)) return w; const i = w.indexOf(f, a[2] === undefined ? 0 : fxNum(a[2]) - 1); return i < 0 ? E('#VALUE!') : i + 1; },
+  SEARCH: function(a){ const f = fxStr(a[0]), w = fxStr(a[1]); if(isErr(f)) return f; if(isErr(w)) return w; const i = w.toLowerCase().indexOf(f.toLowerCase(), a[2] === undefined ? 0 : fxNum(a[2]) - 1); return i < 0 ? E('#VALUE!') : i + 1; },
+  CONCATENATE: function(a){ let s = ''; for(let i = 0; i < a.length; i++){ const x = fxStr(a[i]); if(isErr(x)) return x; s += x; } return s; },
+  TEXTBEFORE: function(a){ return fxTextSel(a, true); },
+  TEXTAFTER: function(a){ return fxTextSel(a, false); },
+  TEXTSPLIT: function(a){
+    const t = fxStr(a[0]); if(isErr(t)) return t;
+    const cd = a[1] === undefined ? '' : fxStr(a[1]), rd = a[2] === undefined ? '' : fxStr(a[2]);
+    if(isErr(cd)) return cd; if(isErr(rd)) return rd;
+    if(!cd && !rd) return E('#VALUE!');
+    let rows = rd ? t.split(rd) : [t];
+    rows = rows.map(function(r){ return cd ? r.split(cd) : [r]; });
+    if(a[3] !== undefined && fxTruthy(a[3])){ rows = rows.map(function(r){ return r.filter(function(x){ return x !== ''; }); }).filter(function(r){ return r.length; }); }
+    const w = Math.max.apply(null, rows.map(function(r){ return r.length; }));
+    const pad = a[5] !== undefined ? a[5] : E('#N/A');
+    return {arr: rows.map(function(r){ const c = r.slice(); while(c.length < w) c.push(pad); return c; })};
+  },
+  VALUE: function(a){
+    const v = scalar(a[0]);
+    if(isErr(v)) return v;
+    if(typeof v === 'number') return v;
+    if(typeof v === 'boolean') return E('#VALUE!');
+    const s = String(v).trim();
+    if(s === '') return E('#VALUE!');
+    if(/^[+-]?\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+    if(/^[+-]?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) return parseFloat(s.replace(/,/g, ''));
+    if(/^[+-]?\d+(\.\d+)?%$/.test(s)) return parseFloat(s) / 100;
+    const d = parseDate(s); if(d !== null) return d;
+    return E('#VALUE!');
+  },
+  NUMBERVALUE: function(a){
+    const v = scalar(a[0]);
+    if(isErr(v)) return v;
+    if(typeof v === 'number') return v;
+    let s = fxStr(v); if(isErr(s)) return s;
+    const dec = a[1] === undefined ? '.' : fxStr(a[1]), grp = a[2] === undefined ? ',' : fxStr(a[2]);
+    if(isErr(dec)) return dec; if(isErr(grp)) return grp;
+    s = s.replace(/\s+/g, '');
+    if(s === '') return 0;
+    let pct = 0;
+    while(s.charAt(s.length-1) === '%'){ pct++; s = s.slice(0, -1); }
+    if(grp) s = s.split(grp).join('');
+    if(dec && dec !== '.') s = s.split(dec).join('.');
+    if(!/^[+-]?(\d+\.?\d*|\.\d+)$/.test(s)) return E('#VALUE!');
+    return parseFloat(s) / Math.pow(100, pct);
+  },
+  DATEVALUE: function(a){ const s = fxStr(a[0]); if(isErr(s)) return s; const d = parseDate(s); return d === null ? E('#VALUE!') : d; },
+  DATE: function(a){ const y = fxNum(a[0]), m = fxNum(a[1]), d = fxNum(a[2]); if(isErr(y)) return y; if(isErr(m)) return m; if(isErr(d)) return d; const s = serialOf(y, m, d); return s === null ? E('#NUM!') : s; },
+  YEAR: function(a){ const n = fxNum(a[0]); return isErr(n) ? n : dateParts(n).y; },
+  MONTH: function(a){ const n = fxNum(a[0]); return isErr(n) ? n : dateParts(n).m; },
+  DAY: function(a){ const n = fxNum(a[0]); return isErr(n) ? n : dateParts(n).d; },
+  ISNUMBER: function(a){ return typeof scalar(a[0]) === 'number'; },
+  ISTEXT: function(a){ const v = scalar(a[0]); return typeof v === 'string'; },
+  ISBLANK: function(a){ const v = scalar(a[0]); return v === '' || v == null; },
+  ISERROR: function(a){ return isErr(scalar(a[0])); },
+  IFERROR: function(a){ const v = a[0]; return (isErr(scalar(v))) ? (a[1] === undefined ? 0 : a[1]) : v; },
+  IF: function(a){ const c = scalar(a[0]); if(isErr(c)) return c; if(fxTruthy(c)) return a[1] === undefined ? 0 : a[1]; return a.length > 2 ? (a[2] === undefined ? 0 : a[2]) : false; },
+  AND: function(a){ for(let i = 0; i < a.length; i++){ if(isErr(scalar(a[i]))) return scalar(a[i]); if(!fxTruthy(a[i])) return false; } return true; },
+  OR: function(a){ for(let i = 0; i < a.length; i++){ if(isErr(scalar(a[i]))) return scalar(a[i]); if(fxTruthy(a[i])) return true; } return false; },
+  NOT: function(a){ return !fxTruthy(a[0]); },
+  SUM: function(a){ const n = flatNums(a); return isErr(n) ? n : n.reduce(function(x, y){ return x + y; }, 0); },
+  AVERAGE: function(a){ const n = flatNums(a); if(isErr(n)) return n; return n.length ? n.reduce(function(x, y){ return x + y; }, 0) / n.length : E('#DIV/0!'); },
+  MAX: function(a){ const n = flatNums(a); return isErr(n) ? n : (n.length ? Math.max.apply(null, n) : 0); },
+  MIN: function(a){ const n = flatNums(a); return isErr(n) ? n : (n.length ? Math.min.apply(null, n) : 0); },
+  COUNT: function(a){ const n = flatNums(a); return isErr(n) ? n : n.length; },
+  COUNTA: function(a){ let c = 0; a.forEach(function(x){ if(x === undefined) return; (x && x.arr ? [].concat.apply([], x.arr) : [x]).forEach(function(v){ if(v !== '' && v != null) c++; }); }); return c; },
+  ROUND: function(a){ const x = fxNum(a[0]), d = a[1] === undefined ? 0 : fxNum(a[1]); if(isErr(x)) return x; if(isErr(d)) return d; const p = Math.pow(10, d); return Math.round(x*p)/p; },
+  ABS: function(a){ const x = fxNum(a[0]); return isErr(x) ? x : Math.abs(x); },
+  INT: function(a){ const x = fxNum(a[0]); return isErr(x) ? x : Math.floor(x); },
+  INDEX: function(a){
+    const arr = a[0] && a[0].arr;
+    if(!arr) return E('#VALUE!');
+    const r = a[1] === undefined ? 1 : fxNum(a[1]);
+    if(isErr(r)) return r;
+    if(a[2] === undefined){
+      if(arr.length === 1){ const v = arr[0][r-1]; return v === undefined ? E('#REF!') : v; }
+      const row = arr[r-1];
+      return row === undefined ? E('#REF!') : (row.length === 1 ? row[0] : {arr:[row]});
+    }
+    const c = fxNum(a[2]); if(isErr(c)) return c;
+    const row2 = arr[r-1];
+    return (!row2 || row2[c-1] === undefined) ? E('#REF!') : row2[c-1];
+  }
+};
+
+class CleanSheet extends Sheet {
+  constructor(rows, cols){ super(rows, cols); this._spill = {}; }
+  isNumericStr(){ return false; }
+  evalCell(r, c, visiting, cache){
+    const key = r + ',' + c;
+    if(cache.has(key)) return cache.get(key);
+    if(visiting.has(key)) return '#CIRCULAR!';
+    const raw = this.getRaw(r, c);
+    let result;
+    if(typeof raw === 'string' && raw.trim().charAt(0) === '='){
+      visiting.add(key);
+      try{ result = this.fx(raw.trim().slice(1), visiting, cache); }catch(e){ result = '#ERROR!'; }
+      visiting.delete(key);
+      if(result instanceof FxErr) result = result.code;
+      else if(result && result.arr){
+        const a = result.arr;
+        if(a.length > 1 || a[0].length > 1) this._spill[key] = a;
+        result = a[0][0];
+        if(result instanceof FxErr) result = result.code;
+      }
+    } else if(raw === '' || raw == null){ result = ''; }
+    else result = raw;
+    cache.set(key, result);
+    return result;
+  }
+  recalcAll(){
+    const cache = new Map();
+    this._spill = {};
+    for(let r = 0; r < this.rows; r++) for(let c = 0; c < this.cols; c++) this.evalCell(r, c, new Set(), cache);
+    const self = this;
+    Object.keys(this._spill).forEach(function(k){
+      const p = k.split(','), r0 = +p[0], c0 = +p[1], arr = self._spill[k];
+      let clash = false;
+      for(let i = 0; i < arr.length && !clash; i++) for(let j = 0; j < arr[i].length; j++){
+        if(i === 0 && j === 0) continue;
+        const rr = r0 + i, cc = c0 + j;
+        if(rr >= self.rows || cc >= self.cols || String(self.getRaw(rr, cc)) !== ''){ clash = true; break; }
+      }
+      if(clash){ cache.set(k, '#SPILL!'); return; }
+      for(let i = 0; i < arr.length; i++) for(let j = 0; j < arr[i].length; j++){
+        if(i === 0 && j === 0) continue;
+        const v = arr[i][j];
+        cache.set((r0+i) + ',' + (c0+j), v instanceof FxErr ? v.code : v);
+      }
+    });
+    this._cache = cache;
+  }
+  fx(expr, visiting, cache){
+    const self = this, T = [];
+    const re = /\s*(?:"((?:[^"]|"")*)"|(\d+(?:\.\d+)?)|(\$?[A-Za-z_][A-Za-z0-9_]*\$?\d*)|(<=|>=|<>|[<>=+\-*\/&^,():%]))/y;
+    let p = 0;
+    while(p < expr.length){
+      re.lastIndex = p;
+      const m = re.exec(expr);
+      if(!m){ if(/^\s*$/.test(expr.slice(p))) break; throw new Error('token'); }
+      p = re.lastIndex;
+      if(m[1] !== undefined) T.push({t:'s', v:m[1].replace(/""/g, '"')});
+      else if(m[2] !== undefined) T.push({t:'n', v:parseFloat(m[2])});
+      else if(m[3] !== undefined) T.push({t:'i', v:m[3]});
+      else T.push({t:'p', v:m[4]});
+    }
+    let i = 0;
+    const peek = function(){ return T[i]; };
+    const nxt = function(){ return T[i++]; };
+    const isP = function(v){ return peek() && peek().t === 'p' && peek().v === v; };
+    const need = function(v){ if(!isP(v)) throw new Error('expected ' + v); i++; };
+    const cellVal = function(ref){
+      const q = self.parseRef(ref);
+      const v = self.evalCell(q.row, q.col, visiting, cache);
+      return (typeof v === 'string' && ERR_RE.test(v)) ? E(v) : v;
+    };
+    const rangeVal = function(a, b){
+      const x = self.parseRef(a), y = self.parseRef(b), out = [];
+      for(let r = Math.min(x.row, y.row); r <= Math.max(x.row, y.row); r++){
+        const row = [];
+        for(let c = Math.min(x.col, y.col); c <= Math.max(x.col, y.col); c++){
+          const v = self.evalCell(r, c, visiting, cache);
+          row.push((typeof v === 'string' && ERR_RE.test(v)) ? E(v) : v);
+        }
+        out.push(row);
+      }
+      return {arr: out};
+    };
+    function parseCmp(){
+      let l = parseCat();
+      while(peek() && peek().t === 'p' && ['=','<>','<','>','<=','>='].indexOf(peek().v) >= 0){ const op = nxt().v; l = fxCmp(l, parseCat(), op); }
+      return l;
+    }
+    function parseCat(){
+      let l = parseAdd();
+      while(isP('&')){ i++; const r = parseAdd(); const a = fxStr(l), b = fxStr(r); l = isErr(a) ? a : (isErr(b) ? b : a + b); }
+      return l;
+    }
+    function parseAdd(){ let l = parseMul(); while(isP('+') || isP('-')){ const op = nxt().v; l = fxArith(op, l, parseMul()); } return l; }
+    function parseMul(){ let l = parsePow(); while(isP('*') || isP('/')){ const op = nxt().v; l = fxArith(op, l, parsePow()); } return l; }
+    function parsePow(){ let l = parseUn(); while(isP('^')){ i++; l = fxArith('^', l, parseUn()); } return l; }
+    function parseUn(){
+      if(isP('-')){ i++; const n = fxNum(parseUn()); return isErr(n) ? n : -n; }
+      if(isP('+')){ i++; return parseUn(); }
+      return parsePost();
+    }
+    function parsePost(){ let v = parsePrim(); while(isP('%')){ i++; const n = fxNum(v); v = isErr(n) ? n : n/100; } return v; }
+    function parseArgs(){
+      const a = [];
+      if(isP(')')) return a;
+      for(;;){
+        if(isP(',') || isP(')')) a.push(undefined); else a.push(parseCmp());
+        if(isP(',')){ i++; continue; }
+        break;
+      }
+      return a;
+    }
+    function parsePrim(){
+      const t = nxt();
+      if(!t) throw new Error('end');
+      if(t.t === 'n' || t.t === 's') return t.v;
+      if(t.t === 'p' && t.v === '('){ const v = parseCmp(); need(')'); return v; }
+      if(t.t === 'i'){
+        if(isP('(')){
+          i++; const args = parseArgs(); need(')');
+          const fn = FXF[t.v.toUpperCase()];
+          return fn ? fn(args) : E('#NAME?');
+        }
+        const up = t.v.toUpperCase();
+        if(up === 'TRUE') return true;
+        if(up === 'FALSE') return false;
+        if(/^\$?[A-Za-z]{1,3}\$?\d+$/.test(t.v)){
+          if(isP(':')){ i++; const e = nxt(); if(!e || e.t !== 'i') throw new Error('range'); return rangeVal(t.v, e.v); }
+          return cellVal(t.v);
+        }
+        return E('#NAME?');
+      }
+      throw new Error('token ' + t.v);
+    }
+    const out = parseCmp();
+    if(i < T.length) throw new Error('trailing');
+    return out;
+  }
+}
+
+/* Menampilkan karakter tersembunyi: spasi di awal/akhir/ganda = ·, NBSP = ⍽, baris baru = ↵ */
+function visChars(s){
+  return String(s).replace(/\u00A0/g, '⍽').replace(/\n/g, '↵').replace(/^ +| +$| {2,}/g, function(m){ return new Array(m.length + 1).join('·'); });
+}
+
+/* ---- Lab: spreadsheet rumus untuk pembersihan teks (memakai UI spreadsheet asli) ---- */
+LAB.fx = function(el, ex){
+  const sh = shell(el, ex, 'cleaning_services');
+  const sheet = ex.buildSheet();
+  sheet.recalcAll();
+  if(ex.showSource){
+    const pn = mk('div','lab-panel');
+    pn.appendChild(mk('div','lab-cap','<b>Data sumber</b> · karakter tersembunyi ditampakkan: spasi di awal/akhir/ganda = <b>·</b> · spasi non-breaking = <b>⍽</b> · baris baru = <b>↵</b>'));
+    const list = mk('div','src-list');
+    ex.showSource.forEach(function(ref){
+      const q = sheet.parseRef(ref);
+      list.appendChild(mk('div','src-item','<span class="src-ref">'+ref+'</span><code>'+esc(visChars(sheet.getRaw(q.row, q.col)))+'</code>'));
+    });
+    pn.appendChild(list);
+    sh.body.appendChild(pn);
+  }
+  const mount = mk('div');
+  sh.body.appendChild(mount);
+  const grid = createSpreadsheet(mount, sheet, ex.editable, {formulaHint: ex.fx});
+  (ex.applyGroups || []).forEach(function(g){
+    const b = mk('button','btn secondary small','⤓ '+esc(g.label));
+    b.addEventListener('click', function(){ grid.applyDown(g.source, g.targets); });
+    sh.actions.appendChild(b);
+  });
+  addCheckBtn(sh, function(){
+    grid.commitPending();
+    sheet.recalcAll();
+    const checks = ex.expected.map(function(e){
+      const q = sheet.parseRef(e.ref), v = sheet.displayValue(q.row, q.col);
+      let good;
+      if(e.type === 'num') good = typeof v === 'number' && Math.abs(v - e.value) < 1e-6 * Math.max(1, Math.abs(e.value));
+      else good = typeof v === 'string' && v === String(e.value);
+      let shown = '';
+      if(!good){
+        shown = (typeof v === 'string' && v !== '' && !ERR_RE.test(v))
+          ? ' (hasilmu: "'+esc(visChars(v))+'", '+v.length+' karakter)'
+          : ' (hasilmu: '+esc(v === '' ? 'kosong' : String(v))+')';
+      }
+      return {ok: good, label: esc(e.label)+' — '+ok(good)+shown};
+    });
+    return {checks:checks, hint:'Klik sel hijau dan periksa rumus di bilah ƒx. Perhatikan spasi, tanda kutip, dan urutan fungsi.'};
+  });
+};
+
+/* ============================= LEVEL 16 — DATA ERROR CHALLENGE ============================= */
+const FB_CATS = [
+  ['','(pilih jenis masalah)'],
+  ['dup','Duplikat data'],
+  ['blank','Data kosong (missing)'],
+  ['texnum','Angka tersimpan sebagai teks'],
+  ['space','Spasi berlebih / karakter tersembunyi'],
+  ['case','Penulisan tidak konsisten (huruf / ejaan)'],
+  ['range','Nilai tidak masuk akal (outlier / di luar batas)'],
+  ['date','Format tanggal tidak konsisten'],
+  ['calc','Hasil hitung tidak cocok'],
+  ['fmt','Format kode / email tidak valid']
+];
+function catName(k){ return FB_CATS.filter(function(c){ return c[0] === k; })[0][1]; }
+function refOf(r, c){ return String.fromCharCode(65 + c) + (r + 1); } // r = baris lembar (1 = header)
+
+LAB.findbugs = function(el, ex){
+  const sh = shell(el, ex, 'bug_report');
+  const cols = ex.cols, rows = ex.rows;
+  const flags = {};           // "r,c" -> kategori (r = indeks baris lembar, header = 1)
+  let sel = null, showHidden = false;
+
+  const tools = mk('div','lab-panel');
+  const tRow = mk('div','lab-row');
+  const selLabel = mk('div','lab-cap','Klik sebuah sel pada tabel untuk memilihnya.');
+  tRow.appendChild(selLabel);
+  tools.appendChild(tRow);
+  const t2 = mk('div','lab-row');
+  const catSel = selectCtl(FB_CATS, '', function(){});
+  t2.appendChild(field('Jenis masalah', catSel));
+  const addBtn = mk('button','btn small','⚑ Tandai masalah');
+  const delBtn = mk('button','btn secondary small','Hapus tanda');
+  const btnWrap = mk('div','lab-field'); btnWrap.appendChild(mk('label',null,'&nbsp;'));
+  const bw = mk('div','action-row'); bw.style.marginTop = '0'; bw.appendChild(addBtn); bw.appendChild(delBtn); btnWrap.appendChild(bw);
+  t2.appendChild(btnWrap);
+  tools.appendChild(t2);
+  const t3 = mk('div','lab-row');
+  t3.appendChild(checkCtl('Tampilkan karakter tersembunyi (· spasi, ⍽ non-breaking)', false, function(v){ showHidden = v; draw(); }));
+  tools.appendChild(t3);
+  sh.body.appendChild(tools);
+
+  const tw = mk('div'); sh.body.appendChild(tw);
+  const list = mk('div','lab-panel'); sh.body.appendChild(list);
+
+  function cellText(v){
+    if(v === '' || v == null) return '';
+    if(typeof v === 'number') return fmtID(v, 2);
+    return showHidden ? visChars(v) : String(v);
+  }
+  function draw(){
+    let h = '<div class="lab-tbl-wrap"><table class="lab-tbl fb-tbl"><thead><tr class="lt-letters"><th class="rn"></th>';
+    cols.forEach(function(c, ci){ h += '<th class="lt-l">'+String.fromCharCode(65+ci)+'</th>'; });
+    h += '</tr><tr><th class="rn">1</th>';
+    cols.forEach(function(c){ h += '<th>'+esc(c)+'</th>'; });
+    h += '</tr></thead><tbody>';
+    rows.forEach(function(row, ri){
+      h += '<tr><td class="rn">'+(ri+2)+'</td>';
+      row.forEach(function(v, ci){
+        const key = (ri+2)+','+ci;
+        const cls = (typeof v === 'number' ? 'num ' : '') + 'fb-cell' + (flags[key] ? ' fb-flag' : '') + (sel === key ? ' fb-sel' : '');
+        h += '<td class="'+cls+'" data-k="'+key+'">'+esc(cellText(v))+'</td>';
+      });
+      h += '</tr>';
+    });
+    tw.innerHTML = h + '</tbody></table></div>';
+    // daftar temuan
+    const keys = Object.keys(flags);
+    let lh = '<div class="lab-cap"><b>Daftar temuanmu</b> · '+keys.length+' sel ditandai</div>';
+    if(!keys.length) lh += '<div class="lab-empty">Belum ada temuan. Pilih sel, tentukan jenis masalahnya, lalu klik Tandai.</div>';
+    else keys.sort().forEach(function(k){
+      const p = k.split(',');
+      lh += '<div class="fb-item"><b>'+refOf(+p[0]-1, +p[1])+'</b> — '+esc(catName(flags[k]))+'</div>';
+    });
+    list.innerHTML = lh;
+    if(sel){ const q = sel.split(','); selLabel.innerHTML = 'Sel terpilih: <b>'+refOf(+q[0]-1, +q[1])+'</b>'+(flags[sel] ? ' · sudah ditandai: '+esc(catName(flags[sel])) : ''); if(flags[sel]) catSel.value = flags[sel]; }
+    else selLabel.innerHTML = 'Klik sebuah sel pada tabel untuk memilihnya.';
+  }
+  tw.addEventListener('click', function(e){
+    const td = e.target.closest ? e.target.closest('td.fb-cell') : null;
+    if(!td) return;
+    sel = td.getAttribute('data-k');
+    catSel.value = flags[sel] || '';
+    draw();
+  });
+  addBtn.addEventListener('click', function(){
+    if(!sel){ selLabel.innerHTML = '<b>Pilih sel dulu</b> dengan mengkliknya pada tabel.'; return; }
+    if(!catSel.value){ selLabel.innerHTML = 'Sel <b>'+refOf(+sel.split(',')[0]-1, +sel.split(',')[1])+'</b> dipilih — <b>tentukan jenis masalahnya</b> dulu.'; return; }
+    flags[sel] = catSel.value;
+    draw();
+  });
+  delBtn.addEventListener('click', function(){ if(sel && flags[sel]){ delete flags[sel]; catSel.value = ''; draw(); } });
+  draw();
+
+  function probFor(key){
+    const p = key.split(','), r = +p[0], c = +p[1], ref = refOf(r-1, c);
+    for(let i = 0; i < ex.problems.length; i++){
+      const pr = ex.problems[i];
+      if((pr.cells && pr.cells.indexOf(ref) >= 0) || (pr.rows && pr.rows.indexOf(r) >= 0)) return pr;
+    }
+    return null;
+  }
+  addCheckBtn(sh, function(){
+    const found = {}, checks = [];
+    let falseAlarm = 0;
+    Object.keys(flags).sort().forEach(function(k){
+      const p = k.split(','), ref = refOf(+p[0]-1, +p[1]), pr = probFor(k), cat = flags[k];
+      if(!pr){ falseAlarm++; checks.push({ok:false, label:'Sel '+ref+' ('+esc(catName(cat))+') — tidak ada masalah data di sini; nilainya wajar'}); return; }
+      if(pr.cat !== cat){ checks.push({ok:false, label:'Sel '+ref+' — memang ada masalah di sini, tetapi jenisnya bukan "'+esc(catName(cat))+'"'}); return; }
+      if(found[pr.id]){ checks.push({ok:true, label:'Sel '+ref+' — masalah yang sama sudah kamu temukan'}); return; }
+      found[pr.id] = true;
+      checks.push({ok:true, label:'Sel '+ref+' — Tepat ('+esc(catName(cat))+'). '+esc(pr.note)});
+    });
+    const nFound = Object.keys(found).length;
+    const need = ex.minFound, maxFa = ex.maxFalse;
+    const okFound = nFound >= need, okFa = falseAlarm <= maxFa;
+    checks.push({ok:okFound, label:'Masalah unik yang ditemukan: '+nFound+' dari '+ex.problems.length+' (minimal '+need+') — '+ok(okFound)});
+    checks.push({ok:okFa, label:'Salah tandai (bukan masalah): '+falseAlarm+' (maksimal '+maxFa+') — '+ok(okFa)});
+    if(nFound < ex.problems.length) checks.push({ok:true, label:'Masih ada '+(ex.problems.length - nFound)+' masalah lain yang belum kamu temukan. Coba nyalakan "Tampilkan karakter tersembunyi" dan bandingkan tiap kolom.'});
+    return {checks:checks, pass: okFound && okFa, hint:'Temukan minimal '+need+' masalah dengan jenis yang tepat, dan jangan asal menandai sel yang sebenarnya wajar.'};
+  });
+};
+
+/* ---- Lab: pilihan ganda berjenjang (dipakai Level 18) ---- */
+LAB.choice = function(el, ex){
+  const sh = shell(el, ex, 'fact_check');
+  const picks = ex.questions.map(function(){ return null; });
+  ex.questions.forEach(function(q, qi){
+    const box = mk('div','lab-panel');
+    box.appendChild(mk('div','lab-cap','<b>Pertanyaan '+(qi+1)+'</b> · '+esc(q.q)));
+    const col = mk('div','opt-col');
+    q.opts.forEach(function(o, oi){
+      const b = mk('button','type-chip opt-btn', esc(o));
+      b.type = 'button';
+      b.addEventListener('click', function(){
+        picks[qi] = oi;
+        Array.prototype.forEach.call(col.children, function(x){ x.classList.remove('active'); });
+        b.classList.add('active');
+      });
+      col.appendChild(b);
+    });
+    box.appendChild(col);
+    sh.body.appendChild(box);
+  });
+  addCheckBtn(sh, function(){
+    return {
+      checks: ex.questions.map(function(q, qi){
+        const good = picks[qi] === q.correct;
+        return {ok:good, label:'Pertanyaan '+(qi+1)+' — '+(good ? 'Tepat. '+esc(q.why) : (picks[qi] === null ? 'Belum dipilih' : 'Belum tepat'))};
+      }),
+      hint:'Pilih jawaban yang spesifik, berangka, dan bisa ditelusuri kembali ke data.'
+    };
+  });
+};
+
+/* ============================= LEVEL 18 — BUSINESS ANALYTICS ============================= */
+const BA = [];
+const BA_M = ['Jan','Feb','Mar','Apr','Mei','Jun'];
+function baAdd(region, product, customer, qtys, prices){
+  qtys.forEach(function(q, i){ BA.push({m:i+1, region:region, product:product, customer:customer, qty:q, price:(prices instanceof Array ? prices[i] : prices)}); });
+}
+baAdd('Jawa Barat','Laptop','PT Maju',[6,6,6,6,6,6],15);
+baAdd('Jawa Barat','Monitor','PT Maju',[12,12,12,12,12,12],3);
+baAdd('Jawa Barat','Printer','CV Sentosa',[20,20,20,20,20,20],2.5);
+baAdd('Jawa Barat','Monitor','CV Sentosa',[10,10,10,10,10,10],3);
+baAdd('Jawa Timur','Laptop','PT Nusantara',[12,12,12,5,5,5],[15,15,15,18,18,18]);
+baAdd('Jawa Timur','Laptop','Toko Abadi',[5,5,5,5,5,5],15);
+baAdd('Jawa Timur','Monitor','Toko Abadi',[10,10,10,10,10,10],3);
+baAdd('Jawa Timur','Printer','UD Sejahtera',[16,16,16,16,16,16],2.5);
+baAdd('Jawa Tengah','Laptop','PT Bintang',[4,4,4,4,4,4],15);
+baAdd('Jawa Tengah','Monitor','PT Bintang',[9,9,9,9,9,9],3);
+baAdd('Jawa Tengah','Printer','CV Karya',[12,12,12,11,11,11],2.5);
+baAdd('Sumatera','Laptop','PT Sumatera Jaya',[5,5,5,5,5,5],15);
+baAdd('Sumatera','Monitor','PT Sumatera Jaya',[8,8,8,9,9,9],3);
+
+function baSum(rows){ return rows.reduce(function(s, r){ return s + r.qty*r.price; }, 0); }
+function baFilter(f){ return BA.filter(function(r){ return (!f.region || r.region === f.region) && (!f.product || r.product === f.product) && (!f.customer || r.customer === f.customer); }); }
+function baBreak(dim, f){
+  const rows = baFilter(f);
+  const names = Array.from(new Set(rows.map(function(r){ return r[dim]; }))).sort(function(a, b){ return a.localeCompare(b, 'id'); });
+  const tot1 = baSum(rows.filter(function(r){ return r.m <= 3; })), tot2 = baSum(rows.filter(function(r){ return r.m > 3; })), dTot = tot2 - tot1;
+  return {tot1:tot1, tot2:tot2, dTot:dTot, rows:names.map(function(n){
+    const g = rows.filter(function(r){ return r[dim] === n; });
+    const q1 = baSum(g.filter(function(r){ return r.m <= 3; })), q2 = baSum(g.filter(function(r){ return r.m > 3; })), d = q2 - q1;
+    return {name:n, q1:q1, q2:q2, d:d, pct: q1 ? d/q1*100 : 0, share: dTot ? d/dTot*100 : 0};
+  })};
+}
+function baMonthly(f){ return BA_M.map(function(_, i){ return baSum(baFilter(f).filter(function(r){ return r.m === i+1; })); }); }
+function f1(x){ return x.toFixed(1).replace('.', ','); }
+function sgn(x){ return (x > 0 ? '+' : (x < 0 ? '−' : '')) + f1(Math.abs(x)); }
+
+LAB.drill = function(el, ex){
+  const sh = shell(el, ex, 'travel_explore');
+  const T = baBreak('region', {});
+  const STEPS = [{k:'region', dim:'region', name:'Region'}, {k:'product', dim:'product', name:'Produk'}, {k:'customer', dim:'customer', name:'Customer'}, {k:'time', name:'Waktu'}, {k:'cause', name:'Penyebab'}];
+  const f = {};
+  let step = 0, sel = null;
+  const doneLines = [];
+
+  const kpi = mk('div','lab-panel');
+  kpi.innerHTML = '<div class="lab-cap"><b>Masalah dari manajemen</b> · revenue turun. Cari akar masalahnya dengan menelusuri satu dimensi pada satu waktu.</div>'+
+    '<div class="kpi-row"><div class="kpi"><span>Q1 (Jan–Mar)</span><b>Rp'+f1(T.tot1)+' jt</b></div><div class="kpi"><span>Q2 (Apr–Jun)</span><b>Rp'+f1(T.tot2)+' jt</b></div>'+
+    '<div class="kpi bad"><span>Perubahan</span><b>'+sgn(T.dTot)+' jt ('+sgn(T.dTot/T.tot1*100)+'%)</b></div></div>';
+  sh.body.appendChild(kpi);
+  const prog = mk('div','chip-row'); sh.body.appendChild(prog);
+  const doneBox = mk('div'); sh.body.appendChild(doneBox);
+  const stepBox = mk('div','lab-panel'); sh.body.appendChild(stepBox);
+  const msg = mk('div'); sh.body.appendChild(msg);
+
+  function drawProg(){
+    prog.innerHTML = STEPS.map(function(s, i){ return '<span class="step-chip '+(i < step ? 'past' : (i === step ? 'active' : ''))+'">'+(i+1)+'. '+s.name+'</span>'; }).join('');
+    doneBox.innerHTML = doneLines.map(function(l){ return '<div class="check-row ok"><span class="ico">✓</span><span>'+l+'</span></div>'; }).join('');
+  }
+  function say(ok_, html){ msg.innerHTML = '<div class="feedback-box '+(ok_ ? 'success' : 'fail')+'">'+html+'</div>'; }
+  function confirmBtn(fn){
+    const b = mk('button','btn small','Pilih & lanjut');
+    b.addEventListener('click', fn);
+    const w = mk('div','action-row'); w.appendChild(b); return w;
+  }
+  function render(){
+    msg.innerHTML = ''; sel = null; drawProg(); stepBox.innerHTML = '';
+    if(step >= STEPS.length){
+      stepBox.style.display = 'none';
+      showFeedback(msg, [{ok:true, label:'Investigasi selesai: akar masalah ditemukan dan didukung bukti.'}], null);
+      return;
+    }
+    const s = STEPS[step];
+    if(s.dim){
+      const B = baBreak(s.dim, f);
+      const ctx = Object.keys(f).length ? ' · fokus: '+Object.keys(f).map(function(k){ return f[k]; }).join(' › ') : ' · seluruh data';
+      stepBox.appendChild(mk('div','lab-cap','<b>Langkah '+(step+1)+' — '+s.name+' mana?</b>'+esc(ctx)+'<br>Bandingkan kolom <b>Δ</b> dan <b>Kontribusi</b>, lalu pilih penyumbang terbesar penurunan.'));
+      let h = '<div class="lab-tbl-wrap"><table class="lab-tbl dr-tbl"><thead><tr><th>'+s.name+'</th><th class="num">Q1</th><th class="num">Q2</th><th class="num">Δ (Rp jt)</th><th class="num">Δ %</th><th class="num">Kontribusi ke penurunan</th></tr></thead><tbody>';
+      B.rows.forEach(function(r){
+        h += '<tr class="dr-row" data-n="'+esc(r.name)+'"><td>'+esc(r.name)+'</td><td class="num">'+f1(r.q1)+'</td><td class="num">'+f1(r.q2)+'</td><td class="num">'+sgn(r.d)+'</td><td class="num">'+sgn(r.pct)+'%</td><td class="num">'+f1(r.share)+'%</td></tr>';
+      });
+      h += '<tr class="tot"><td>Total</td><td class="num">'+f1(B.tot1)+'</td><td class="num">'+f1(B.tot2)+'</td><td class="num">'+sgn(B.dTot)+'</td><td class="num">'+sgn(B.dTot/B.tot1*100)+'%</td><td class="num">100,0%</td></tr></tbody></table></div>';
+      const tw = mk('div'); tw.innerHTML = h; stepBox.appendChild(tw);
+      tw.addEventListener('click', function(e){
+        const tr = e.target.closest ? e.target.closest('tr.dr-row') : null; if(!tr) return;
+        Array.prototype.forEach.call(tw.querySelectorAll('tr.dr-row'), function(x){ x.classList.remove('dr-sel'); });
+        tr.classList.add('dr-sel'); sel = tr.getAttribute('data-n');
+      });
+      stepBox.appendChild(confirmBtn(function(){
+        if(!sel){ say(false, 'Pilih satu baris dulu dengan mengkliknya.'); return; }
+        const worst = B.rows.slice().sort(function(a, b){ return a.d - b.d; })[0];
+        if(sel !== worst.name){
+          say(false, '<b>'+esc(sel)+'</b> bukan penyumbang terbesar. Urutkan berdasarkan selisih rupiah (<b>Δ</b>) dan lihat <b>Kontribusi</b> — persentase turun yang besar belum tentu berdampak besar bila nilai dasarnya kecil.');
+          return;
+        }
+        f[s.k] = sel;
+        doneLines.push(s.name+': <b>'+esc(sel)+'</b> — Δ '+sgn(worst.d)+' jt, menyumbang '+f1(worst.share)+'% dari penurunan');
+        step++; render();
+      }));
+    } else if(s.k === 'time'){
+      const mon = baMonthly(f);
+      stepBox.appendChild(mk('div','lab-cap','<b>Langkah 4 — Sejak kapan?</b> · pendapatan bulanan '+esc([f.customer, f.product, f.region].join(' › '))+'. Pilih bulan ketika penurunan mulai terjadi.'));
+      const cb = mk('div','chart-box');
+      cb.innerHTML = chartSvg({type:'column', categories:BA_M, series:[{name:'Revenue', values:mon}], title:'Revenue '+f.customer+' (Rp juta)', dataLabels:true, height:250});
+      stepBox.appendChild(cb);
+      const chips = mk('div','chip-row'); chips.style.marginTop = '10px';
+      BA_M.forEach(function(mn, i){
+        const b = mk('button','type-chip', mn); b.type = 'button';
+        b.addEventListener('click', function(){ sel = i; Array.prototype.forEach.call(chips.children, function(x){ x.classList.remove('active'); }); b.classList.add('active'); });
+        chips.appendChild(b);
+      });
+      stepBox.appendChild(chips);
+      stepBox.appendChild(confirmBtn(function(){
+        if(sel === null){ say(false, 'Pilih satu bulan dulu.'); return; }
+        let first = 1, worstDrop = 0;
+        for(let i = 1; i < mon.length; i++){ const dr = (mon[i] - mon[i-1]) / mon[i-1]; if(dr < worstDrop){ worstDrop = dr; first = i; } }
+        if(sel !== first){ say(false, 'Bukan bulan itu. Cari bulan pertama ketika revenue turun tajam dibanding bulan sebelumnya (perubahan bulan ke bulan / MoM).'); return; }
+        f.month = BA_M[first];
+        doneLines.push('Waktu: penurunan dimulai <b>'+BA_M[first]+'</b> — revenue '+f.customer+' turun '+f1(Math.abs(worstDrop*100))+'% dari bulan sebelumnya');
+        step++; render();
+      }));
+    } else {
+      stepBox.appendChild(mk('div','lab-cap','<b>Langkah 5 — Apa penyebabnya?</b> · uji hipotesis dengan bukti di bawah, lalu pilih yang paling didukung data.'));
+      const ev = mk('div','ev-grid');
+      const rc = BA_M.map(function(_, i){ return {key:'m'+i, label:BA_M[i], num:true}; });
+      const lapReg = ['Jawa Barat','Jawa Tengah','Jawa Timur','Sumatera'].map(function(rg){ const o = {w:rg}; BA_M.forEach(function(_, i){ o['m'+i] = baSum(BA.filter(function(r){ return r.product === 'Laptop' && r.region === rg && r.m === i+1; })); }); return o; });
+      const nus = BA.filter(function(r){ return r.customer === f.customer && r.product === f.product; });
+      const abd = BA.filter(function(r){ return r.customer === 'Toko Abadi' && r.product === 'Laptop'; });
+      const mkC = function(rows){ return BA_M.map(function(mn, i){ const r = rows[i]; return {b:mn, qty:r.qty, price:r.price, rev:r.qty*r.price}; }); };
+      const cQ = [{key:'b',label:'Bulan'},{key:'qty',label:'Qty',num:true},{key:'price',label:'Harga/unit',num:true},{key:'rev',label:'Revenue',num:true}];
+      const dupCnt = BA.length - Array.from(new Set(BA.map(function(r){ return [r.m, r.region, r.product, r.customer].join('|'); }))).length;
+      const blankCnt = BA.filter(function(r){ return !r.qty || !r.price; }).length;
+      const evT = function(title, html){ const d = mk('div','ev-box'); d.innerHTML = '<div class="lab-cap"><b>'+title+'</b></div>'+html; ev.appendChild(d); };
+      evT('Tabel 1 · Revenue Laptop per wilayah (Rp jt)', tableHtml([{key:'w',label:'Wilayah'}].concat(rc), lapReg, {noRn:true}));
+      evT('Tabel 2 · '+esc(f.customer)+' (Laptop)', tableHtml(cQ, mkC(nus), {noRn:true}));
+      evT('Tabel 3 · Toko Abadi (Laptop, Jawa Timur)', tableHtml(cQ, mkC(abd), {noRn:true}));
+      evT('Tabel 4 · Cek kualitas data', '<div class="lab-empty" style="text-align:left">Baris duplikat: <b>'+dupCnt+'</b><br>Qty / harga kosong atau nol: <b>'+blankCnt+'</b><br>Jumlah baris data: <b>'+BA.length+'</b></div>');
+      stepBox.appendChild(ev);
+      const H = [
+        {t:'Permintaan Laptop turun di seluruh wilayah (tren pasar).', ok:false, why:'Tabel 1: Laptop di wilayah lain stabil; hanya Jawa Timur yang turun. Ini bukan tren pasar.'},
+        {t:f.customer+' memangkas pembelian setelah kenaikan harga khusus akunnya di April (harga 15 → 18 juta/unit, qty 12 → 5).', ok:true, why:''},
+        {t:'Ada data ganda atau salah input di Q1 yang menggelembungkan angka.', ok:false, why:'Tabel 4: tidak ada duplikat maupun data kosong, dan angka Q1 konsisten dengan bulan lainnya.'},
+        {t:'Pelanggan Laptop lain di Jawa Timur ikut berhenti membeli.', ok:false, why:'Tabel 3: Toko Abadi stabil di qty dan harga yang sama.'}
+      ];
+      const col = mk('div','opt-col'); col.style.marginTop = '12px';
+      H.forEach(function(h, i){
+        const b = mk('button','type-chip opt-btn', esc(h.t)); b.type = 'button';
+        b.addEventListener('click', function(){ sel = i; Array.prototype.forEach.call(col.children, function(x){ x.classList.remove('active'); }); b.classList.add('active'); });
+        col.appendChild(b);
+      });
+      stepBox.appendChild(col);
+      stepBox.appendChild(confirmBtn(function(){
+        if(sel === null){ say(false, 'Pilih satu hipotesis dulu.'); return; }
+        if(!H[sel].ok){ say(false, '<b>Hipotesis ditolak oleh data.</b> '+esc(H[sel].why)); return; }
+        doneLines.push('Penyebab: <b>'+esc(f.customer)+'</b> memangkas order setelah harga naik 15 → 18 juta — didukung Tabel 2, dan dibantah tabel lain untuk hipotesis alternatif');
+        step++; render();
+      }));
+    }
+  }
+  render();
+};
+
+/* ============================= DEFINISI LEVEL 16–18 ============================= */
+function mkFx(headers, rows){
+  const s = new CleanSheet(rows.length + 1, headers.length);
+  headers.forEach(function(h, c){ s.setRaw(0, c, h); });
+  rows.forEach(function(row, r){ row.forEach(function(v, c){ if(v !== null && v !== undefined) s.setRaw(r+1, c, v); }); });
+  return s;
+}
+const NB = '\u00A0';
+
+const T18 = baBreak('region', {});
+const INSIGHT_GOOD = 'Revenue Q2 turun '+f1(Math.abs(T18.dTot/T18.tot1*100))+'% (Rp'+f1(Math.abs(T18.dTot))+' juta) dibanding Q1. Seluruh penurunan berasal dari PT Nusantara (Laptop, Jawa Timur): order turun dari 12 ke 5 unit per bulan sejak April, tepat setelah harga akun ini naik dari Rp15 juta ke Rp18 juta per unit.';
+
+NEW_LEVELS.push(
+{
+  id:16, title:'Data Error Challenge', tagline:'Temukan minimal 5 masalah data — bukan sekadar menulis formula',
+  narrative:[
+    {who:'client', name:'Pak Andra (Kepala Kualitas Data)', text:'Kami baru menggabungkan data dari beberapa cabang. Sebelum dipakai untuk laporan direksi, saya mau tahu satu hal: apa saja yang salah dengan data ini? Saya tidak butuh rumus dulu — saya butuh temuan.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Analis data yang baik pertama-tama curiga. Sebelum menulis rumus, temukan masalahnya: duplikat, kosong, angka jadi teks, spasi tersembunyi, penulisan tidak konsisten, dan nilai yang tidak masuk akal.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Jadi tugas saya menemukan dan mengklasifikasikan masalah dulu, baru memperbaikinya. Saya periksa tabelnya sel demi sel.'}
+  ],
+  concepts:[
+    {title:'Mindset: Curiga Dulu, Hitung Kemudian', formula:'Temukan → Klasifikasi → Verifikasi → Baru perbaiki', desc:'Rumus yang benar di atas data yang salah tetap menghasilkan laporan yang salah. Pekerjaan Data Analyst sering dimulai dari pertanyaan: apa yang tidak beres pada data ini?'},
+    {title:'Sembilan Masalah Data yang Paling Umum', formula:'Duplikat · Kosong · Angka-teks · Spasi · Tidak konsisten · Outlier · Tanggal · Hasil hitung tidak cocok · Format', desc:'Kesembilan jenis ini menjelaskan sebagian besar data berantakan di dunia kerja. Kamu akan mengklasifikasikan tiap temuan, karena jenis masalah menentukan cara memperbaikinya.'},
+    {title:'Tanda-tanda Visual di Excel', formula:'Angka asli rata kanan · teks rata kiri · segitiga hijau kecil · SUM hasilnya 0', desc:'Angka yang tersimpan sebagai teks biasanya rata kiri dan diabaikan SUM. Ejaan yang bervariasi terlihat di daftar dropdown Filter. Spasi tersembunyi tidak terlihat, jadi perlu alat bantu seperti LEN.'},
+    {title:'Alat Bantu Deteksi', formula:'=LEN(A2)   =COUNTIF(A:A,A2)>1   =ISNUMBER(D2)   Filter · Conditional Formatting · Pivot', desc:'LEN membongkar spasi tersembunyi, COUNTIF atau Conditional Formatting menandai duplikat, ISNUMBER membedakan angka asli dari teks, MIN/MAX membongkar outlier, dan Pivot Table memperlihatkan kategori yang ejaannya berbeda.'},
+    {title:'Verifikasi Sebelum Mengubah', formula:'Simpan salinan data mentah · catat perubahan · konfirmasi ke sumber', desc:'Jangan langsung menghapus outlier atau mengisi data kosong. Nilai ekstrem bisa saja benar. Tandai dulu, verifikasi ke pemilik data, dan catat setiap perubahan agar bisa ditelusuri.'}
+  ],
+  exercises:[
+    {
+      id:'l16e1', type:'findbugs', title:'Tantangan 1 — Data Transaksi Penjualan',
+      instruction:'Tabel transaksi ini akan dipakai untuk laporan omzet. Temukan <b>minimal 5 masalah data</b>: klik sel yang bermasalah, pilih jenis masalahnya, lalu klik Tandai. Jangan asal menandai — sel yang wajar tidak boleh ikut dituduh.',
+      hint:'Angka asli rata kanan, teks rata kiri. Nyalakan "Tampilkan karakter tersembunyi" untuk melihat spasi. Cek juga: Qty × Harga = Total? Ada baris kembar? Ada nilai yang terlalu ekstrem?',
+      minFound:5, maxFalse:2,
+      cols:['ID','Tanggal','Pelanggan','Wilayah','Qty','Harga','Total'],
+      rows:[
+        ['TRX001','2026-03-02','Andi Wijaya','Jawa Barat',3,150000,450000],
+        ['TRX002','2026-03-03','Budi Santoso','Jawa Timur',2,200000,400000],
+        ['TRX003','2026-03-03','Citra Lestari','Jawa Barat',5,120000,600000],
+        ['TRX004','4 Maret 2026','Dedi Kurniawan','Jawa Tengah',3,100000,300000],
+        ['TRX005','2026-03-05','Eka Putri','jawa barat',4,150000,600000],
+        ['TRX003','2026-03-03','Citra Lestari','Jawa Barat',5,120000,600000],
+        ['TRX007','2026-03-06','Fajar Nugroho','Jawa Timur',-2,180000,-360000],
+        ['TRX008','2026-03-07','Gita Maharani','Jawa Tengah',4,200000,700000],
+        ['TRX009','2026-03-08','','Jawa Barat',1,250000,250000],
+        ['TRX010','2026-03-09','Hadi Pratama','Jawa Tengah','3',100000,300000],
+        ['TRX011','2026-03-09','Intan Permata ','Jawa Barat',2,175000,350000],
+        ['TRX012','2026-03-10','Joko Susilo','Jawa Timur',1,15000000,15000000]
+      ],
+      problems:[
+        {id:'a', cat:'date', cells:['B5'], note:'Tanggal "4 Maret 2026" berupa teks dengan format berbeda dari baris lain (yyyy-mm-dd), sehingga tidak bisa diurutkan atau dihitung sebagai tanggal.'},
+        {id:'b', cat:'case', cells:['D6'], note:'"jawa barat" ditulis huruf kecil, berbeda dari "Jawa Barat" — penulisan tidak seragam merusak pencarian dan pengelompokan eksak.'},
+        {id:'c', cat:'dup', rows:[4,7], note:'TRX003 muncul dua kali dengan isi identik, sehingga omzet terhitung ganda.'},
+        {id:'d', cat:'range', cells:['E8','G8'], note:'Qty −2 dan total negatif tidak wajar untuk penjualan; jika itu retur, seharusnya dicatat terpisah.'},
+        {id:'e', cat:'calc', cells:['G9'], note:'Total 700.000, padahal 4 × 200.000 = 800.000.'},
+        {id:'f', cat:'blank', cells:['C10'], note:'Nama pelanggan kosong sehingga transaksi tidak bisa ditelusuri.'},
+        {id:'g', cat:'texnum', cells:['E11'], note:'Qty "3" rata kiri berarti tersimpan sebagai teks; SUM dan AVERAGE akan mengabaikannya.'},
+        {id:'h', cat:'space', cells:['C12'], note:'"Intan Permata " memiliki spasi di belakang, sehingga tidak cocok dengan "Intan Permata" pada pencarian eksak.'},
+        {id:'i', cat:'range', cells:['F13','G13'], note:'Harga 15.000.000 untuk 1 unit adalah 100× harga lain; kemungkinan salah ketik dari 150.000.'}
+      ]
+    },
+    {
+      id:'l16e2', type:'findbugs', title:'Tantangan 2 — Data Karyawan',
+      instruction:'Sekarang data HR. Sekali lagi temukan <b>minimal 5 masalah data</b> dan tentukan jenisnya. Kali ini beberapa masalah lebih halus, jadi periksa tiap kolom dengan teliti.',
+      hint:'Periksa rentang umur yang wajar, format email, tanggal yang tidak mungkin terjadi, ejaan nama departemen, dan orang yang sama tercatat dua kali dengan ID berbeda.',
+      minFound:5, maxFalse:2,
+      cols:['ID','Nama','Departemen','Umur','Gaji','Email','Tanggal Masuk'],
+      rows:[
+        ['E001','Rina Amalia','HR',28,7500000,'rina@mail.com','2021-01-10'],
+        ['E002','Budi Hartono','IT',34,12000000,'budi@mail.com','2019-06-01'],
+        ['E003','Sari Dewi','Finance',250,9500000,'sari@mail.com','2020-08-17'],
+        ['E004','Joko Susilo','IT',41,12500000,'joko#mail.com','2018-02-20'],
+        ['E005','Lia Marlina','Finance',29,9000000,'lia@mail.com','2035-02-01'],
+        ['E006','Tono Wijaya','Marketing',37,'Rp 8.500.000','tono@mail.com','2017-11-05'],
+        ['E007','Maya Sari','Markting',26,8000000,'maya@mail.com','2022-04-12'],
+        ['E008','Budi Hartono','IT',34,12000000,'budi@mail.com','2019-06-01'],
+        ['E009','Ani Rahma','HR',31,'','ani@mail.com','2022-03-15'],
+        ['E010','Doni Prakoso','IT',27,500000000,'doni@mail.com','2023-07-30']
+      ],
+      problems:[
+        {id:'a', cat:'range', cells:['D4'], note:'Umur 250 tahun mustahil; kemungkinan salah ketik dari 25.'},
+        {id:'b', cat:'fmt', cells:['F5'], note:'"joko#mail.com" tidak memiliki @ sehingga bukan email yang valid.'},
+        {id:'c', cat:'range', cells:['G6'], note:'Tanggal masuk tahun 2035 ada di masa depan.'},
+        {id:'d', cat:'texnum', cells:['E7'], note:'Gaji "Rp 8.500.000" berupa teks (rata kiri, ada awalan Rp) sehingga tidak ikut terjumlah.'},
+        {id:'e', cat:'case', cells:['C8'], note:'"Markting" adalah salah eja dari "Marketing"; akan terhitung sebagai departemen terpisah.'},
+        {id:'f', cat:'dup', rows:[3,9], note:'Budi Hartono (IT, umur 34, email sama) tercatat dua kali dengan ID berbeda, yaitu E002 dan E008.'},
+        {id:'g', cat:'blank', cells:['E10'], note:'Gaji Ani Rahma kosong.'},
+        {id:'h', cat:'range', cells:['E11'], note:'Gaji 500.000.000 per bulan jauh di luar kewajaran; kemungkinan kelebihan nol.'}
+      ]
+    }
+  ],
+  quiz:[
+    {q:'Angka pada sebuah kolom tampak rata KIRI dan SUM kolom itu hasilnya 0. Kemungkinan terbesar?', opts:['Formula SUM rusak','Kolom disembunyikan','Angka tersimpan sebagai teks','File belum disimpan'], correct:2, explain:'Angka asli rata kanan. Angka yang tersimpan sebagai teks rata kiri dan diabaikan oleh SUM, AVERAGE, dan COUNT.'},
+    {q:'Dua baris punya semua isi sama, termasuk ID transaksinya. Jenis masalah datanya?', opts:['Outlier','Duplikat data','Data kosong','Format tanggal'], correct:1, explain:'Baris identik menyebabkan omzet terhitung ganda. Bisa dideteksi dengan COUNTIF atau Conditional Formatting duplikat.'},
+    {q:'Harga satu barang 15.000.000, padahal barang sejenis 150.000. Langkah paling tepat?', opts:['Langsung hapus barisnya','Ganti dengan rata-rata tanpa memberi tahu siapa pun','Abaikan karena hanya satu baris','Tandai sebagai outlier lalu verifikasi ke sumber sebelum memperbaiki'], correct:3, explain:'Outlier bisa salah ketik, bisa juga benar. Verifikasi dulu ke pemilik data, lalu catat perubahannya.'},
+    {q:'Nama "Budi" terlihat identik di dua sel, tetapi pencarian eksak menganggapnya berbeda. Penyebab paling mungkin?', opts:['Spasi berlebih atau karakter tersembunyi','Font berbeda','Warna sel berbeda','Sel dikunci'], correct:0, explain:'Spasi di akhir teks tidak terlihat tetapi membuat dua teks berbeda. LEN(A2) akan membongkarnya.'},
+    {q:'Apa yang sebaiknya dilakukan PERTAMA saat menerima data mentah dari banyak sumber?', opts:['Langsung membuat laporan','Menghapus semua sel kosong','Menyimpan salinan data mentah dan memeriksa masalahnya dulu','Mengurutkan kolom pertama'], correct:2, explain:'Salinan data mentah menjaga jejak audit. Baru setelah masalah ditemukan dan diverifikasi, data diperbaiki.'}
   ]
-});
+},
+{
+  id:17, title:'Advanced Data Cleaning', tagline:'TRIM, CLEAN, SUBSTITUTE, REPLACE, TEXTBEFORE/AFTER/SPLIT, VALUE, NUMBERVALUE, DATEVALUE, ISNUMBER, ISTEXT, IFERROR',
+  narrative:[
+    {who:'client', name:'Bu Wulan (Manajer Operasi Data)', text:'Kami sudah menemukan masalah datanya. Sekarang tolong bersihkan: nama dengan spasi aneh, nomor HP tidak seragam, nominal berupa teks, tanggal ditulis macam-macam, dan satu sel berisi banyak informasi sekaligus.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Ini pekerjaan yang paling sering memakan waktu analis. Kuncinya memilih fungsi yang tepat untuk tiap jenis masalah, lalu membangun rangkaian fungsi kecil yang bisa disalin ke seluruh baris.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Jadi satu masalah, satu fungsi, lalu digabungkan. Saya mulai dari spasi dulu.'}
+  ],
+  concepts:[
+    {title:'Merapikan Spasi & Karakter Tersembunyi', formula:'=TRIM(A2)   =CLEAN(A2)   =SUBSTITUTE(A2,CHAR(160)," ")', desc:'TRIM membuang spasi di awal/akhir dan mengecilkan spasi ganda, tetapi hanya untuk spasi biasa. Data hasil salin dari web sering berisi spasi non-breaking (CHAR 160) yang tidak tersentuh TRIM. CLEAN menghapus karakter tak tercetak, termasuk baris baru (yang bisa menempelkan dua kata).'},
+    {title:'Mengganti Teks: SUBSTITUTE vs REPLACE', formula:'=SUBSTITUTE(A2,"-","")   |   =REPLACE(A2,1,1,"+62")', desc:'SUBSTITUTE mengganti berdasarkan ISI teks (semua kemunculan atau kemunculan ke-n). REPLACE mengganti berdasarkan POSISI karakter (mulai karakter ke berapa, berapa panjangnya).'},
+    {title:'Memotong Teks: TEXTBEFORE, TEXTAFTER, TEXTSPLIT', formula:'=TEXTBEFORE(A2,"@")   =TEXTAFTER(A2,"@")   =TEXTSPLIT(A2,"|")', desc:'Tersedia di Excel 365/2024. TEXTBEFORE dan TEXTAFTER mengambil bagian sebelum/sesudah pembatas; angka instance negatif menghitung dari belakang. TEXTSPLIT memecah satu sel menjadi banyak sel (spill). Hasilnya selalu berupa teks. Excel lama memakai LEFT, MID, dan FIND.'},
+    {title:'Teks → Angka & Tanggal', formula:'=VALUE("1250")   =NUMBERVALUE("1.250,50",",",".")   =DATEVALUE("2026-03-15")', desc:'VALUE mengikuti pengaturan regional komputer. NUMBERVALUE memungkinkan kamu menentukan sendiri pemisah desimal dan ribuan, jadi aman untuk format Indonesia. DATEVALUE menghasilkan nomor seri tanggal; format yyyy-mm-dd paling aman lintas pengaturan. Modul ini memakai pemisah desimal titik pada VALUE dan format dd/mm/yyyy pada DATEVALUE.'},
+    {title:'Menguji Tipe Data', formula:'=ISNUMBER(A2)   =ISTEXT(A2)', desc:'ISNUMBER bernilai TRUE hanya untuk angka asli. Angka yang tersimpan sebagai teks membuatnya FALSE, sehingga cocok untuk mendeteksi masalah sebelum memperbaikinya.'},
+    {title:'Menangani Error: IFERROR', formula:'=IFERROR(VALUE(A2),0)', desc:'IFERROR mengganti error dengan nilai cadangan. Gunakan pada langkah yang memang boleh gagal, dengan cadangan yang bermakna. Membungkus seluruh rumus dengan IFERROR bisa menyembunyikan kesalahan sungguhan.'}
+  ],
+  exercises:[
+    {
+      id:'l17e1', type:'fx', title:'Lab 1 — TRIM: Spasi Berlebih',
+      instruction:'Kolom A berisi nama dengan spasi di awal, akhir, atau di tengah. Isi Nama bersih (C2) dengan TRIM lalu salin ke bawah. Kolom Panjang membantu kamu melihat selisih karakter yang tak terlihat.',
+      fx:'Contoh: =TRIM(A2)',
+      showSource:['A2','A3','A4','A5'],
+      buildSheet:function(){ return mkFx(['Nama (kotor)','Panjang awal','Nama bersih','Panjang akhir'], [
+        ['  Andi   Wijaya ','=LEN(A2)',null,'=LEN(C2)'],
+        ['Budi Santoso  ','=LEN(A3)',null,'=LEN(C3)'],
+        ['   Citra Lestari','=LEN(A4)',null,'=LEN(C4)'],
+        ['Dedi  Kurniawan','=LEN(A5)',null,'=LEN(C5)']]); },
+      editable:['C2','C3','C4','C5'],
+      applyGroups:[{source:'C2', targets:['C3','C4','C5'], label:'Salin C2 ke semua baris'}],
+      expected:[
+        {ref:'C2',type:'text',value:'Andi Wijaya',label:'Nama bersih baris 2'},
+        {ref:'C3',type:'text',value:'Budi Santoso',label:'Nama bersih baris 3'},
+        {ref:'C4',type:'text',value:'Citra Lestari',label:'Nama bersih baris 4'},
+        {ref:'C5',type:'text',value:'Dedi Kurniawan',label:'Nama bersih baris 5'}
+      ]
+    },
+    {
+      id:'l17e2', type:'fx', title:'Lab 2 — CLEAN & SUBSTITUTE: Spasi Non-Breaking dan Baris Baru',
+      instruction:'Data hasil salin dari web ini lolos dari TRIM biasa. Ada spasi non-breaking (⍽) dan satu nama yang terpecah baris baru (↵). Buat SATU rumus di C2 yang membersihkan semuanya menjadi nama dengan satu spasi biasa, lalu salin ke bawah.',
+      fx:'Contoh: =TRIM(SUBSTITUTE(SUBSTITUTE(A2,CHAR(160)," "),CHAR(10)," "))  — CLEAN saja akan menempelkan dua kata pada baris baru',
+      showSource:['A2','A3','A4','A5'],
+      buildSheet:function(){ return mkFx(['Nama (kotor)','Panjang','Nama bersih'], [
+        ['Budi'+NB+'Santoso','=LEN(A2)',null],
+        ['Citra\nLestari','=LEN(A3)',null],
+        ['Dedi'+NB+NB+'Kurniawan','=LEN(A4)',null],
+        [' Eka Putri'+NB,'=LEN(A5)',null]]); },
+      editable:['C2','C3','C4','C5'],
+      applyGroups:[{source:'C2', targets:['C3','C4','C5'], label:'Salin C2 ke semua baris'}],
+      expected:[
+        {ref:'C2',type:'text',value:'Budi Santoso',label:'Nama bersih baris 2 (spasi non-breaking)'},
+        {ref:'C3',type:'text',value:'Citra Lestari',label:'Nama bersih baris 3 (baris baru)'},
+        {ref:'C4',type:'text',value:'Dedi Kurniawan',label:'Nama bersih baris 4 (dua non-breaking)'},
+        {ref:'C5',type:'text',value:'Eka Putri',label:'Nama bersih baris 5 (awal dan akhir)'}
+      ]
+    },
+    {
+      id:'l17e3', type:'fx', title:'Lab 3 — SUBSTITUTE & REPLACE: Seragamkan Nomor HP',
+      instruction:'Ubah nomor HP mentah (0812-3456-7890) menjadi format internasional tanpa tanda hubung (+6281234567890). Hapus tanda "-" dengan SUBSTITUTE, lalu ganti angka 0 di posisi pertama dengan "+62" memakai REPLACE.',
+      fx:'Contoh: =REPLACE(SUBSTITUTE(A2,"-",""),1,1,"+62")',
+      showSource:['A2','A3','A4'],
+      buildSheet:function(){ return mkFx(['No. HP (mentah)','No. HP (+62)'], [['0812-3456-7890',null],['0857-1111-2222',null],['0813-9999-0000',null]]); },
+      editable:['B2','B3','B4'],
+      applyGroups:[{source:'B2', targets:['B3','B4'], label:'Salin B2 ke semua baris'}],
+      expected:[
+        {ref:'B2',type:'text',value:'+6281234567890',label:'Nomor baris 2'},
+        {ref:'B3',type:'text',value:'+6285711112222',label:'Nomor baris 3'},
+        {ref:'B4',type:'text',value:'+6281399990000',label:'Nomor baris 4'}
+      ]
+    },
+    {
+      id:'l17e4', type:'fx', title:'Lab 4 — TEXTBEFORE & TEXTAFTER: Pecah Email',
+      instruction:'Ambil username (sebelum @) di kolom B, domain (sesudah @) di kolom C, dan ekstensi terakhir (setelah titik terakhir) di kolom D. Untuk ekstensi, gunakan angka instance negatif agar penghitungan dimulai dari belakang.',
+      fx:'Contoh: =TEXTBEFORE(A2,"@")   =TEXTAFTER(A2,"@")   =TEXTAFTER(A2,".",-1)',
+      showSource:['A2','A3','A4'],
+      buildSheet:function(){ return mkFx(['Email','Username','Domain','Ekstensi'], [
+        ['budi.santoso@mail.com',null,null,null],['citra@perusahaan.co.id',null,null,null],['dedi_k@mail.com',null,null,null]]); },
+      editable:['B2','C2','D2','B3','C3','D3','B4','C4','D4'],
+      applyGroups:[
+        {source:'B2', targets:['B3','B4'], label:'Salin B2 ke bawah'},
+        {source:'C2', targets:['C3','C4'], label:'Salin C2 ke bawah'},
+        {source:'D2', targets:['D3','D4'], label:'Salin D2 ke bawah'}],
+      expected:[
+        {ref:'B2',type:'text',value:'budi.santoso',label:'Username baris 2'},
+        {ref:'B3',type:'text',value:'citra',label:'Username baris 3'},
+        {ref:'C3',type:'text',value:'perusahaan.co.id',label:'Domain baris 3'},
+        {ref:'C4',type:'text',value:'mail.com',label:'Domain baris 4'},
+        {ref:'D2',type:'text',value:'com',label:'Ekstensi baris 2'},
+        {ref:'D3',type:'text',value:'id',label:'Ekstensi baris 3'}
+      ]
+    },
+    {
+      id:'l17e5', type:'fx', title:'Lab 5 — TEXTSPLIT: Satu Sel Menjadi Banyak Kolom',
+      instruction:'Kolom A menyimpan Nama|Kota|Produk|Qty dalam satu sel. Tulis SATU rumus di B2 yang memecahnya ke B2:E2 (hasil melimpah ke sel kanan atau spill), lalu salin ke baris di bawahnya. Perhatikan bahwa Qty hasil TEXTSPLIT masih berupa teks.',
+      fx:'Contoh: =TEXTSPLIT(A2,"|")',
+      showSource:['A2','A3','A4'],
+      buildSheet:function(){ return mkFx(['Data mentah','Nama','Kota','Produk','Qty'], [
+        ['Andi|Bandung|Laptop|3'],['Budi|Surabaya|Printer|5'],['Citra|Jakarta|Monitor|8']]); },
+      editable:['B2','B3','B4'],
+      applyGroups:[{source:'B2', targets:['B3','B4'], label:'Salin B2 ke semua baris'}],
+      expected:[
+        {ref:'B2',type:'text',value:'Andi',label:'Nama baris 2'},
+        {ref:'C2',type:'text',value:'Bandung',label:'Kota baris 2 (hasil spill)'},
+        {ref:'D3',type:'text',value:'Printer',label:'Produk baris 3 (hasil spill)'},
+        {ref:'E2',type:'text',value:'3',label:'Qty baris 2 (masih teks)'},
+        {ref:'E4',type:'text',value:'8',label:'Qty baris 4 (masih teks)'}
+      ]
+    },
+    {
+      id:'l17e6', type:'fx', title:'Lab 6 — VALUE & NUMBERVALUE: Nominal Teks Menjadi Angka',
+      instruction:'Kolom A berisi nominal dalam berbagai format teks: 1250, 1.250,50, Rp 2.500.000, dan 15%. Sel D2 menunjukkan bahwa SUM di atas teks hasilnya 0. Buat SATU rumus di B2 yang mengubah semuanya menjadi angka, salin ke bawah, lalu jumlahkan hasilnya di E2.',
+      fx:'Contoh: =NUMBERVALUE(SUBSTITUTE(A2,"Rp ",""),",",".")   dan   =SUM(B2:B5)',
+      showSource:['A2','A3','A4','A5'],
+      buildSheet:function(){ return mkFx(['Nominal (teks)','Nominal (angka)','','SUM mentah','SUM bersih'], [
+        ['1250',null,null,'=SUM(A2:A5)',null],['1.250,50'],['Rp 2.500.000'],['15%']]); },
+      editable:['B2','B3','B4','B5','E2'],
+      applyGroups:[{source:'B2', targets:['B3','B4','B5'], label:'Salin B2 ke semua baris'}],
+      expected:[
+        {ref:'B2',type:'num',value:1250,label:'Angka baris 2'},
+        {ref:'B3',type:'num',value:1250.5,label:'Angka baris 3 (format Indonesia)'},
+        {ref:'B4',type:'num',value:2500000,label:'Angka baris 4 (awalan Rp)'},
+        {ref:'B5',type:'num',value:0.15,label:'Angka baris 5 (persen)'},
+        {ref:'E2',type:'num',value:2502500.65,label:'SUM bersih (E2)'}
+      ]
+    },
+    {
+      id:'l17e7', type:'fx', title:'Lab 7 — DATEVALUE: Tanggal Teks Menjadi Tanggal',
+      instruction:'Tanggal di kolom A ditulis dalam tiga format teks. Ubah menjadi nomor seri tanggal dengan DATEVALUE di kolom B, lalu ambil nomor bulannya dengan MONTH di kolom C. Asumsi: format dd/mm/yyyy (pengaturan regional Indonesia).',
+      fx:'Contoh: =DATEVALUE(A2)   dan   =MONTH(B2)',
+      showSource:['A2','A3','A4'],
+      buildSheet:function(){ return mkFx(['Tanggal (teks)','Nomor seri','Bulan'], [['2026-03-15'],['20/04/2026'],['02-Mei-2026']]); },
+      editable:['B2','C2','B3','C3','B4','C4'],
+      applyGroups:[{source:'B2', targets:['B3','B4'], label:'Salin B2 ke bawah'},{source:'C2', targets:['C3','C4'], label:'Salin C2 ke bawah'}],
+      expected:[
+        {ref:'B2',type:'num',value:serialOf(2026,3,15),label:'Nomor seri 2026-03-15'},
+        {ref:'B3',type:'num',value:serialOf(2026,4,20),label:'Nomor seri 20/04/2026'},
+        {ref:'B4',type:'num',value:serialOf(2026,5,2),label:'Nomor seri 02-Mei-2026'},
+        {ref:'C2',type:'num',value:3,label:'Bulan baris 2'},
+        {ref:'C3',type:'num',value:4,label:'Bulan baris 3'},
+        {ref:'C4',type:'num',value:5,label:'Bulan baris 4'}
+      ]
+    },
+    {
+      id:'l17e8', type:'fx', title:'Lab 8 — ISNUMBER, ISTEXT & IFERROR: Uji Tipe dan Tangani Error',
+      instruction:'Kolom A bercampur angka asli, angka bertipe teks, dan teks biasa. Di kolom B beri label "Angka" bila ISNUMBER, selain itu "Teks". Di kolom C ubah ke angka dengan VALUE, tetapi ganti error dengan 0 memakai IFERROR. Jumlahkan kolom C di D2.',
+      fx:'Contoh: =IF(ISNUMBER(A2),"Angka","Teks")   =IFERROR(VALUE(A2),0)   =SUM(C2:C5)',
+      buildSheet:function(){ return mkFx(['Data campur','Jenis','Angka aman','Total'], [[1500],['2000'],['N/A'],[2500]]); },
+      editable:['B2','B3','B4','B5','C2','C3','C4','C5','D2'],
+      applyGroups:[{source:'B2', targets:['B3','B4','B5'], label:'Salin B2 ke bawah'},{source:'C2', targets:['C3','C4','C5'], label:'Salin C2 ke bawah'}],
+      expected:[
+        {ref:'B2',type:'text',value:'Angka',label:'Jenis baris 2 (angka asli)'},
+        {ref:'B3',type:'text',value:'Teks',label:'Jenis baris 3 (angka bertipe teks)'},
+        {ref:'B4',type:'text',value:'Teks',label:'Jenis baris 4 (teks biasa)'},
+        {ref:'C3',type:'num',value:2000,label:'Angka aman baris 3'},
+        {ref:'C4',type:'num',value:0,label:'Angka aman baris 4 (error diganti 0)'},
+        {ref:'D2',type:'num',value:6000,label:'Total (D2)'}
+      ]
+    },
+    {
+      id:'l17e9', type:'fx', title:'Lab 9 — Studi Kasus Gabungan: Rapikan Data Pelanggan',
+      instruction:'Setiap baris menyimpan tiga informasi dipisah titik koma: nama;nominal;HP. Rapikan nama menjadi huruf judul (Budi Santoso), ubah nominal menjadi angka, dan seragamkan HP menjadi format +62. Gabungkan fungsi yang sudah kamu pelajari, lalu salin ke bawah.',
+      fx:'Nama: =PROPER(TRIM(TEXTBEFORE(A2,";")))   Nominal: =NUMBERVALUE(SUBSTITUTE(TEXTBEFORE(TEXTAFTER(A2,";"),";"),"Rp ",""),",",".")   HP: =REPLACE(SUBSTITUTE(TEXTAFTER(A2,";",2),"-",""),1,1,"+62")',
+      showSource:['A2','A3','A4'],
+      buildSheet:function(){ return mkFx(['Data mentah','Nama','Nominal','No. HP'], [
+        ['  budi santoso ;Rp 1.500.000;0857-1111-2222'],
+        ['CITRA lestari;Rp 250.000;0812-3333-4444'],
+        [' dedi  kurniawan;Rp 3.750.000;0813-5555-6666']]); },
+      editable:['B2','C2','D2','B3','C3','D3','B4','C4','D4'],
+      applyGroups:[
+        {source:'B2', targets:['B3','B4'], label:'Salin B2 ke bawah'},
+        {source:'C2', targets:['C3','C4'], label:'Salin C2 ke bawah'},
+        {source:'D2', targets:['D3','D4'], label:'Salin D2 ke bawah'}],
+      expected:[
+        {ref:'B2',type:'text',value:'Budi Santoso',label:'Nama baris 2'},
+        {ref:'B3',type:'text',value:'Citra Lestari',label:'Nama baris 3'},
+        {ref:'B4',type:'text',value:'Dedi Kurniawan',label:'Nama baris 4'},
+        {ref:'C2',type:'num',value:1500000,label:'Nominal baris 2'},
+        {ref:'C4',type:'num',value:3750000,label:'Nominal baris 4'},
+        {ref:'D2',type:'text',value:'+6285711112222',label:'HP baris 2'},
+        {ref:'D3',type:'text',value:'+6281233334444',label:'HP baris 3'},
+        {ref:'D4',type:'text',value:'+6281355556666',label:'HP baris 4'}
+      ]
+    }
+  ],
+  quiz:[
+    {q:'TRIM tidak berhasil menghapus spasi pada data hasil salin dari web. Penyebab umum dan solusinya?', opts:['Spasi itu sebenarnya huruf; gunakan UPPER','Data terlalu panjang; potong dengan LEFT','Spasi non-breaking (CHAR 160); ganti dengan SUBSTITUTE lalu TRIM','Excel rusak; instal ulang'], correct:2, explain:'TRIM hanya membuang spasi biasa (kode 32). Spasi non-breaking harus diganti dulu, misalnya SUBSTITUTE(A2,CHAR(160)," "), baru di-TRIM.'},
+    {q:'Apa beda utama SUBSTITUTE dan REPLACE?', opts:['SUBSTITUTE mengganti berdasarkan isi teks, REPLACE berdasarkan posisi karakter','SUBSTITUTE hanya untuk angka, REPLACE hanya untuk teks','Tidak ada bedanya','REPLACE mengganti semua kemunculan, SUBSTITUTE hanya yang pertama'], correct:0, explain:'SUBSTITUTE mencari teks tertentu dan menggantinya. REPLACE bekerja berdasarkan posisi awal dan jumlah karakter.'},
+    {q:'=VALUE("1.250,50") menghasilkan #VALUE! pada pengaturan regional English. Fungsi yang tepat?', opts:['=TRIM("1.250,50")','=NUMBERVALUE("1.250,50",",",".")','=CLEAN("1.250,50")','=ISNUMBER("1.250,50")'], correct:1, explain:'NUMBERVALUE memungkinkan kamu menyebutkan pemisah desimal (koma) dan ribuan (titik) secara eksplisit, sehingga tidak bergantung pada pengaturan komputer.'},
+    {q:'ISNUMBER(A2) menghasilkan FALSE padahal sel tampak berisi 1500. Artinya?', opts:['Angka itu terlalu besar','Sel dikunci','Formula ISNUMBER salah','Sel berisi teks "1500", bukan angka asli'], correct:3, explain:'Angka bertipe teks terlihat sama tetapi tidak dihitung oleh SUM. VALUE atau NUMBERVALUE mengubahnya menjadi angka asli.'},
+    {q:'Kapan IFERROR menjadi berbahaya?', opts:['Saat membungkus seluruh rumus sehingga error sungguhan ikut tersembunyi dan hasil salah tampak normal','Saat dipakai bersama VALUE','Saat datanya berupa teks','Tidak pernah berbahaya'], correct:0, explain:'IFERROR yang membungkus terlalu luas bisa menutupi kesalahan logika. Pakailah pada langkah yang memang boleh gagal, dengan nilai cadangan yang bermakna.'}
+  ]
+},
+{
+  id:18, title:'Business Analytics', tagline:'Revenue turun 12%: Region → Produk → Customer → Waktu → Penyebab',
+  narrative:[
+    {who:'client', name:'Pak Hendro (CEO)', text:'Revenue kuartal ini turun sekitar 12%. Saya tidak mau daftar angka. Saya mau tahu: di mana masalahnya, sejak kapan, dan apa penyebabnya — lalu apa yang harus kita lakukan.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Ini inti pekerjaan Business Analyst. Jangan langsung menebak penyebab. Pecah dulu penurunannya berlapis-lapis, dimensi demi dimensi, sampai kamu menemukan siapa yang paling berkontribusi. Baru uji hipotesisnya dengan data.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Saya mulai dari menghitung kontribusi tiap wilayah terhadap penurunan, lalu menelusuri ke bawah.'}
+  ],
+  concepts:[
+    {title:'Pola Drill-Down (Akar Masalah)', formula:'Revenue turun 12% → Region mana? → Produk mana? → Customer mana? → Sejak kapan? → Apa penyebabnya?', desc:'Pecah penurunan total menjadi bagian yang lebih kecil, satu dimensi pada satu waktu, selalu mengikuti penyumbang terbesar. Setiap langkah mempersempit area pencarian sampai penyebab bisa dijelaskan.'},
+    {title:'Kontribusi Perubahan', formula:'Kontribusi = Δ segmen ÷ Δ total', desc:'Segmen yang turun 50% belum tentu penyebab utama bila nilai dasarnya kecil. Kontribusi mengukur seberapa besar bagian penurunan total yang berasal dari segmen itu, jadi urutan prioritasnya berdasarkan rupiah, bukan persentase.'},
+    {title:'Bandingkan yang Setara', formula:'MoM · QoQ · YoY', desc:'Bandingkan periode yang sebanding. Bila bisnis bermusim, YoY (Januari vs Januari tahun lalu) lebih adil dibanding MoM (bulan lalu). Pastikan jumlah hari dan cakupan datanya sama.'},
+    {title:'Hipotesis & Bukti', formula:'Hipotesis → uji dengan data → terima / tolak', desc:'Rumuskan beberapa penjelasan yang mungkin, lalu cari data yang bisa menolaknya. Periksa kualitas data lebih dulu (Level 16). Korelasi bukan bukti sebab-akibat, jadi konfirmasi kesimpulan ke pihak yang mengenal kasusnya.'},
+    {title:'Dari Temuan ke Tindakan', formula:'Temuan spesifik + angka + penyebab + rekomendasi', desc:'Insight yang baik menyebut siapa, berapa, sejak kapan, apa penyebabnya, dan apa tindakan yang disarankan. Kalimat samar seperti "pasar sedang lesu" tidak bisa ditindaklanjuti.'},
+    {title:'Peralatan Excel yang Dipakai', formula:'Pivot Table · SUMIFS · Chart · Conditional Formatting', desc:'Pivot Table membuat ringkasan per dimensi dengan cepat, chart memperlihatkan kapan perubahan terjadi, dan Conditional Formatting menyorot segmen yang turun paling dalam.'}
+  ],
+  exercises:[
+    {
+      id:'l18e1', title:'Lab 1 — Hitung Kontribusi Penurunan per Wilayah',
+      instruction:'Tabel menunjukkan revenue Q1 dan Q2 tiap wilayah (Rp juta). Hitung Δ (Q2 − Q1) di kolom D, Δ % (Δ ÷ Q1) di kolom E, dan Kontribusi (Δ wilayah ÷ Δ total) di kolom F. Kunci baris Total dengan $. Isi juga Δ % total di E6.',
+      fx:'Contoh: =C2-B2   =D2/B2   =D2/D$6   dan   =D6/B6',
+      buildSheet:function(){
+        const B = baBreak('region', {});
+        const s = new Sheet(6, 6);
+        ['Wilayah','Q1 (Rp jt)','Q2 (Rp jt)','Δ (Rp jt)','Δ %','Kontribusi'].forEach(function(h, c){ s.setRaw(0, c, h); });
+        B.rows.forEach(function(r, i){ s.setRaw(i+1, 0, r.name); s.setRaw(i+1, 1, r.q1); s.setRaw(i+1, 2, r.q2); });
+        s.setRaw(5, 0, 'Total'); s.setRaw(5, 1, '=SUM(B2:B5)'); s.setRaw(5, 2, '=SUM(C2:C5)'); s.setRaw(5, 3, '=C6-B6');
+        return s;
+      },
+      editable:['D2','D3','D4','D5','E2','E3','E4','E5','E6','F2','F3','F4','F5'],
+      applyGroups:[
+        {source:'D2', targets:['D3','D4','D5'], label:'Salin D2 ke bawah'},
+        {source:'E2', targets:['E3','E4','E5'], label:'Salin E2 ke bawah'},
+        {source:'F2', targets:['F3','F4','F5'], label:'Salin F2 ke bawah'}],
+      expected:(function(){
+        const B = baBreak('region', {}), ex = [];
+        B.rows.forEach(function(r, i){
+          ex.push({ref:'D'+(i+2), type:'num', value:r.d, label:'Δ '+r.name});
+          ex.push({ref:'F'+(i+2), type:'num', value:r.d/B.dTot, label:'Kontribusi '+r.name});
+        });
+        ex.push({ref:'E4', type:'num', value:B.rows[2].d/B.rows[2].q1, label:'Δ % '+B.rows[2].name});
+        ex.push({ref:'E6', type:'num', value:B.dTot/B.tot1, label:'Δ % total (E6)'});
+        return ex;
+      })()
+    },
+    {
+      id:'l18e2', type:'drill', title:'Lab 2 — Investigasi Akar Masalah (Drill-Down)',
+      instruction:'Revenue turun. Telusuri berlapis: tentukan region, produk, dan customer penyumbang terbesar, cari kapan penurunan mulai, lalu uji hipotesis penyebabnya dengan bukti data. Setiap langkah terbuka setelah langkah sebelumnya benar.',
+      hint:'Pilih baris dengan Δ (rupiah) paling negatif, bukan sekadar persentase. Pada langkah penyebab, baca keempat tabel bukti sebelum memilih.'
+    },
+    {
+      id:'l18e3', type:'choice', title:'Lab 3 — Dari Temuan ke Insight dan Tindakan',
+      instruction:'Investigasi selesai. Sekarang rangkum untuk direksi dan tentukan langkah berikutnya.',
+      questions:[
+        {q:'Pilih kalimat temuan yang paling baik untuk manajemen.', opts:[
+          'Revenue turun karena pasar sedang lesu.',
+          INSIGHT_GOOD,
+          'Ada penurunan di beberapa wilayah dan produk, perlu dianalisis lebih lanjut.',
+          'Tim sales Jawa Timur kurang berusaha sehingga revenue turun.'], correct:1, why:'Spesifik, berangka, menyebut siapa dan sejak kapan, serta penyebab yang didukung data.'},
+        {q:'Rekomendasi tindakan yang paling tepat?', opts:[
+          'Turunkan harga seluruh Laptop sebesar 20% di semua wilayah.',
+          'Hentikan penjualan ke Jawa Timur.',
+          'Hubungi PT Nusantara, pahami alasan mereka mengurangi order, dan tinjau ulang skema harga atau kontraknya.',
+          'Tambah iklan nasional untuk semua produk.'], correct:2, why:'Tindakan menargetkan sumber masalah yang ditemukan, bukan mengubah seluruh bisnis.'},
+        {q:'Sebelum menyampaikan penyebab ke direksi, langkah validasi terpenting?', opts:[
+          'Langsung umumkan agar cepat ditindaklanjuti.',
+          'Periksa kualitas data dan konfirmasi hipotesis ke tim akun yang mengenal pelanggan itu.',
+          'Hapus data Q1 supaya perbandingannya tampak lebih baik.',
+          'Tunggu tiga bulan lagi tanpa melakukan apa pun.'], correct:1, why:'Korelasi harga dan qty perlu dikonfirmasi; data yang salah membuat kesimpulan menyesatkan.'}
+      ]
+    }
+  ],
+  quiz:[
+    {q:'Revenue turun 12%. Langkah pertama yang paling efektif?', opts:['Memangkas anggaran semua divisi','Memecah penurunan berdasarkan dimensi (region, produk, customer) untuk menemukan penyumbang terbesar','Menyalahkan tim sales','Menunggu bulan depan'], correct:1, explain:'Drill-down menemukan sumber penurunan sebelum menebak penyebab atau bertindak.'},
+    {q:'Region A turun 50% tetapi hanya menyumbang 5% dari total penurunan. Region B turun 10% dan menyumbang 70%. Fokus utama?', opts:['Region A karena persentasenya terbesar','Keduanya sama penting','Region B karena kontribusinya terbesar','Tidak perlu fokus'], correct:2, explain:'Prioritas ditentukan oleh kontribusi terhadap penurunan total (rupiah), bukan persentase pada nilai dasar kecil.'},
+    {q:'Bisnis selalu naik di Desember dan turun di Januari. Cara membandingkan yang paling adil?', opts:['Bandingkan Januari dengan Desember','MoM saja','Abaikan musim','YoY: Januari tahun ini dengan Januari tahun lalu'], correct:3, explain:'YoY menetralkan pola musiman karena membandingkan periode yang setara.'},
+    {q:'Harga naik bersamaan dengan turunnya qty pada satu customer. Pernyataan yang paling tepat?', opts:['Harga naik pasti penyebabnya','Korelasi kuat, tetapi perlu dikonfirmasi ke tim akun sebelum disebut sebagai penyebab pasti','Keduanya tidak berhubungan','Datanya pasti salah'], correct:1, explain:'Korelasi adalah petunjuk, bukan bukti sebab-akibat. Konfirmasi dengan pihak yang mengenal kasusnya.'},
+    {q:'Ciri insight yang baik untuk manajemen?', opts:['Panjang dan penuh istilah teknis','Hanya berisi grafik','Spesifik, berangka, menyebut penyebab, dan disertai rekomendasi','Mengulang seluruh angka tabel'], correct:2, explain:'Insight yang bisa ditindaklanjuti menyebut siapa, berapa, sejak kapan, mengapa, dan apa yang perlu dilakukan.'}
+  ]
+}
+);
+
+/* ============================= INTEGRASI ============================= */
+/* Idempoten: level yang sudah ada tidak didaftarkan dua kali (aman bila versi sebelumnya sempat tertempel). */
+NEW_LEVELS.forEach(function(l){ if(!LEVELS.some(function(x){ return x.id === l.id; })) LEVELS.push(l); });
+LEVELS.sort(function(a, b){ return a.id - b.id; });
+
+(function(){
+  const have = {};
+  CV_GROUPS.forEach(function(g){ g.items.forEach(function(it){ have[it.lv] = true; }); });
+  const groups = [
+    {title:'Pengelolaan Data, Pelaporan & Visualisasi', items:[
+      {lv:11, name:'Validasi Data',         desc:'Data Validation: angka, dropdown, rumus kustom'},
+      {lv:12, name:'Filter & Sort',         desc:'Urutan bertingkat, filter multi-kriteria'},
+      {lv:13, name:'Conditional Formatting',desc:'Aturan sorot: nilai, duplikat, Top N, rumus'},
+      {lv:14, name:'Pivot Table',           desc:'Rows, Columns, Values, agregasi & filter'},
+      {lv:15, name:'Chart & Visualisasi',   desc:'Pilih jenis chart, sumbu & label yang jujur'}
+    ]},
+    {title:'Kualitas Data & Analisis Bisnis', items:[
+      {lv:16, name:'Data Error Challenge',  desc:'Menemukan dan mengklasifikasi masalah data'},
+      {lv:17, name:'Advanced Data Cleaning',desc:'TRIM, SUBSTITUTE, TEXTSPLIT, NUMBERVALUE, IFERROR'},
+      {lv:18, name:'Business Analytics',    desc:'Drill-down akar masalah & insight bisnis'}
+    ]}
+  ];
+  groups.forEach(function(g){
+    const items = g.items.filter(function(it){ return !have[it.lv]; });
+    if(items.length) CV_GROUPS.push({title:g.title, items:items});
+  });
+})();
 
 /* Lab bertipe baru ditangani modul ini; lab spreadsheet lama tetap ke renderExercise asli. */
 const _renderExercise = renderExercise;
