@@ -128,7 +128,10 @@ h1,h2,h3{font-family:var(--mono); letter-spacing:-0.01em; margin:0 0 8px;}
 .hero-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:26px 0;}
 .hero-grid div{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px; font-family:var(--mono); font-size:11px; color:var(--text-dim); text-align:center;}
 .hero-grid div b{display:block; color:var(--text); font-size:13px; margin-bottom:2px;}
-@media (max-width:640px){.hero-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){
+  .hero-grid{grid-template-columns:repeat(2,1fr);}
+  .hero-grid div:last-child{grid-column:1 / -1;}
+}
 
 /* maskot (di tengah, tepat sebelum footer) */
 .mascot{display:flex; justify-content:center; align-items:center; margin:28px 0 0;}
@@ -241,7 +244,7 @@ h1,h2,h3{font-family:var(--mono); letter-spacing:-0.01em; margin:0 0 8px;}
 <section id="screen-hero" class="screen active">
     <span class="hero-badge">MODUL INTERAKTIF · BASIC → MASTER</span>
     <h1>Latih <span>Logika Data</span><br>Lewat Studi Kasus Excel Nyata.</h1>
-    <p class="lead">Bukan sekadar teori rumus. Kamu akan berperan sebagai Analis Data yang menyelesaikan masalah nyata dari klien — mulai dari rekap nilai sederhana, membangun sistem payroll otomatis dengan VLOOKUP, INDEX-MATCH, dan dasar macro/VBA, sampai 20 studi kasus logika lintas divisi dunia kerja.</p>
+    <p class="lead">Bukan sekadar teori rumus. Kamu akan berperan sebagai Analis Data yang menyelesaikan masalah nyata dari klien — mulai dari rekap nilai sederhana, membangun sistem payroll otomatis dengan VLOOKUP, INDEX-MATCH, dan dasar macro/VBA, sampai 20 studi kasus logika lintas divisi dunia kerja, lalu fitur andalan Excel: validasi data, filter &amp; sort, conditional formatting, pivot table, dan chart.</p>
     <div class="hero-grid">
       <div><b>Level 1</b>Fondasi Logika</div>
       <div><b>Level 2</b>Logika Bertingkat</div>
@@ -253,8 +256,13 @@ h1,h2,h3{font-family:var(--mono); letter-spacing:-0.01em; margin:0 0 8px;}
       <div><b>Level 8</b>Analisis &amp; Rangking</div>
       <div><b>Level 9</b>Teks &amp; Pembersihan Data</div>
       <div><b>Level 10</b>Capstone Rekrutmen</div>
+      <div><b>Level 11</b>Validasi Data</div>
+      <div><b>Level 12</b>Filter &amp; Sort</div>
+      <div><b>Level 13</b>Conditional Formatting</div>
+      <div><b>Level 14</b>Pivot Table</div>
+      <div><b>Level 15</b>Chart &amp; Visualisasi</div>
     </div>
-    <a class="btn" href="soal.html" style="display:inline-block; text-decoration:none;">▶ Mulai Petualangan</a>
+    <a class="btn" href="<?= scriptUrl ?>?page=soal" style="display:inline-block; text-decoration:none;">▶ Mulai Petualangan</a>
   </section>
 
   <div class="mascot">

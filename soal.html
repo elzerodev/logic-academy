@@ -674,7 +674,7 @@ textarea.reflect:focus{border-color:var(--accent);}
   <path class="l1" d="M169.48,410.71h-34.25l-21.5-40.47c-.77-1.42-1.36-2.54-1.77-3.37-.35-.88-.74-1.89-1.15-3.01h-.35c-.53,1.42-1.03,2.57-1.5,3.45-.47.89-1.03,1.98-1.68,3.28l-22.3,40.11h-32.3l38.76-63.58-36.1-63.4h33.8l19.11,36.13c.77,1.48,1.42,2.78,1.95,3.9.59,1.06,1.18,2.33,1.77,3.81h.35c.82-1.71,1.47-3.07,1.95-4.07.53-1,1.24-2.33,2.12-3.98l19.82-35.77h32.21l-36.63,62.43,37.7,64.55Z"/>
 </svg><span class="dot"></span> EXCEL LOGIC ACADEMY</div>
     <div class="actions">
-      <a class="btn-ghost no-print" href="index.html" style="text-decoration:none;">
+      <a class="btn-ghost no-print" href="<?= scriptUrl ?>" style="text-decoration:none;">
   <span class="material-symbols-rounded icon-sm">home</span>
   Beranda
 </a>
@@ -2749,33 +2749,30 @@ function computeFinalSummary(){
    Best-effort: kalau gagal (mis. sedang dibuka di luar deployment Apps
    Script, atau tidak ada akses jaringan), sertifikat tetap tampil normal —
    hanya status penyimpanan di bawah tombol cetak yang berubah. */
-const RESULT_API_URL = 'https://script.google.com/macros/s/AKfycbwhXKwxbX6CrrXcsmnN0eNgkuB3KeC5zDapa4sXWXCxd5_KHw_D7rzfeLMB1FREi_WI/exec';
-
 function submitResultToServer(payload){
   const statusEl = document.getElementById('certSaveStatus');
-  if (!RESULT_API_URL || RESULT_API_URL.indexOf('PASTE') === 0){
+  if (!(window.google && google.script && google.script.run)){
     if (statusEl) statusEl.textContent = '';
     return;
   }
   if (statusEl) statusEl.textContent = 'Menyimpan hasil…';
-  fetch(RESULT_API_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
-  })
-  .then(()=>{ if (statusEl) statusEl.textContent = '✓ Hasil terkirim.'; })
-  .catch((err)=>{
-    console.error('Gagal mengirim hasil:', err);
-    if (statusEl) statusEl.textContent = '';
-  });
+  google.script.run
+    .withSuccessHandler((res)=>{
+      if (!statusEl) return;
+      statusEl.textContent = (res && res.ok) ? '✓ Hasil tersimpan.' : '';
+    })
+    .withFailureHandler((err)=>{
+      console.error('Gagal menyimpan hasil ke server:', err);
+      if (statusEl) statusEl.textContent = '';
+    })
+    .saveCertificateResult(payload);
 }
 
 /* Menampilkan sertifikat berdasarkan nama yang sudah diisi di awal (gerbang
    nama sebelum Level 1) — tidak perlu input nama lagi di sini. Dipanggil
    otomatis begitu review Level 5 selesai, atau saat node "Ambil
    Sertifikatmu" di peta diklik. */
-const COFFEE_TIP_URL = 'https://tiptap.gg/dikilabs'; // dikirim dari code.gs (template.coffeeTipUrl) — ubah nilainya di sana, bukan di sini
+const COFFEE_TIP_URL = '<?= coffeeTipUrl ?>'; // dikirim dari code.gs (template.coffeeTipUrl) — ubah nilainya di sana, bukan di sini
 
 
 const COFFEE_ICON_SVG = '<svg class="coffee-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M463.52993 521.415858c-1.878162 0-3.758455-0.241965-5.588651-0.716302l-10.725348-2.786331c-11.84457-3.076263-18.978814-15.215029-15.902551-27.059599l123.151769-474.233707c2.541168-9.785201 11.372365-16.619919 21.47308-16.619919 1.878162 0 3.759521 0.240899 5.588651 0.715236l10.724282 2.785265a22.05401 22.05401 0 0 1 13.55858 10.236088 22.045483 22.045483 0 0 1 2.347169 16.824577L485.001945 504.794873c-2.541168 9.786267-11.371299 16.620985-21.472015 16.620985z" fill="currentColor"/><path d="M274.613721 323.819813l45.209122 581.254815c0 30.001555 22.949388 54.320658 51.258253 54.320659H594.057907c28.30993 0 51.259319-24.319103 51.259318-54.320659l45.206991-581.254815H274.613721z" fill="#E33E3D"/><path d="M655.845377 323.389179l21.178885-150.273192c0-9.601862-10.081529-17.387386-22.51449-17.387386H289.197721c-12.432962 0-22.512359 7.785524-22.512359 17.387386l21.178885 150.273192h367.98113z" fill="#FFFFFF"/><path d="M485.901586 557.608312c-96.667769 0-179.500884-13.127945-197.428695-38.955334-2.052974 4.73591 0.510579 9.616785 0.689654 14.596791 1.922931 53.082052 88.081735 61.608395 196.739041 61.608395 108.655174 0 196.739041-16.453635 196.739041-61.608395 0-4.982138-1.074453-9.860882-3.131691-14.596791-29.346011 34.782234-96.937449 38.955334-193.60735 38.955334z" fill="#FDFAED"/><path d="M427.801154 574.716425a57.9075 56.064514 0 1 0 115.814999 0 57.9075 56.064514 0 1 0-115.814999 0Z" fill="#FDFAED"/><path d="M650.534934 323.27619l-45.205925 581.254816c0 30.003687-22.953652 54.320658-51.260385 54.320659h39.989283c28.307799 0 51.260385-24.316971 51.260384-54.320659l45.205925-581.254816h-39.989282z" fill="#9D1F24"/></svg>';
@@ -3114,5 +3111,1404 @@ function closeTipModal(){
 })();
 
 </script>
+
+<!-- ===========================================================================
+  MATERI LANJUTAN — Level 11–15 untuk Excel Logic Academy
+  Tempel SELURUH blok ini tepat sebelum </body> pada halaman Modul (setelah </script> utama).
+  Isi: Data Validation, Filter & Sort, Conditional Formatting, Pivot Table, Chart.
+============================================================================ -->
+<style>
+/* ===================== MATERI LANJUTAN (Level 11–15) ===================== */
+.lab-panel{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin:12px 0;}
+.lab-cap{font-family:var(--mono); font-size:11.5px; color:var(--text-dim); margin-bottom:10px; line-height:1.6;}
+.lab-cap b{color:var(--accent);}
+.lab-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; align-items:flex-end;}
+.lab-row:last-child{margin-bottom:0;}
+.lab-row > .lab-cap{margin:0; align-self:center;}
+.lab-field{display:flex; flex-direction:column; gap:4px; flex:1 1 150px; min-width:120px;}
+.lab-field > label{font-family:var(--mono); font-size:10.5px; color:var(--text-dim);}
+.lab-in{width:100%; background:var(--panel); border:1px solid var(--line); color:var(--text); font-family:var(--mono); font-size:12.5px; padding:8px 10px; border-radius:7px; outline:none; font-variant-ligatures:none; -webkit-font-feature-settings:"liga" 0,"calt" 0; font-feature-settings:"liga" 0,"calt" 0;}
+.lab-in:focus{border-color:var(--accent);}
+select.lab-in{cursor:pointer;}
+.lab-check{display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:12px; color:var(--text); cursor:pointer; padding:7px 11px; background:var(--panel); border:1px solid var(--line); border-radius:7px;}
+.lab-check input{accent-color:var(--accent); width:15px; height:15px;}
+.lab-count{font-family:var(--mono); font-size:11px; color:var(--text-dim); margin:8px 0;}
+.lab-count b{color:var(--accent);}
+.lab-empty{font-family:var(--mono); font-size:12px; color:var(--text-dim-2); padding:18px; text-align:center; border:1px dashed var(--line); border-radius:8px;}
+.lab-empty.warn{color:var(--amber); border-color:rgba(255,180,0,.4);}
+.lab-mark{color:var(--accent); font-size:10px;}
+
+/* tabel data */
+.lab-tbl-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:8px; background:var(--grid-bg); -webkit-overflow-scrolling:touch;}
+table.lab-tbl{border-collapse:separate; border-spacing:0; width:100%; font-family:var(--mono); font-size:12.5px; font-variant-ligatures:none;}
+table.lab-tbl th, table.lab-tbl td{border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:7px 10px; text-align:left; white-space:nowrap;}
+table.lab-tbl thead th{background:var(--panel-3); color:var(--text-dim); font-weight:700; font-size:11.5px;}
+table.lab-tbl tr.lt-letters th{font-size:10.5px; color:var(--text-dim-2); text-align:center; padding:4px 10px;}
+table.lab-tbl th.rn, table.lab-tbl td.rn{background:var(--panel-3); color:var(--text-dim-2); text-align:center; width:34px; min-width:34px; font-size:11px; padding:7px 6px;}
+table.lab-tbl th.num, table.lab-tbl td.num{text-align:right;}
+table.lab-tbl tbody tr:last-child td{border-bottom:none;}
+table.lab-tbl tr.tot td, table.lab-tbl td.tot{font-weight:700; background:var(--panel-2);}
+table.lab-tbl.pv thead th{background:rgba(182,255,61,0.10); color:var(--accent);}
+:root[data-theme="light"] table.lab-tbl.pv thead th{background:rgba(92,156,31,0.12);}
+
+/* conditional formatting */
+td.cf-red{background:rgba(255,107,92,.30); color:var(--danger);}
+td.cf-yellow{background:rgba(255,180,0,.30); color:var(--amber);}
+td.cf-green{background:rgba(74,222,128,.28); color:var(--ok);}
+
+/* data validation */
+.dv-res{font-weight:700; font-size:12px;}
+.dv-res.ok{color:var(--ok);}
+.dv-res.no{color:var(--danger);}
+.dv-msg{font-size:13px; padding:10px 13px; border:1px solid var(--line); border-left-width:4px; border-radius:6px; background:var(--panel); margin-top:10px; line-height:1.5;}
+.dv-msg.okk{border-left-color:var(--ok);}
+.dv-msg.stop{border-left-color:var(--danger);}
+.dv-msg.warning{border-left-color:var(--amber);}
+.dv-msg.info{border-left-color:var(--accent);}
+.dv-msg .dim{font-size:12px;}
+.dv-tip{font-size:12.5px; padding:8px 11px; background:rgba(255,180,0,.10); border:1px solid rgba(255,180,0,.35); border-radius:6px; margin-bottom:8px;}
+
+/* pivot */
+.pv-chips{display:flex; flex-wrap:wrap; gap:6px;}
+.pv-chip{font-family:var(--mono); font-size:11px; padding:4px 10px; border-radius:14px; background:var(--panel-3); border:1px solid var(--line); color:var(--text-dim);}
+.pv-areas{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:12px 0;}
+.pv-area{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;}
+.pv-area h4{font-family:var(--mono); font-size:11px; color:var(--amber); margin:0;}
+
+/* chart */
+.chart-box{margin-top:10px;}
+.chart-svg{width:100%; height:auto; display:block; background:var(--panel-2); border:1px solid var(--line); border-radius:8px;}
+.ch-t{fill:var(--text-dim); font-family:var(--mono); font-size:10px;}
+.ch-dl{fill:var(--text); font-family:var(--mono); font-size:9.5px; font-weight:700;}
+.ch-title{fill:var(--text); font-family:var(--mono); font-size:13px; font-weight:700;}
+.ch-lab-in{fill:#0a1006; font-family:var(--mono); font-size:11px; font-weight:800;}
+.ch-grid{stroke:var(--line); stroke-width:1;}
+.ch-axis{stroke:var(--text-dim-2); stroke-width:1.5;}
+.chip-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
+.type-chip{font-family:var(--mono); font-size:12px; background:var(--panel); color:var(--text); border:1px solid var(--line); padding:8px 12px; border-radius:7px; cursor:pointer; transition:.12s;}
+.type-chip:hover{border-color:var(--accent);}
+.type-chip.active{background:rgba(182,255,61,0.14); border-color:var(--accent); color:var(--accent);}
+
+@media (max-width:640px){
+  .lab-panel{padding:10px 11px;}
+  .lab-field{flex:1 1 100%;}
+  table.lab-tbl{font-size:11.5px;}
+  table.lab-tbl th, table.lab-tbl td{padding:6px 7px;}
+  .type-chip{font-size:11px; padding:7px 10px;}
+}
+
+/* Lampiran CV memuat lebih banyak baris kompetensi: rapatkan sedikit agar tetap muat satu halaman A4 */
+.cv-doc .cv-skill{padding:6px 0;}
+.cv-doc .cv-group{margin-bottom:14px;}
+@media print{
+  .cv-doc .cv-skill{padding:3px 0;}
+  .cv-doc .cv-group{margin-bottom:8px;}
+}
+</style>
+<script>
+/* ==========================================================================
+   MATERI LANJUTAN — Level 11–15
+   Data Validation · Filter & Sort · Conditional Formatting · Pivot Table · Chart
+   Ditempel SETELAH skrip utama (sebelum </body>). Tidak mengubah kode yang ada:
+   level baru didaftarkan lewat LEVELS.push, dan lab bertipe baru ditangani
+   lewat pembungkus renderExercise.
+   ========================================================================== */
+(function(){
+'use strict';
+if(typeof LEVELS === 'undefined' || typeof Sheet === 'undefined' || typeof renderExercise === 'undefined'){
+  console.warn('Materi lanjutan: skrip utama belum termuat, add-on dilewati.');
+  return;
+}
+if(LEVELS.some(function(l){ return l.id === 11; })) return; // sudah terpasang
+
+const LAB = {};
+
+/* ============================= UTIL ============================= */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fmtID(n, d){ return (typeof n === 'number' && isFinite(n)) ? n.toLocaleString('id-ID', {maximumFractionDigits: d==null?2:d}) : ''; }
+function parseNum(s){
+  s = String(s==null?'':s).trim();
+  if(s === '') return NaN;
+  if(/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g,'').replace(',','.');
+  else if(/^-?\d+,\d+$/.test(s)) s = s.replace(',','.');
+  if(!/^-?\d+(\.\d+)?$/.test(s)) return NaN;
+  return parseFloat(s);
+}
+function mk(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html != null) e.innerHTML = html;
+  return e;
+}
+function selectCtl(opts, val, cb){
+  const s = mk('select','lab-in');
+  opts.forEach(function(o){ const op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; s.appendChild(op); });
+  s.value = val;
+  s.addEventListener('change', function(){ cb(s.value); });
+  return s;
+}
+function inputCtl(val, ph, cb){
+  const i = mk('input','lab-in');
+  i.type = 'text'; i.value = val || ''; i.placeholder = ph || '';
+  i.spellcheck = false; i.autocomplete = 'off'; i.autocapitalize = 'off';
+  i.addEventListener('input', function(){ cb(i.value); });
+  return i;
+}
+function checkCtl(label, val, cb){
+  const w = mk('label','lab-check');
+  const i = document.createElement('input');
+  i.type = 'checkbox'; i.checked = !!val;
+  i.addEventListener('change', function(){ cb(i.checked); });
+  w.appendChild(i); w.appendChild(document.createTextNode(label));
+  return w;
+}
+function field(label, ctl){
+  const w = mk('div','lab-field');
+  w.appendChild(mk('label', null, label));
+  w.appendChild(ctl);
+  return w;
+}
+function shell(el, ex, icon){
+  const card = mk('div','card');
+  card.innerHTML = '<h2><span class="material-symbols-rounded">'+icon+'</span> '+ex.title+'</h2><p>'+ex.instruction+'</p>'+
+    (ex.hint ? '<div class="fx-hint"><span>💡</span><span><b>Tips:</b> '+ex.hint+'</span></div>' : '');
+  const body = mk('div'); card.appendChild(body);
+  const actions = mk('div','action-row'); card.appendChild(actions);
+  const feedback = mk('div'); card.appendChild(feedback);
+  el.appendChild(card);
+  return {card:card, body:body, actions:actions, feedback:feedback};
+}
+function showFeedback(box, checks, hintFail){
+  const allOk = checks.every(function(c){ return c.ok; });
+  let rows = '';
+  checks.forEach(function(c){
+    rows += '<div class="check-row '+(c.ok?'ok':'fail')+'"><span class="ico">'+(c.ok?'✓':'✕')+'</span><span>'+c.label+'</span></div>';
+  });
+  box.innerHTML = '<div class="feedback-box '+(allOk?'success':'fail')+'">'+rows+
+    (allOk ? '<div class="action-row"><button class="btn small" data-lab-next="1">Lanjut</button></div>'
+           : '<p class="dim" style="margin-top:8px; font-size:12.5px;">'+(hintFail || 'Periksa lagi pengaturannya, lalu klik "Cek jawaban".')+'</p>')+'</div>';
+  const nb = box.querySelector('[data-lab-next]');
+  if(nb) nb.addEventListener('click', function(){ nextStep(); });
+}
+function addCheckBtn(sh, fn){
+  const b = mk('button','btn','✓ Cek jawaban');
+  sh.actions.appendChild(b);
+  b.addEventListener('click', function(){ const r = fn(); showFeedback(sh.feedback, r.checks, r.hint); });
+  return b;
+}
+function ok(b){ return b ? 'Benar' : 'Belum tepat'; }
+
+/* Tabel data bergaya spreadsheet. opt: letters, rowNums[], cellClass(ri,ci,row), cellStyle(ri,ci,row), headMark(col) */
+function tableHtml(cols, rows, opt){
+  opt = opt || {};
+  let h = '<div class="lab-tbl-wrap"><table class="lab-tbl"><thead>';
+  if(opt.letters){
+    h += '<tr class="lt-letters"><th class="rn"></th>';
+    cols.forEach(function(c, ci){ h += '<th class="lt-l">'+String.fromCharCode(65+ci)+'</th>'; });
+    h += '</tr>';
+  }
+  h += '<tr><th class="rn">'+(opt.letters?'1':'')+'</th>';
+  cols.forEach(function(c){ h += '<th class="'+(c.num?'num':'')+'">'+esc(c.label)+(opt.headMark?opt.headMark(c):'')+'</th>'; });
+  h += '</tr></thead><tbody>';
+  rows.forEach(function(row, ri){
+    h += '<tr><td class="rn">'+(opt.rowNums ? opt.rowNums[ri] : ri+2)+'</td>';
+    cols.forEach(function(c, ci){
+      const v = row[c.key];
+      const cls = (c.num?'num ':'') + (opt.cellClass ? (opt.cellClass(ri,ci,row)||'') : '');
+      const st = opt.cellStyle ? (opt.cellStyle(ri,ci,row)||'') : '';
+      h += '<td class="'+cls+'"'+(st?' style="'+st+'"':'')+'>'+esc((c.num && typeof v === 'number') ? fmtID(v,2) : v)+'</td>';
+    });
+    h += '</tr>';
+  });
+  return h + '</tbody></table></div>';
+}
+
+/* ============================= DATASET BERSAMA ============================= */
+const SALES_COLS = [
+  {key:'sales',label:'Sales'},{key:'wilayah',label:'Wilayah'},{key:'produk',label:'Produk'},
+  {key:'qty',label:'Qty',num:true},{key:'omzet',label:'Penjualan',num:true}
+];
+const SALES = [
+  {sales:'Andi',  wilayah:'Jawa Barat',  produk:'Laptop', qty:3, omzet:45000000},
+  {sales:'Budi',  wilayah:'Jawa Timur',  produk:'Printer',qty:5, omzet:12500000},
+  {sales:'Citra', wilayah:'Jawa Barat',  produk:'Monitor',qty:8, omzet:24000000},
+  {sales:'Dedi',  wilayah:'Jawa Tengah', produk:'Laptop', qty:2, omzet:30000000},
+  {sales:'Eka',   wilayah:'Jawa Timur',  produk:'Laptop', qty:4, omzet:60000000},
+  {sales:'Fajar', wilayah:'Jawa Barat',  produk:'Printer',qty:7, omzet:17500000},
+  {sales:'Gita',  wilayah:'Jawa Tengah', produk:'Monitor',qty:9, omzet:27000000},
+  {sales:'Hadi',  wilayah:'Jawa Timur',  produk:'Monitor',qty:7, omzet:21000000},
+  {sales:'Intan', wilayah:'Jawa Barat',  produk:'Laptop', qty:5, omzet:75000000},
+  {sales:'Joko',  wilayah:'Jawa Tengah', produk:'Printer',qty:3, omzet:7500000},
+  {sales:'Kiki',  wilayah:'Jawa Timur',  produk:'Laptop', qty:1, omzet:15000000},
+  {sales:'Lina',  wilayah:'Jawa Barat',  produk:'Monitor',qty:4, omzet:12000000}
+];
+
+/* ============================= LEVEL 11 — DATA VALIDATION ============================= */
+const DV_ALLOW = [
+  ['any','Semua nilai (Any value)'],['whole','Bilangan bulat (Whole number)'],['decimal','Desimal (Decimal)'],
+  ['list','Daftar (List)'],['length','Panjang teks (Text length)'],['custom','Kustom (Custom formula)']
+];
+const DV_OPS = [
+  ['between','antara (between)'],['notbetween','tidak antara (not between)'],['eq','sama dengan (equal to)'],
+  ['ne','tidak sama dengan (not equal to)'],['gt','lebih besar dari (greater than)'],['lt','lebih kecil dari (less than)'],
+  ['ge','lebih besar atau sama dengan'],['le','lebih kecil atau sama dengan']
+];
+function dvCmp(n, r){
+  const a = parseNum(r.v1), b = parseNum(r.v2);
+  if(isNaN(a)) return false;
+  switch(r.op){
+    case 'between': case 'notbetween': {
+      if(isNaN(b)) return false;
+      const inside = n >= Math.min(a,b) && n <= Math.max(a,b);
+      return r.op === 'between' ? inside : !inside;
+    }
+    case 'eq': return n === a;
+    case 'ne': return n !== a;
+    case 'gt': return n > a;
+    case 'lt': return n < a;
+    case 'ge': return n >= a;
+    case 'le': return n <= a;
+  }
+  return false;
+}
+function truthyV(v){ return v === true || (typeof v === 'number' && v !== 0); }
+function dvCustom(rule, raw, ctx){
+  let f = String(rule.formula || '').trim();
+  if(!f) return false;
+  if(f.charAt(0) !== '=') f = '=' + f;
+  const s = new Sheet(2,3);
+  s.setRaw(0,0,raw);
+  if(ctx != null) s.setRaw(0,1,ctx);
+  s.setRaw(0,2,f);
+  let v;
+  try{ v = s.evalCell(0,2,new Set(),new Map()); }catch(e){ v = '#ERROR!'; }
+  return truthyV(v);
+}
+function dvValidate(rule, raw, ctx){
+  raw = String(raw==null?'':raw).trim();
+  if(raw === '') return true; // Ignore blank
+  switch(rule.allow){
+    case 'any': return true;
+    case 'whole': if(!/^-?\d+$/.test(raw)) return false; return dvCmp(parseInt(raw,10), rule);
+    case 'decimal': { const n = parseNum(raw); if(isNaN(n)) return false; return dvCmp(n, rule); }
+    case 'length': return dvCmp(raw.length, rule);
+    case 'list': { const items = String(rule.source||'').split(',').map(function(s){ return s.trim(); }).filter(Boolean); return items.indexOf(raw) >= 0; }
+    case 'custom': return dvCustom(rule, raw, ctx);
+  }
+  return false;
+}
+
+LAB.dv = function(el, ex){
+  const sh = shell(el, ex, 'rule');
+  const rule = {allow:'any', op:'between', v1:'', v2:'', source:'', formula:'', inTitle:'', inMsg:'', errStyle:'stop', errTitle:'', errMsg:''};
+
+  const p1 = mk('div','lab-panel');
+  p1.appendChild(mk('div','lab-cap','<b>Settings</b> · sel yang divalidasi: <b>'+esc(ex.cellLabel)+'</b> — menu Data → Data Validation'));
+  const f1 = mk('div','lab-row'); p1.appendChild(f1);
+  sh.body.appendChild(p1);
+
+  function build(){
+    f1.innerHTML = '';
+    f1.appendChild(field('Izinkan (Allow)', selectCtl(DV_ALLOW, rule.allow, function(v){ rule.allow = v; build(); refresh(); })));
+    if(['whole','decimal','length'].indexOf(rule.allow) >= 0){
+      f1.appendChild(field('Data', selectCtl(DV_OPS, rule.op, function(v){ rule.op = v; build(); refresh(); })));
+      const two = rule.op === 'between' || rule.op === 'notbetween';
+      f1.appendChild(field(two ? 'Minimum' : 'Nilai', inputCtl(rule.v1, 'angka', function(v){ rule.v1 = v; refresh(); })));
+      if(two) f1.appendChild(field('Maksimum', inputCtl(rule.v2, 'angka', function(v){ rule.v2 = v; refresh(); })));
+    } else if(rule.allow === 'list'){
+      f1.appendChild(field('Sumber (Source) — pisahkan dengan koma', inputCtl(rule.source, 'mis. Ya,Tidak', function(v){ rule.source = v; refresh(); })));
+    } else if(rule.allow === 'custom'){
+      f1.appendChild(field('Rumus (Formula) — tulis untuk sel '+ex.cellLabel, inputCtl(rule.formula, 'mis. =A1>0', function(v){ rule.formula = v; refresh(); })));
+    }
+  }
+
+  if(ex.messages){
+    const p2 = mk('div','lab-panel');
+    p2.appendChild(mk('div','lab-cap','<b>Input Message</b> · petunjuk yang muncul saat sel dipilih'));
+    const r1 = mk('div','lab-row');
+    r1.appendChild(field('Judul (Title)', inputCtl('', 'mis. Qty Keluar', function(v){ rule.inTitle = v; refresh(); })));
+    r1.appendChild(field('Pesan (Input message)', inputCtl('', 'mis. Isi qty 1 sampai sebanyak stok', function(v){ rule.inMsg = v; refresh(); })));
+    p2.appendChild(r1);
+    p2.appendChild(mk('div','lab-cap','<b>Error Alert</b> · pesan yang muncul saat data ditolak'));
+    const r2 = mk('div','lab-row');
+    r2.appendChild(field('Gaya (Style)', selectCtl([['stop','Stop — menolak data'],['warning','Warning — bertanya'],['info','Information — hanya memberi tahu']], 'stop', function(v){ rule.errStyle = v; refresh(); })));
+    r2.appendChild(field('Judul (Title)', inputCtl('', 'mis. Qty tidak valid', function(v){ rule.errTitle = v; refresh(); })));
+    r2.appendChild(field('Pesan (Error message)', inputCtl('', 'mis. Qty harus lebih dari 0 dan tidak melebihi stok', function(v){ rule.errMsg = v; refresh(); })));
+    p2.appendChild(r2);
+    sh.body.appendChild(p2);
+  }
+
+  const p3 = mk('div','lab-panel');
+  p3.appendChild(mk('div','lab-cap','<b>Tabel uji</b> · hasil aturanmu pada tiap entri (diperbarui langsung)'+(ex.ctxNote?' · '+esc(ex.ctxNote):'')));
+  const tbl = mk('div'); p3.appendChild(tbl);
+  sh.body.appendChild(p3);
+
+  const p4 = mk('div','lab-panel');
+  p4.appendChild(mk('div','lab-cap','<b>Coba sendiri</b> · ketik sebuah entri untuk melihat reaksi Excel'));
+  const tipBox = mk('div');
+  const ti = inputCtl('', 'ketik nilai lalu lihat hasilnya…', function(){ tester(); });
+  const out = mk('div');
+  p4.appendChild(tipBox); p4.appendChild(ti); p4.appendChild(out);
+  sh.body.appendChild(p4);
+
+  function tester(){
+    tipBox.innerHTML = (rule.inTitle.trim() || rule.inMsg.trim())
+      ? '<div class="dv-tip">💬 <b>'+esc(rule.inTitle.trim())+'</b> '+esc(rule.inMsg.trim())+'</div>' : '';
+    const v = ti.value;
+    if(v.trim() === ''){ out.innerHTML = ''; return; }
+    if(dvValidate(rule, v, ex.ctx)){ out.innerHTML = '<div class="dv-msg okk"><b>✓ Diterima</b> — nilai masuk ke sel.</div>'; return; }
+    const st = rule.errStyle;
+    const title = rule.errTitle.trim() || 'Microsoft Excel';
+    const msg = rule.errMsg.trim() || 'Nilai ini tidak sesuai dengan pembatasan validasi data yang ditetapkan untuk sel ini.';
+    const icon = st === 'stop' ? '⛔' : (st === 'warning' ? '⚠️' : 'ℹ️');
+    const tail = st === 'stop' ? 'Nilai ditolak. Pilihan: Coba Lagi atau Batal.'
+               : (st === 'warning' ? 'Nilai tetap bisa masuk jika kamu memilih Ya.' : 'Nilai tetap masuk setelah kamu menekan OK.');
+    out.innerHTML = '<div class="dv-msg '+st+'"><b>'+icon+' '+esc(title)+'</b><br>'+esc(msg)+'<br><span class="dim">'+tail+'</span></div>';
+  }
+  function refresh(){
+    let h = '<div class="lab-tbl-wrap"><table class="lab-tbl"><thead><tr><th>Entri uji</th><th>Hasil aturanmu</th></tr></thead><tbody>';
+    ex.tests.forEach(function(t){
+      const good = dvValidate(rule, t[0], ex.ctx);
+      h += '<tr><td>'+esc(t[0])+'</td><td><span class="dv-res '+(good?'ok':'no')+'">'+(good?'✓ Diterima':'✕ Ditolak')+'</span></td></tr>';
+    });
+    tbl.innerHTML = h + '</tbody></table></div>';
+    tester();
+  }
+  build(); refresh();
+
+  addCheckBtn(sh, function(){
+    const checks = [];
+    ex.tests.forEach(function(t){
+      const got = dvValidate(rule, t[0], ex.ctx);
+      checks.push({ok: got === t[1], label: 'Entri uji "'+esc(t[0])+'" — '+ok(got === t[1])});
+    });
+    if(ex.requireAllow){
+      const nm = DV_ALLOW.filter(function(a){ return a[0] === ex.requireAllow; })[0][1];
+      checks.push({ok: rule.allow === ex.requireAllow, label: 'Jenis validasi = '+nm+' — '+ok(rule.allow === ex.requireAllow)});
+    }
+    if(ex.messages){
+      checks.push({ok: rule.errStyle === 'stop', label: 'Gaya Error Alert = Stop — '+ok(rule.errStyle === 'stop')});
+      checks.push({ok: rule.errMsg.trim().length >= 10, label: 'Pesan error terisi (min. 10 karakter) — '+ok(rule.errMsg.trim().length >= 10)});
+      checks.push({ok: rule.inMsg.trim().length >= 5, label: 'Pesan input terisi (min. 5 karakter) — '+ok(rule.inMsg.trim().length >= 5)});
+    }
+    return {checks:checks, hint:'Lihat tabel uji: entri yang seharusnya ditolak masih diterima, atau sebaliknya. Sesuaikan aturannya.'};
+  });
+};
+
+/* ============================= LEVEL 12 — FILTER & SORT ============================= */
+const FS_OPS = [
+  ['eq','sama dengan'],['ne','tidak sama dengan'],['gt','lebih besar dari'],['lt','lebih kecil dari'],
+  ['ge','lebih besar atau sama dengan'],['le','lebih kecil atau sama dengan'],['contains','mengandung'],
+  ['begins','diawali dengan'],['in','salah satu dari (pisahkan koma)']
+];
+function fsMatch(row, f, cols){
+  if(!f.col || String(f.val).trim() === '') return true;
+  const col = cols.filter(function(c){ return c.key === f.col; })[0];
+  const v = row[f.col];
+  const raw = String(f.val).trim();
+  if(f.op === 'in') return raw.split(',').map(function(s){ return s.trim().toLowerCase(); }).filter(Boolean).indexOf(String(v).toLowerCase()) >= 0;
+  if(f.op === 'contains') return String(v).toLowerCase().indexOf(raw.toLowerCase()) >= 0;
+  if(f.op === 'begins') return String(v).toLowerCase().indexOf(raw.toLowerCase()) === 0;
+  if(col.num){
+    const n = parseNum(raw);
+    if(isNaN(n)) return false;
+    switch(f.op){
+      case 'eq': return v === n; case 'ne': return v !== n; case 'gt': return v > n;
+      case 'lt': return v < n; case 'ge': return v >= n; case 'le': return v <= n;
+    }
+    return false;
+  }
+  const a = String(v).toLowerCase(), b = raw.toLowerCase();
+  switch(f.op){
+    case 'eq': return a === b; case 'ne': return a !== b; case 'gt': return a > b;
+    case 'lt': return a < b; case 'ge': return a >= b; case 'le': return a <= b;
+  }
+  return false;
+}
+function fsRun(cols, data, filters, sorts){
+  let rows = data.map(function(r, i){ return {r:r, i:i}; });
+  rows = rows.filter(function(x){ return filters.every(function(f){ return fsMatch(x.r, f, cols); }); });
+  const act = sorts.filter(function(s){ return s.col; });
+  rows.sort(function(a, b){
+    for(let k = 0; k < act.length; k++){
+      const s = act[k];
+      const col = cols.filter(function(c){ return c.key === s.col; })[0];
+      const cmp = col.num ? (a.r[s.col] - b.r[s.col]) : String(a.r[s.col]).localeCompare(String(b.r[s.col]), 'id');
+      if(cmp !== 0) return s.dir === 'desc' ? -cmp : cmp;
+    }
+    return a.i - b.i;
+  });
+  return rows;
+}
+
+LAB.filtersort = function(el, ex){
+  const sh = shell(el, ex, 'filter_alt');
+  const cols = SALES_COLS, data = SALES;
+  const filters = [0,1,2].map(function(){ return {col:'', op:'eq', val:''}; });
+  const sorts = [0,1].map(function(){ return {col:'', dir:'asc'}; });
+  const colOpts = [['','(tanpa)']].concat(cols.map(function(c){ return [c.key, c.label]; }));
+
+  const p1 = mk('div','lab-panel');
+  p1.appendChild(mk('div','lab-cap','<b>Filter</b> · semua filter yang aktif digabung dengan logika AND'));
+  filters.forEach(function(f, i){
+    const row = mk('div','lab-row');
+    row.appendChild(field('Filter '+(i+1)+' — Kolom', selectCtl(colOpts, f.col, function(v){ f.col = v; upd(); })));
+    row.appendChild(field('Kriteria', selectCtl(FS_OPS, f.op, function(v){ f.op = v; upd(); })));
+    row.appendChild(field('Nilai', inputCtl(f.val, 'mis. Jawa Barat atau 20000000', function(v){ f.val = v; upd(); })));
+    p1.appendChild(row);
+  });
+  sh.body.appendChild(p1);
+
+  const p2 = mk('div','lab-panel');
+  p2.appendChild(mk('div','lab-cap','<b>Sort</b> · Data → Sort (Custom Sort dengan beberapa level)'));
+  const dirOpts = [['asc','A → Z / Terkecil → Terbesar'],['desc','Z → A / Terbesar → Terkecil']];
+  sorts.forEach(function(s, i){
+    const row = mk('div','lab-row');
+    row.appendChild(field(i === 0 ? 'Urutkan berdasarkan' : 'Lalu berdasarkan', selectCtl(colOpts, s.col, function(v){ s.col = v; upd(); })));
+    row.appendChild(field('Urutan', selectCtl(dirOpts, s.dir, function(v){ s.dir = v; upd(); })));
+    p2.appendChild(row);
+  });
+  sh.body.appendChild(p2);
+
+  const count = mk('div','lab-count');
+  const tw = mk('div');
+  sh.body.appendChild(count); sh.body.appendChild(tw);
+
+  function upd(){
+    const res = fsRun(cols, data, filters, sorts);
+    count.innerHTML = 'Menampilkan <b>'+res.length+'</b> dari '+data.length+' baris'+(res.length < data.length ? ' · nomor baris yang terlewati = baris tersembunyi' : '');
+    tw.innerHTML = tableHtml(cols, res.map(function(x){ return x.r; }), {
+      rowNums: res.map(function(x){ return x.i + 2; }),
+      headMark: function(c){
+        let m = '';
+        if(filters.some(function(f){ return f.col === c.key && String(f.val).trim() !== ''; })) m += ' <span class="lab-mark">▼</span>';
+        sorts.forEach(function(s, i){ if(s.col === c.key) m += ' <span class="lab-mark">'+(s.dir === 'asc' ? '↑' : '↓')+(i+1)+'</span>'; });
+        return m;
+      }
+    });
+  }
+  upd();
+
+  addCheckBtn(sh, function(){
+    const sol = fsRun(cols, data, ex.solution.filters, ex.solution.sorts).map(function(x){ return x.i; });
+    const mine = fsRun(cols, data, filters, sorts).map(function(x){ return x.i; });
+    const sameSet = mine.length === sol.length && mine.slice().sort(function(a,b){ return a-b; }).join() === sol.slice().sort(function(a,b){ return a-b; }).join();
+    const sameOrder = mine.join() === sol.join();
+    return {
+      checks: [
+        {ok: sameSet, label: 'Baris yang tampil sesuai kriteria — '+ok(sameSet)},
+        {ok: sameOrder, label: 'Urutan baris sesuai permintaan — '+ok(sameOrder)}
+      ],
+      hint: 'Bandingkan tabel dengan permintaan di atas: cek kolom, kriteria, nilai filter, serta arah urutan.'
+    };
+  });
+};
+
+/* ============================= LEVEL 13 — CONDITIONAL FORMATTING ============================= */
+const CF_COLS = [
+  {key:'kode',label:'Kode'},{key:'barang',label:'Barang'},{key:'stok',label:'Stok',num:true},
+  {key:'omzet',label:'Penjualan',num:true},{key:'status',label:'Status'}
+];
+const CF_DATA = [
+  {kode:'K101',barang:'Kabel HDMI', stok:25,omzet:12500000,status:'Lunas'},
+  {kode:'K102',barang:'Mouse',      stok:8, omzet:8000000, status:'Belum'},
+  {kode:'K103',barang:'Keyboard',   stok:14,omzet:18500000,status:'Lunas'},
+  {kode:'K104',barang:'Monitor',    stok:3, omzet:42000000,status:'Belum'},
+  {kode:'K102',barang:'Mouse Pad',  stok:40,omzet:3000000, status:'Lunas'},
+  {kode:'K105',barang:'Webcam',     stok:9, omzet:15000000,status:'Belum'},
+  {kode:'K106',barang:'Headset',    stok:22,omzet:27000000,status:'Lunas'},
+  {kode:'K104',barang:'Monitor Besar',stok:6,omzet:36000000,status:'Belum'},
+  {kode:'K107',barang:'Flashdisk',  stok:60,omzet:9000000, status:'Lunas'},
+  {kode:'K108',barang:'Speaker',    stok:12,omzet:21000000,status:'Belum'}
+];
+const CF_RANGES = [
+  ['','(pilih rentang)'],['A2:A11','A2:A11  (kolom Kode)'],['B2:B11','B2:B11  (kolom Barang)'],
+  ['C2:C11','C2:C11  (kolom Stok)'],['D2:D11','D2:D11  (kolom Penjualan)'],['E2:E11','E2:E11  (kolom Status)'],
+  ['A2:E11','A2:E11  (seluruh baris data)']
+];
+const CF_TYPES = [
+  ['','(pilih jenis aturan)'],['gt','Nilai sel lebih besar dari'],['lt','Nilai sel lebih kecil dari'],['eq','Nilai sel sama dengan'],
+  ['between','Nilai sel antara'],['text','Teks mengandung'],['dup','Nilai duplikat (Duplicate Values)'],
+  ['top','Top N nilai tertinggi'],['bottom','Bottom N nilai terendah'],['databar','Data Bar'],
+  ['colorscale','Color Scale (3 warna)'],['formula','Rumus (Use a formula)']
+];
+const CF_FILLS = [['red','Isi merah muda + teks merah tua'],['yellow','Isi kuning + teks kuning tua'],['green','Isi hijau + teks hijau tua']];
+const CF_FILL_NAME = {red:'merah', yellow:'kuning', green:'hijau'};
+
+function cfRange(s){
+  const m = /^([A-E])(\d+):([A-E])(\d+)$/.exec(s || '');
+  if(!m) return null;
+  return {c1: m[1].charCodeAt(0)-65, r1: parseInt(m[2],10)-2, c2: m[3].charCodeAt(0)-65, r2: parseInt(m[4],10)-2};
+}
+function colNum(l){ let n = 0; for(let i = 0; i < l.length; i++) n = n*26 + (l.charCodeAt(i)-64); return n; }
+function colLet(n){ let s = ''; while(n > 0){ const m = (n-1)%26; s = String.fromCharCode(65+m)+s; n = Math.floor((n-1)/26); } return s; }
+/* Menggeser referensi relatif pada rumus (seperti Excel menyalin rumus ke sel lain). Teks di dalam tanda kutip tidak disentuh. */
+function shiftF(f, dr, dc){
+  let bad = false;
+  const out = f.replace(/"[^"]*"|(\$?)([A-Za-z]{1,3})(\$?)(\d+)(?![\dA-Za-z(])/g, function(m, dcol, col, drow, row){
+    if(col === undefined) return m;
+    let c = colNum(col.toUpperCase()), r = parseInt(row,10);
+    if(!dcol) c += dc;
+    if(!drow) r += dr;
+    if(c < 1 || r < 1){ bad = true; return m; }
+    return dcol + colLet(c) + drow + r;
+  });
+  return bad ? null : out;
+}
+function cfSheet(cols, data){
+  const s = new Sheet(data.length + 3, cols.length + 3);
+  cols.forEach(function(c, ci){ s.setRaw(0, ci, c.label); });
+  data.forEach(function(row, ri){ cols.forEach(function(c, ci){ s.setRaw(ri+1, ci, row[c.key]); }); });
+  return s;
+}
+function evalOn(sheet, f){
+  const rr = sheet.rows-1, cc = sheet.cols-1;
+  sheet.setRaw(rr, cc, f);
+  let v;
+  try{ v = sheet.evalCell(rr, cc, new Set(), new Map()); }catch(e){ v = '#ERROR!'; }
+  sheet.setRaw(rr, cc, '');
+  return v;
+}
+function scaleColor(t){
+  const R = [255,107,92], Y = [255,196,60], G = [74,222,128];
+  let a, b, u;
+  if(t < 0.5){ a = R; b = Y; u = t*2; } else { a = Y; b = G; u = (t-0.5)*2; }
+  const c = a.map(function(x, i){ return Math.round(x + (b[i]-x)*u); });
+  return 'rgba('+c.join(',')+',.55)';
+}
+/* Hasil: peta "barisData,kolom" -> {fill} | {bar} | {scale} */
+function cfCompute(rule, cols, data){
+  const out = {};
+  const rg = cfRange(rule.range);
+  if(!rg || !rule.type) return out;
+  const cells = [];
+  for(let r = rg.r1; r <= rg.r2; r++) for(let c = rg.c1; c <= rg.c2; c++) cells.push({r:r, c:c, v:data[r][cols[c].key]});
+  const mark = function(x, o){ out[x.r+','+x.c] = o; };
+  const t = rule.type;
+  if(t === 'gt' || t === 'lt' || t === 'eq' || t === 'between'){
+    const a = parseNum(rule.v1), b = parseNum(rule.v2);
+    cells.forEach(function(x){
+      const isN = typeof x.v === 'number';
+      let hit = false;
+      if(t === 'eq'){
+        hit = isN ? (!isNaN(a) && x.v === a)
+                  : (String(rule.v1).trim() !== '' && String(x.v).toLowerCase() === String(rule.v1).trim().toLowerCase());
+      } else if(isN && !isNaN(a)){
+        if(t === 'gt') hit = x.v > a;
+        else if(t === 'lt') hit = x.v < a;
+        else hit = !isNaN(b) && x.v >= Math.min(a,b) && x.v <= Math.max(a,b);
+      }
+      if(hit) mark(x, {fill: rule.fill});
+    });
+  } else if(t === 'text'){
+    const q = String(rule.v1).trim().toLowerCase();
+    if(q) cells.forEach(function(x){ if(String(x.v).toLowerCase().indexOf(q) >= 0) mark(x, {fill: rule.fill}); });
+  } else if(t === 'dup'){
+    const cnt = {};
+    cells.forEach(function(x){ const k = String(x.v).toLowerCase(); cnt[k] = (cnt[k]||0) + 1; });
+    cells.forEach(function(x){ if(cnt[String(x.v).toLowerCase()] > 1) mark(x, {fill: rule.fill}); });
+  } else if(t === 'top' || t === 'bottom'){
+    const nums = cells.filter(function(x){ return typeof x.v === 'number'; }).map(function(x){ return x.v; })
+      .sort(function(p, q){ return t === 'top' ? q-p : p-q; });
+    const n = parseInt(rule.n, 10);
+    if(n > 0 && nums.length){
+      const th = nums[Math.min(n, nums.length)-1];
+      cells.forEach(function(x){ if(typeof x.v === 'number' && (t === 'top' ? x.v >= th : x.v <= th)) mark(x, {fill: rule.fill}); });
+    }
+  } else if(t === 'databar' || t === 'colorscale'){
+    const nums = cells.filter(function(x){ return typeof x.v === 'number'; });
+    if(nums.length){
+      const vals = nums.map(function(x){ return x.v; });
+      const mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+      nums.forEach(function(x){
+        const p = mx === mn ? 1 : (x.v-mn)/(mx-mn);
+        mark(x, t === 'databar' ? {bar: Math.round(10 + p*90)} : {scale: p});
+      });
+    }
+  } else if(t === 'formula'){
+    let f = String(rule.formula || '').trim();
+    if(f){
+      if(f.charAt(0) !== '=') f = '=' + f;
+      const sheet = cfSheet(cols, data);
+      cells.forEach(function(x){
+        const g = shiftF(f, x.r - rg.r1, x.c - rg.c1);
+        if(g === null) return;
+        if(truthyV(evalOn(sheet, g))) mark(x, {fill: rule.fill});
+      });
+    }
+  }
+  return out;
+}
+function cfSig(map){ return Object.keys(map).sort().join(';'); }
+
+LAB.cf = function(el, ex){
+  const sh = shell(el, ex, 'palette');
+  const rule = {range:'', type:'', v1:'', v2:'', n:'3', formula:'', fill:'red'};
+  const HIGHLIGHT = ['gt','lt','eq','between','text','dup','top','bottom','formula'];
+
+  const panel = mk('div','lab-panel');
+  panel.appendChild(mk('div','lab-cap','<b>New Rule</b> · Home → Conditional Formatting → New Rule'));
+  const r1 = mk('div','lab-row');
+  r1.appendChild(field('Terapkan pada rentang (Applies to)', selectCtl(CF_RANGES, rule.range, function(v){ rule.range = v; draw(); })));
+  r1.appendChild(field('Jenis aturan', selectCtl(CF_TYPES, rule.type, function(v){ rule.type = v; build(); draw(); })));
+  panel.appendChild(r1);
+  const r2 = mk('div','lab-row'); panel.appendChild(r2);
+  sh.body.appendChild(panel);
+
+  function build(){
+    r2.innerHTML = '';
+    const t = rule.type;
+    if(t === 'gt' || t === 'lt' || t === 'eq' || t === 'between'){
+      r2.appendChild(field(t === 'between' ? 'Nilai bawah' : 'Nilai', inputCtl(rule.v1, 'mis. 10', function(v){ rule.v1 = v; draw(); })));
+      if(t === 'between') r2.appendChild(field('Nilai atas', inputCtl(rule.v2, 'mis. 20', function(v){ rule.v2 = v; draw(); })));
+    } else if(t === 'text'){
+      r2.appendChild(field('Teks yang dicari', inputCtl(rule.v1, 'mis. Monitor', function(v){ rule.v1 = v; draw(); })));
+    } else if(t === 'top' || t === 'bottom'){
+      r2.appendChild(field('Jumlah item (N)', inputCtl(rule.n, 'mis. 3', function(v){ rule.n = v; draw(); })));
+    } else if(t === 'formula'){
+      r2.appendChild(field('Rumus — ditulis untuk sel kiri-atas rentang', inputCtl(rule.formula, 'mis. =$C2<10', function(v){ rule.formula = v; draw(); })));
+    }
+    if(HIGHLIGHT.indexOf(t) >= 0) r2.appendChild(field('Format', selectCtl(CF_FILLS, rule.fill, function(v){ rule.fill = v; draw(); })));
+  }
+
+  const note = mk('div','lab-count');
+  const tw = mk('div');
+  sh.body.appendChild(note); sh.body.appendChild(tw);
+
+  function draw(){
+    const map = cfCompute(rule, CF_COLS, CF_DATA);
+    const n = Object.keys(map).length;
+    note.innerHTML = n ? 'Sel yang tersorot: <b>'+n+'</b>' : 'Belum ada sel yang tersorot — pilih rentang dan aturan.';
+    tw.innerHTML = tableHtml(CF_COLS, CF_DATA, {
+      letters: true,
+      cellClass: function(ri, ci){ const m = map[ri+','+ci]; return m && m.fill ? 'cf-'+m.fill : ''; },
+      cellStyle: function(ri, ci){
+        const m = map[ri+','+ci];
+        if(!m) return '';
+        if(m.bar != null) return 'background:linear-gradient(90deg,rgba(79,179,255,.5) '+m.bar+'%,transparent '+m.bar+'%)';
+        if(m.scale != null) return 'background:'+scaleColor(m.scale);
+        return '';
+      }
+    });
+  }
+  build(); draw();
+
+  addCheckBtn(sh, function(){
+    const checks = [];
+    if(ex.expectRule){
+      const e = ex.expectRule;
+      const tn = CF_TYPES.filter(function(t){ return t[0] === e.type; })[0][1];
+      checks.push({ok: rule.type === e.type, label: 'Jenis aturan = '+tn+' — '+ok(rule.type === e.type)});
+      checks.push({ok: rule.range === e.range, label: 'Diterapkan pada rentang '+e.range+' — '+ok(rule.range === e.range)});
+      return {checks:checks, hint:'Pilih jenis aturan dan rentang yang sesuai dengan permintaan Bu Tari.'};
+    }
+    const sol = cfCompute(ex.solution, CF_COLS, CF_DATA);
+    const mine = cfCompute(rule, CF_COLS, CF_DATA);
+    const same = Object.keys(sol).length > 0 && cfSig(mine) === cfSig(sol);
+    const fillOk = same && rule.fill === ex.solution.fill;
+    checks.push({ok: same, label: 'Sel yang tersorot sesuai target — '+ok(same)});
+    checks.push({ok: fillOk, label: 'Warna sorotan '+CF_FILL_NAME[ex.solution.fill]+' — '+ok(fillOk)});
+    return {checks:checks, hint:'Perhatikan tabel: sel yang menyala harus persis sama dengan yang diminta — tidak kurang, tidak lebih.'};
+  });
+};
+
+/* ============================= LEVEL 14 — PIVOT TABLE ============================= */
+const FN_LABEL = {sum:'Jumlah', count:'Hitung', avg:'Rata-rata', max:'Maks', min:'Min'};
+function colLabel(k){ return SALES_COLS.filter(function(c){ return c.key === k; })[0].label; }
+function colIsNum(k){ return !!SALES_COLS.filter(function(c){ return c.key === k; })[0].num; }
+
+function pvCompute(data, cfg){
+  if(!cfg.val) return {empty:true};
+  if(cfg.fn !== 'count' && !colIsNum(cfg.val)){
+    return {error:'Field teks ('+colLabel(cfg.val)+') tidak bisa dijumlahkan atau dirata-ratakan — pakai fungsi Hitung (Count) atau pilih field angka.'};
+  }
+  const rows = data.filter(function(d){ return !cfg.fField || !cfg.fVal || String(d[cfg.fField]) === cfg.fVal; });
+  const keyOf = function(r, f){ return f ? r[f] : ''; };
+  const uniq = function(f){
+    if(!f) return [''];
+    return Array.from(new Set(rows.map(function(r){ return r[f]; }))).sort(function(a, b){ return String(a).localeCompare(String(b), 'id'); });
+  };
+  const rk = uniq(cfg.row), ck = uniq(cfg.col);
+  const agg = function(list){
+    const v = list.map(function(r){ return r[cfg.val]; });
+    if(cfg.fn === 'count') return v.length;
+    const s = v.reduce(function(a, b){ return a+b; }, 0);
+    if(cfg.fn === 'sum') return s;
+    if(cfg.fn === 'avg') return s / v.length;
+    if(cfg.fn === 'max') return Math.max.apply(null, v);
+    return Math.min.apply(null, v);
+  };
+  const sub = function(a, b){ return rows.filter(function(r){ return keyOf(r, cfg.row) === a && keyOf(r, cfg.col) === b; }); };
+  const cells = rk.map(function(a){ return ck.map(function(b){ const l = sub(a,b); return l.length ? agg(l) : null; }); });
+  const rowTot = rk.map(function(a){ const l = rows.filter(function(r){ return keyOf(r, cfg.row) === a; }); return l.length ? agg(l) : null; });
+  const colTot = ck.map(function(b){ const l = rows.filter(function(r){ return keyOf(r, cfg.col) === b; }); return l.length ? agg(l) : null; });
+  return {rk:rk, ck:ck, cells:cells, rowTot:rowTot, colTot:colTot, grand: rows.length ? agg(rows) : null, hasR:!!cfg.row, hasC:!!cfg.col};
+}
+function pvHtml(res, cfg){
+  if(res.empty) return '<div class="lab-empty">Pilih field untuk area <b>Values</b> agar pivot table terisi.</div>';
+  if(res.error) return '<div class="lab-empty warn">'+esc(res.error)+'</div>';
+  const fl = FN_LABEL[cfg.fn]+' dari '+colLabel(cfg.val);
+  const fmt = function(v){ return v == null ? '' : fmtID(v, 3); };
+  let h = '<div class="lab-tbl-wrap"><table class="lab-tbl pv"><thead>';
+  if(res.hasC){
+    h += '<tr><th>'+esc(fl)+'</th><th class="num" colspan="'+res.ck.length+'">'+esc(colLabel(cfg.col))+'</th><th></th></tr>';
+    h += '<tr><th>'+esc(res.hasR ? colLabel(cfg.row) : '')+'</th>'+res.ck.map(function(k){ return '<th class="num">'+esc(k)+'</th>'; }).join('')+'<th class="num">Grand Total</th></tr>';
+  } else {
+    h += '<tr><th>'+esc(res.hasR ? colLabel(cfg.row) : 'Baris')+'</th><th class="num">'+esc(fl)+'</th></tr>';
+  }
+  h += '</thead><tbody>';
+  res.rk.forEach(function(a, i){
+    h += '<tr><td>'+esc(res.hasR ? a : 'Total')+'</td>';
+    if(res.hasC){
+      res.cells[i].forEach(function(v){ h += '<td class="num">'+fmt(v)+'</td>'; });
+      h += '<td class="num tot">'+fmt(res.rowTot[i])+'</td>';
+    } else h += '<td class="num">'+fmt(res.cells[i][0])+'</td>';
+    h += '</tr>';
+  });
+  if(res.hasR){
+    h += '<tr class="tot"><td>Grand Total</td>';
+    if(res.hasC){ res.colTot.forEach(function(v){ h += '<td class="num">'+fmt(v)+'</td>'; }); }
+    h += '<td class="num">'+fmt(res.grand)+'</td></tr>';
+  }
+  return h + '</tbody></table></div>';
+}
+function sameArr(a, b){ return a.length === b.length && a.every(function(x, i){ return String(x) === String(b[i]); }); }
+function pvCompare(a, b){
+  const bad = {rows:false, cols:false, vals:false};
+  if(a.empty || a.error || b.empty || b.error) return bad;
+  const rows = a.hasR === b.hasR && sameArr(a.rk, b.rk);
+  const cols = a.hasC === b.hasC && sameArr(a.ck, b.ck);
+  let vals = false;
+  if(rows && cols){
+    const near = function(x, y){ return (x == null && y == null) || (x != null && y != null && Math.abs(x-y) < 1e-6); };
+    vals = near(a.grand, b.grand) && a.cells.every(function(row, i){ return row.every(function(v, j){ return near(v, b.cells[i][j]); }); });
+  }
+  return {rows:rows, cols:cols, vals:vals};
+}
+
+LAB.pivot = function(el, ex){
+  const sh = shell(el, ex, 'pivot_table_chart');
+  const cfg = {row:'', col:'', val:'', fn:'sum', fField:'', fVal:''};
+  const textFields = SALES_COLS.filter(function(c){ return !c.num; });
+  const catOpts = [['','(kosong)']].concat(textFields.map(function(c){ return [c.key, c.label]; }));
+  const valOpts = [['','(pilih field)']].concat(SALES_COLS.map(function(c){ return [c.key, c.label]; }));
+  const fnOpts = [['sum','Jumlah (Sum)'],['count','Hitung (Count)'],['avg','Rata-rata (Average)'],['max','Maksimum (Max)'],['min','Minimum (Min)']];
+
+  const chips = mk('div','lab-panel');
+  chips.appendChild(mk('div','lab-cap','<b>PivotTable Fields</b> · field yang tersedia dari data sumber (12 baris transaksi)'));
+  chips.appendChild(mk('div','pv-chips', SALES_COLS.map(function(c){ return '<span class="pv-chip">'+esc(c.label)+(c.num?' · angka':' · teks')+'</span>'; }).join('')));
+  sh.body.appendChild(chips);
+
+  const areas = mk('div','pv-areas');
+  function area(title, ctls){
+    const a = mk('div','pv-area');
+    a.appendChild(mk('h4', null, title));
+    ctls.forEach(function(c){ a.appendChild(c); });
+    areas.appendChild(a);
+  }
+  const fVal = selectCtl([['','(Semua)']], '', function(v){ cfg.fVal = v; draw(); });
+  area('▼ Filters', [
+    selectCtl(catOpts, '', function(v){
+      cfg.fField = v; cfg.fVal = '';
+      const vals = v ? Array.from(new Set(SALES.map(function(r){ return r[v]; }))).sort() : [];
+      fVal.innerHTML = '';
+      [['','(Semua)']].concat(vals.map(function(x){ return [x, x]; })).forEach(function(o){ const op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; fVal.appendChild(op); });
+      fVal.value = '';
+      draw();
+    }),
+    fVal
+  ]);
+  area('▥ Columns', [selectCtl(catOpts, '', function(v){ cfg.col = v; draw(); })]);
+  area('☰ Rows', [selectCtl(catOpts, '', function(v){ cfg.row = v; draw(); })]);
+  area('Σ Values', [selectCtl(valOpts, '', function(v){ cfg.val = v; draw(); }), selectCtl(fnOpts, 'sum', function(v){ cfg.fn = v; draw(); })]);
+  sh.body.appendChild(areas);
+
+  const tw = mk('div','pv-out');
+  sh.body.appendChild(tw);
+  function draw(){ tw.innerHTML = pvHtml(pvCompute(SALES, cfg), cfg); }
+  draw();
+
+  addCheckBtn(sh, function(){
+    const cmp = pvCompare(pvCompute(SALES, cfg), pvCompute(SALES, ex.solution));
+    const checks = [
+      {ok: cmp.rows, label: 'Rows — label baris sesuai target — '+ok(cmp.rows)},
+      {ok: cmp.cols, label: 'Columns — susunan kolom sesuai target — '+ok(cmp.cols)},
+      {ok: cmp.vals, label: 'Values — angka & fungsi ringkasan sesuai target — '+ok(cmp.vals)}
+    ];
+    if(ex.solution.fField){
+      const fo = cfg.fField === ex.solution.fField && cfg.fVal === ex.solution.fVal;
+      checks.push({ok: fo, label: 'Filters — '+esc(colLabel(ex.solution.fField))+' = '+esc(ex.solution.fVal)+' — '+ok(fo)});
+    }
+    return {checks:checks, hint:'Cocokkan area pivot dengan pertanyaan: apa yang jadi baris, apa yang jadi kolom, dan angka apa yang dirangkum dengan fungsi apa.'};
+  });
+};
+
+/* ============================= LEVEL 15 — CHART ============================= */
+const CH_COL = ['var(--accent)','#4fb3ff','var(--amber)','#c084fc','#ff6b5c','#2dd4bf','#f472b6','#94a3b8'];
+function chColor(i){ return CH_COL[i % CH_COL.length]; }
+function niceNum(x, round){
+  const e = Math.floor(Math.log10(x)), f = x / Math.pow(10, e);
+  let nf;
+  if(round) nf = f < 1.5 ? 1 : (f < 3 ? 2 : (f < 7 ? 5 : 10));
+  else nf = f <= 1 ? 1 : (f <= 2 ? 2 : (f <= 5 ? 5 : 10));
+  return nf * Math.pow(10, e);
+}
+function chAxis(lo, dmax){
+  let span = dmax - lo;
+  if(span <= 0) span = Math.abs(dmax) || 1;
+  const step = niceNum(span/5, true);
+  let hi = lo + Math.ceil(span/step - 1e-9) * step;
+  if(hi < dmax) hi += step;
+  return {lo:lo, hi:hi, step:step};
+}
+function trunc(s, n){ s = String(s); return s.length > n ? s.slice(0, Math.max(1, n-1)) + '…' : s; }
+
+/* sp: {type: column|bar|line|pie, categories[], series:[{name,values[],color?}], title, xTitle, yTitle, legend, dataLabels, yMin, height} */
+function chartSvg(sp){
+  const W = 560, H = sp.height || 300, type = sp.type, C = sp.categories || [], S = sp.series || [];
+  if(!C.length || !S.length) return '<div class="lab-empty">Pilih minimal satu seri data agar chart tampil.</div>';
+  const A = [];
+  A.push('<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(sp.title || 'Chart')+'" xmlns="http://www.w3.org/2000/svg">');
+  const top = sp.title ? 34 : 12;
+  if(sp.title) A.push('<text class="ch-title" x="'+(W/2)+'" y="21" text-anchor="middle">'+esc(sp.title)+'</text>');
+
+  if(type === 'pie'){
+    const s = S[0];
+    const vals = s.values.map(function(v){ return Math.max(0, v); });
+    const tot = vals.reduce(function(a, b){ return a+b; }, 0) || 1;
+    const r = Math.min((H-top-14)/2, W*0.24), cx = W*0.29, cy = top + (H-top-8)/2;
+    let ang = -Math.PI/2;
+    vals.forEach(function(v, i){
+      const a1 = ang + v/tot*2*Math.PI, col = chColor(i);
+      if(v/tot >= 0.9999){
+        A.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" style="fill:'+col+'"/>');
+      } else if(v > 0){
+        const x0 = cx + r*Math.cos(ang), y0 = cy + r*Math.sin(ang), x1 = cx + r*Math.cos(a1), y1 = cy + r*Math.sin(a1);
+        A.push('<path d="M'+cx+','+cy+' L'+x0.toFixed(1)+','+y0.toFixed(1)+' A'+r+','+r+' 0 '+(a1-ang > Math.PI ? 1 : 0)+' 1 '+x1.toFixed(1)+','+y1.toFixed(1)+' Z" style="fill:'+col+';stroke:var(--panel-2);stroke-width:2"/>');
+      }
+      const pct = v/tot*100;
+      if(pct >= 6){
+        const m = (ang + a1)/2;
+        A.push('<text class="ch-lab-in" x="'+(cx + r*0.64*Math.cos(m)).toFixed(1)+'" y="'+(cy + r*0.64*Math.sin(m) + 4).toFixed(1)+'" text-anchor="middle">'+Math.round(pct)+'%</text>');
+      }
+      ang = a1;
+    });
+    const lx = W*0.58;
+    C.forEach(function(c, i){
+      const y = top + 14 + i*20;
+      A.push('<rect x="'+lx+'" y="'+(y-9)+'" width="11" height="11" rx="2" style="fill:'+chColor(i)+'"/><text class="ch-t" x="'+(lx+18)+'" y="'+y+'">'+esc(trunc(c, 14))+' · '+fmtID(vals[i], 1)+'</text>');
+    });
+    if(S.length > 1) A.push('<text class="ch-t" x="10" y="'+(H-6)+'">Pie hanya menampilkan satu seri ('+esc(s.name)+').</text>');
+    A.push('</svg>');
+    return A.join('');
+  }
+
+  const horiz = type === 'bar';
+  const showLegend = !!sp.legend;
+  const vmax = Math.max.apply(null, S.map(function(s){ return Math.max.apply(null, s.values); }));
+  const lo = sp.yMin == null ? 0 : sp.yMin;
+  const ax = chAxis(lo, vmax);
+  if(sp.dataLabels && ax.hi - vmax < ax.step*0.35) ax.hi += ax.step; // ruang untuk label di atas batang tertinggi
+  const legendH = showLegend ? 24 : 0;
+  const catT = sp.xTitle || '', valT = sp.yTitle || '';
+  let padL, padB;
+  const padR = 18, padT = top;
+  if(!horiz){ padL = 50 + (valT ? 16 : 0); padB = 30 + (catT ? 16 : 0) + legendH; }
+  else {
+    const maxLab = Math.min(14, Math.max.apply(null, C.map(function(c){ return String(c).length; })));
+    padL = 14 + maxLab*6.2 + (catT ? 16 : 0); padB = 28 + (valT ? 16 : 0) + legendH;
+  }
+  const pw = W - padL - padR, ph = H - padT - padB;
+  const yv = function(v){ return padT + ph - Math.max(0, (v-ax.lo)/(ax.hi-ax.lo))*ph; };
+  const xv = function(v){ return padL + Math.max(0, (v-ax.lo)/(ax.hi-ax.lo))*pw; };
+  const ticks = [];
+  for(let t = ax.lo; t <= ax.hi + ax.step*1e-6; t += ax.step) ticks.push(t);
+
+  ticks.forEach(function(t){
+    if(!horiz){
+      const y = yv(t);
+      A.push('<line class="ch-grid" x1="'+padL+'" y1="'+y.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+y.toFixed(1)+'"/>');
+      A.push('<text class="ch-t" x="'+(padL-6)+'" y="'+(y+3).toFixed(1)+'" text-anchor="end">'+fmtID(t, 2)+'</text>');
+    } else {
+      const x = xv(t);
+      A.push('<line class="ch-grid" x1="'+x.toFixed(1)+'" y1="'+padT+'" x2="'+x.toFixed(1)+'" y2="'+(padT+ph)+'"/>');
+      A.push('<text class="ch-t" x="'+x.toFixed(1)+'" y="'+(padT+ph+14)+'" text-anchor="middle">'+fmtID(t, 2)+'</text>');
+    }
+  });
+  A.push(horiz
+    ? '<line class="ch-axis" x1="'+padL+'" y1="'+padT+'" x2="'+padL+'" y2="'+(padT+ph)+'"/>'
+    : '<line class="ch-axis" x1="'+padL+'" y1="'+(padT+ph)+'" x2="'+(W-padR)+'" y2="'+(padT+ph)+'"/>');
+
+  const n = C.length, m = S.length;
+  if(type === 'column'){
+    const gw = pw/n, bw = gw*0.72/m, gap = (gw - bw*m)/2;
+    C.forEach(function(c, i){
+      A.push('<text class="ch-t" x="'+(padL + i*gw + gw/2).toFixed(1)+'" y="'+(padT+ph+14)+'" text-anchor="middle">'+esc(trunc(c, Math.floor(gw/6.2)))+'</text>');
+      S.forEach(function(s, j){
+        const v = s.values[i], x = padL + i*gw + gap + j*bw, y = yv(v), h = Math.max(0, padT + ph - y);
+        A.push('<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+Math.max(1, bw-2).toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" style="fill:'+(s.color || chColor(j))+'"/>');
+        if(sp.dataLabels) A.push('<text class="ch-dl" x="'+(x + (bw-2)/2).toFixed(1)+'" y="'+(y-4).toFixed(1)+'" text-anchor="middle">'+fmtID(v, 1)+'</text>');
+      });
+    });
+  } else if(type === 'bar'){
+    const gh = ph/n, bh = gh*0.72/m, gap = (gh - bh*m)/2;
+    C.forEach(function(c, i){
+      A.push('<text class="ch-t" x="'+(padL-6)+'" y="'+(padT + i*gh + gh/2 + 3).toFixed(1)+'" text-anchor="end">'+esc(trunc(c, 14))+'</text>');
+      S.forEach(function(s, j){
+        const v = s.values[i], y = padT + i*gh + gap + j*bh, x2 = xv(v);
+        A.push('<rect x="'+padL+'" y="'+y.toFixed(1)+'" width="'+Math.max(0, x2-padL).toFixed(1)+'" height="'+Math.max(1, bh-2).toFixed(1)+'" rx="2" style="fill:'+(s.color || chColor(j))+'"/>');
+        if(sp.dataLabels) A.push('<text class="ch-dl" x="'+(x2+4).toFixed(1)+'" y="'+(y + bh/2 + 2).toFixed(1)+'">'+fmtID(v, 1)+'</text>');
+      });
+    });
+  } else { // line
+    const px = function(i){ return padL + (i + 0.5)*pw/n; };
+    C.forEach(function(c, i){
+      A.push('<text class="ch-t" x="'+px(i).toFixed(1)+'" y="'+(padT+ph+14)+'" text-anchor="middle">'+esc(trunc(c, Math.floor(pw/n/6.2)))+'</text>');
+    });
+    S.forEach(function(s, j){
+      const col = s.color || chColor(j);
+      const pts = s.values.map(function(v, i){ return px(i).toFixed(1)+','+yv(v).toFixed(1); });
+      A.push('<polyline points="'+pts.join(' ')+'" fill="none" style="stroke:'+col+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>');
+      s.values.forEach(function(v, i){
+        A.push('<circle cx="'+px(i).toFixed(1)+'" cy="'+yv(v).toFixed(1)+'" r="3.5" style="fill:'+col+'"/>');
+        if(sp.dataLabels) A.push('<text class="ch-dl" x="'+px(i).toFixed(1)+'" y="'+(yv(v)-8).toFixed(1)+'" text-anchor="middle">'+fmtID(v, 1)+'</text>');
+      });
+    });
+  }
+
+  if(catT){
+    if(!horiz) A.push('<text class="ch-t" x="'+(padL+pw/2)+'" y="'+(H-legendH-6)+'" text-anchor="middle">'+esc(catT)+'</text>');
+    else A.push('<text class="ch-t" transform="translate(12,'+(padT+ph/2)+') rotate(-90)" text-anchor="middle">'+esc(catT)+'</text>');
+  }
+  if(valT){
+    if(!horiz) A.push('<text class="ch-t" transform="translate(12,'+(padT+ph/2)+') rotate(-90)" text-anchor="middle">'+esc(valT)+'</text>');
+    else A.push('<text class="ch-t" x="'+(padL+pw/2)+'" y="'+(H-legendH-6)+'" text-anchor="middle">'+esc(valT)+'</text>');
+  }
+  if(showLegend){
+    const items = S.map(function(s, j){ return {name:s.name, color:s.color || chColor(j), w: 20 + String(s.name).length*6.4 + 14}; });
+    const total = items.reduce(function(a, it){ return a + it.w; }, 0);
+    let x = (W - total)/2;
+    items.forEach(function(it){
+      A.push('<rect x="'+x.toFixed(1)+'" y="'+(H-19)+'" width="11" height="11" rx="2" style="fill:'+it.color+'"/><text class="ch-t" x="'+(x+17).toFixed(1)+'" y="'+(H-10)+'">'+esc(it.name)+'</text>');
+      x += it.w;
+    });
+  }
+  A.push('</svg>');
+  return A.join('');
+}
+
+const CH_TYPES = [['column','Column (kolom)'],['bar','Bar (batang mendatar)'],['line','Line (garis)'],['pie','Pie (lingkaran)']];
+
+/* ---- Lab: pilih jenis chart untuk beberapa skenario ---- */
+LAB.chartpick = function(el, ex){
+  const sh = shell(el, ex, 'ssid_chart');
+  const picks = ex.scenarios.map(function(){ return null; });
+  ex.scenarios.forEach(function(sc, i){
+    const box = mk('div','lab-panel');
+    box.appendChild(mk('div','lab-cap','<b>Skenario '+(i+1)+'</b> · '+esc(sc.title)));
+    const chips = mk('div','chip-row');
+    const prev = mk('div','chart-box');
+    prev.innerHTML = '<div class="lab-empty">Pilih jenis chart untuk melihat pratinjaunya.</div>';
+    CH_TYPES.forEach(function(t){
+      const b = mk('button','type-chip', esc(t[1]));
+      b.type = 'button';
+      b.addEventListener('click', function(){
+        picks[i] = t[0];
+        Array.prototype.forEach.call(chips.children, function(x){ x.classList.remove('active'); });
+        b.classList.add('active');
+        prev.innerHTML = chartSvg({type:t[0], categories:sc.cats, series:sc.series, title:sc.chartTitle, height:230});
+      });
+      chips.appendChild(b);
+    });
+    box.appendChild(chips); box.appendChild(prev);
+    sh.body.appendChild(box);
+  });
+  addCheckBtn(sh, function(){
+    const checks = ex.scenarios.map(function(sc, i){
+      const good = picks[i] !== null && sc.accept.indexOf(picks[i]) >= 0;
+      return {ok: good, label: 'Skenario '+(i+1)+' ('+esc(sc.title)+') — '+(good ? 'Tepat. '+esc(sc.why) : (picks[i] === null ? 'Belum dipilih' : 'Belum tepat'))};
+    });
+    return {checks:checks, hint:'Tanyakan pada diri sendiri: apa pesan yang ingin disampaikan — tren waktu, perbandingan antar kategori, atau porsi dari total?'};
+  });
+};
+
+/* ---- Lab: bangun chart dari tabel ---- */
+const CH_COLS = [
+  {key:'bulan',label:'Bulan'},{key:'penjualan',label:'Penjualan',num:true},
+  {key:'target',label:'Target',num:true},{key:'biaya',label:'Biaya',num:true}
+];
+const CH_DATA = [
+  {bulan:'Jan',penjualan:120,target:125,biaya:80},{bulan:'Feb',penjualan:135,target:130,biaya:84},
+  {bulan:'Mar',penjualan:128,target:135,biaya:83},{bulan:'Apr',penjualan:150,target:140,biaya:90},
+  {bulan:'Mei',penjualan:172,target:150,biaya:98},{bulan:'Jun',penjualan:190,target:160,biaya:104}
+];
+LAB.chartbuild = function(el, ex){
+  const sh = shell(el, ex, 'bar_chart');
+  const st = {cat:'bulan', series:{penjualan:false, target:false, biaya:false}, type:'column', title:'', yTitle:'', legend:false, labels:false};
+
+  const tp = mk('div','lab-panel');
+  tp.appendChild(mk('div','lab-cap','<b>Data sumber</b> · dalam Rp juta'));
+  tp.innerHTML += tableHtml(CH_COLS, CH_DATA, {letters:true});
+  sh.body.appendChild(tp);
+
+  const p = mk('div','lab-panel');
+  p.appendChild(mk('div','lab-cap','<b>Chart Design</b> · Insert → Chart, lalu Select Data &amp; Chart Elements'));
+  const r1 = mk('div','lab-row');
+  r1.appendChild(field('Sumbu kategori (label horizontal)', selectCtl(CH_COLS.map(function(c){ return [c.key, c.label]; }), st.cat, function(v){ st.cat = v; draw(); })));
+  r1.appendChild(field('Jenis chart', selectCtl(CH_TYPES, st.type, function(v){ st.type = v; draw(); })));
+  p.appendChild(r1);
+  const r2 = mk('div','lab-row');
+  r2.appendChild(mk('div','lab-cap','Seri data (Values):'));
+  CH_COLS.filter(function(c){ return c.num; }).forEach(function(c){
+    r2.appendChild(checkCtl(c.label, st.series[c.key], function(v){ st.series[c.key] = v; draw(); }));
+  });
+  p.appendChild(r2);
+  const r3 = mk('div','lab-row');
+  r3.appendChild(field('Judul chart', inputCtl('', 'mis. Penjualan vs Target 2026', function(v){ st.title = v; draw(); })));
+  r3.appendChild(field('Judul sumbu Y (satuan)', inputCtl('', 'mis. Rp juta', function(v){ st.yTitle = v; draw(); })));
+  p.appendChild(r3);
+  const r4 = mk('div','lab-row');
+  r4.appendChild(checkCtl('Tampilkan legend', st.legend, function(v){ st.legend = v; draw(); }));
+  r4.appendChild(checkCtl('Tampilkan data labels', st.labels, function(v){ st.labels = v; draw(); }));
+  p.appendChild(r4);
+  sh.body.appendChild(p);
+
+  const box = mk('div','chart-box'); sh.body.appendChild(box);
+  const numCols = CH_COLS.filter(function(c){ return c.num; });
+  function chosen(){ return numCols.filter(function(c){ return st.series[c.key] && c.key !== st.cat; }); }
+  function draw(){
+    const cats = CH_DATA.map(function(r){ return String(r[st.cat]); });
+    const series = chosen().map(function(c){ return {name:c.label, color:chColor(numCols.indexOf(c)), values:CH_DATA.map(function(r){ return r[c.key]; })}; });
+    box.innerHTML = chartSvg({type:st.type, categories:cats, series:series, title:st.title.trim(), yTitle:st.yTitle.trim(), legend:st.legend, dataLabels:st.labels});
+  }
+  draw();
+
+  addCheckBtn(sh, function(){
+    const keys = chosen().map(function(c){ return c.key; }).sort().join();
+    const want = ex.expect.series.slice().sort().join();
+    const c = [
+      {ok: st.type === ex.expect.type, label: 'Jenis chart = Line — '+ok(st.type === ex.expect.type)},
+      {ok: st.cat === ex.expect.cat, label: 'Sumbu kategori = Bulan — '+ok(st.cat === ex.expect.cat)},
+      {ok: keys === want, label: 'Seri data = Penjualan dan Target saja — '+ok(keys === want)},
+      {ok: st.title.trim().length >= 5, label: 'Judul chart terisi (min. 5 karakter) — '+ok(st.title.trim().length >= 5)},
+      {ok: st.yTitle.trim().length >= 2, label: 'Judul sumbu Y (satuan) terisi — '+ok(st.yTitle.trim().length >= 2)},
+      {ok: st.legend, label: 'Legend tampil — '+ok(st.legend)}
+    ];
+    return {checks:c, hint:'Periksa pratinjau: garis harus ada dua (Penjualan & Target), sumbu X berisi nama bulan, dan ada judul, satuan, serta legend.'};
+  });
+};
+
+/* ---- Lab: sumbu & label yang jujur ---- */
+LAB.chartaxis = function(el, ex){
+  const sh = shell(el, ex, 'bar_chart');
+  const st = {yMin:90, labels:false};
+  const cats = ['Cabang A','Cabang B','Cabang C','Cabang D'], vals = [91, 93, 96, 92];
+  const p = mk('div','lab-panel');
+  p.appendChild(mk('div','lab-cap','<b>Format Axis</b> · klik kanan sumbu Y → Format Axis → Bounds'));
+  const r = mk('div','lab-row');
+  r.appendChild(field('Minimum sumbu Y', selectCtl([['90','Otomatis (mulai dari 90)'],['50','50'],['0','0']], '90', function(v){ st.yMin = parseFloat(v); draw(); })));
+  r.appendChild(checkCtl('Tampilkan data labels', st.labels, function(v){ st.labels = v; draw(); }));
+  p.appendChild(r);
+  sh.body.appendChild(p);
+  const box = mk('div','chart-box'), note = mk('div','lab-count');
+  sh.body.appendChild(box); sh.body.appendChild(note);
+  function draw(){
+    box.innerHTML = chartSvg({type:'column', categories:cats, series:[{name:'Skor', values:vals}], title:'Skor Kepuasan Pelanggan per Cabang (%)', yMin:st.yMin, dataLabels:st.labels});
+    const visual = (96 - st.yMin)/(91 - st.yMin), real = 96/91;
+    note.innerHTML = 'Batang Cabang C tampak <b>'+fmtID(visual, 2)+'×</b> lebih tinggi dari Cabang A — padahal nilai aslinya hanya <b>'+fmtID(real, 2)+'×</b>.';
+  }
+  draw();
+  addCheckBtn(sh, function(){
+    return {
+      checks: [
+        {ok: st.yMin === 0, label: 'Sumbu Y dimulai dari 0 — '+ok(st.yMin === 0)},
+        {ok: st.labels, label: 'Data labels aktif — '+ok(st.labels)}
+      ],
+      hint: 'Bandingkan angka "tampak Nx lebih tinggi" dengan nilai aslinya. Sumbu yang jujur membuat keduanya hampir sama.'
+    };
+  });
+};
+
+/* ============================= DEFINISI LEVEL 11–15 ============================= */
+const NEW_LEVELS = [
+{
+  id:11, title:'Validasi Data', tagline:'Data Validation: angka, dropdown, rumus kustom & pesan error',
+  narrative:[
+    {who:'client', name:'Bu Dewi (Kepala Administrasi)', text:'Form input data pegawai kami sering berantakan: ada umur ditulis 200, nama departemen diketik sembarangan, dan qty barang keluar melebihi stok. Bisa nggak Excel menolak data yang salah sebelum masuk?'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Bisa. Fiturnya bernama Data Validation. Logikanya mirip IF: ada kondisi, lalu ada keputusan diterima atau ditolak. Bedanya, keputusan diambil saat data diketik — bukan setelah datanya berantakan.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Jadi mencegah lebih murah daripada membersihkan. Saya coba tiga aturan: batas angka, dropdown, dan rumus kustom.'}
+  ],
+  concepts:[
+    {title:'Di Mana Fiturnya?', formula:'Data → Data Tools → Data Validation', desc:'Pilih sel atau rentang yang mau dibatasi, buka Data Validation, lalu atur tiga tab: Settings (aturan), Input Message (petunjuk saat sel dipilih), dan Error Alert (pesan saat data ditolak).'},
+    {title:'Jenis Aturan (Allow) & Operator', formula:'Whole number · Decimal · List · Text length · Custom   +   between · equal to · greater than ...', desc:'Whole number hanya menerima bilangan bulat, Decimal menerima pecahan, Text length membatasi jumlah karakter. Setelah memilih jenis, tentukan operatornya — sama seperti operator logika di IF, misalnya between 18 dan 60.'},
+    {title:'Daftar Dropdown (List)', formula:'Source: HR,IT,Finance   atau   =$H$2:$H$6', desc:'Daftar bisa diketik langsung (dipisah koma) atau merujuk ke rentang sel. Daftar yang diketik langsung membedakan huruf besar/kecil, sedangkan rujukan ke rentang tidak.'},
+    {title:'Custom Formula', formula:'=AND(A1>0,A1<=B1)', desc:'Rumus ditulis untuk sel pertama yang dipilih dan harus menghasilkan TRUE agar data diterima. Referensi sel bekerja seperti biasa — gunakan $ untuk mengunci bagian yang tidak boleh bergeser.'},
+    {title:'Error Alert: Stop, Warning, Information', formula:'Stop = menolak · Warning = bertanya · Information = memberi tahu', desc:'Hanya gaya Stop yang benar-benar menolak data; Warning dan Information tetap mengizinkan data masuk. Ingat: validasi hanya memeriksa ketikan langsung. Data yang di-paste bisa menembusnya, dan data lama tidak otomatis diperiksa — gunakan Circle Invalid Data untuk menemukannya.'}
+  ],
+  exercises:[
+    {
+      id:'l11e1', type:'dv', title:'Lab 1 — Batasi Umur Pegawai (Whole Number)',
+      instruction:'Sel Umur hanya boleh menerima bilangan BULAT dari 18 sampai 60 (kedua batas termasuk). Atur aturannya di panel; tabel uji langsung menunjukkan entri mana yang diterima atau ditolak.',
+      hint:'Izinkan = Bilangan bulat, Data = antara, Minimum 18, Maksimum 60.',
+      cellLabel:'B2 (Umur)',
+      tests:[['25',true],['17',false],['60',true],['61',false],['45.5',false],['dua puluh',false],['18',true],['59',true]]
+    },
+    {
+      id:'l11e2', type:'dv', title:'Lab 2 — Dropdown Departemen (List)',
+      instruction:'Kolom Departemen hanya boleh berisi HR, IT, Finance, atau Marketing — persis seperti itu, termasuk huruf besar-kecilnya. Buat sebagai daftar dropdown.',
+      hint:'Izinkan = Daftar, Sumber: HR,IT,Finance,Marketing (pisahkan dengan koma). Daftar yang diketik langsung membedakan huruf besar/kecil.',
+      cellLabel:'C2 (Departemen)', requireAllow:'list',
+      tests:[['HR',true],['Finance',true],['Legal',false],['IT',true],['Sales',false],['marketing',false]]
+    },
+    {
+      id:'l11e3', type:'dv', title:'Lab 3 — Batas Qty Keluar (Custom + Pesan Error)',
+      instruction:'Di form barang keluar, sel A1 adalah Qty yang diinput dan B1 berisi Stok tersedia (20). Qty harus LEBIH DARI 0 dan TIDAK MELEBIHI stok. Buat dengan Custom formula, gaya error Stop, lalu isi pesan input dan pesan error.',
+      hint:'Contoh rumus: =AND(A1>0,A1<=B1) — ditulis untuk sel A1. Lalu isi Input Message dan Error Alert (gaya Stop).',
+      cellLabel:'A1 (Qty keluar)', ctx:20, ctxNote:'B1 (Stok) = 20', messages:true, requireAllow:'custom',
+      tests:[['5',true],['20',true],['21',false],['0',false],['-3',false],['15',true],['banyak',false]]
+    }
+  ],
+  quiz:[
+    {q:'Fitur Excel mana yang dipakai untuk membuat dropdown di sebuah sel?', opts:['Conditional Formatting','Data Validation dengan jenis List','Filter','Pivot Table'], correct:1, explain:'Dropdown dibuat lewat Data → Data Validation → Allow: List. Daftar bisa diketik langsung atau merujuk ke rentang sel.'},
+    {q:'Sebuah sel hanya boleh berisi bilangan bulat antara 1 dan 12 (nomor bulan). Pengaturan yang tepat?', opts:['Decimal, between 1 dan 12','Text length, between 1 dan 12','Whole number, between 1 dan 12','List dengan sumber 1-12'], correct:2, explain:'Whole number menolak pecahan seperti 6,5. Decimal akan menerimanya, sedangkan Text length menghitung jumlah karakter — bukan nilainya.'},
+    {q:'Gaya Error Alert mana yang benar-benar MENOLAK data yang tidak valid?', opts:['Stop','Warning','Information','Ketiganya sama-sama menolak'], correct:0, explain:'Hanya Stop yang menolak. Warning bertanya dulu (pengguna boleh lanjut), sedangkan Information hanya memberi tahu.'},
+    {q:'Custom formula manakah yang memastikan A1 lebih dari 0 dan tidak melebihi B1?', opts:['=A1>0','=IF(A1<=B1)','=OR(A1>0,A1<=B1)','=AND(A1>0,A1<=B1)'], correct:3, explain:'AND menuntut kedua syarat terpenuhi. OR akan meloloskan angka sebesar apa pun karena syarat A1>0 saja sudah cukup TRUE.'},
+    {q:'Apa keterbatasan penting Data Validation yang harus diwaspadai?', opts:['Tidak bisa dipakai pada angka','Data yang di-paste atau sudah ada sebelumnya tidak otomatis diperiksa','Hanya bisa dipakai pada satu sel','Tidak bisa menampilkan pesan apa pun'], correct:1, explain:'Validasi hanya bekerja pada ketikan langsung. Paste bisa menimpa aturan, dan data lama tidak diperiksa ulang — pakai Circle Invalid Data untuk menandai yang tidak valid.'}
+  ]
+},
+{
+  id:12, title:'Filter & Sort', tagline:'Urutan bertingkat, filter multi-kriteria, dan gabungan keduanya',
+  narrative:[
+    {who:'client', name:'Pak Bayu (Manajer Penjualan)', text:'Data penjualan tim saya ada ratusan baris. Tiap rapat saya diminta menunjukkan top performer, penjualan di wilayah tertentu, dan siapa yang di bawah target. Saya capek scroll dan mencari manual.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Dua fitur andalan: Sort mengubah URUTAN baris, Filter mengubah baris yang TAMPIL. Keduanya tidak menghapus data — Filter hanya menyembunyikan baris yang tidak memenuhi syarat.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Jadi filter itu semacam IF yang menyembunyikan baris. Saya mulai dari sort sederhana lalu tambah filter.'}
+  ],
+  concepts:[
+    {title:'Sort (Urutkan)', formula:'Data → Sort A to Z / Z to A / Sort', desc:'Sort mengurutkan baris berdasarkan satu kolom: angka dari kecil ke besar atau sebaliknya, teks dari A ke Z atau sebaliknya. Pastikan seluruh baris ikut berpindah, bukan hanya satu kolom, supaya data tidak tertukar antar baris.'},
+    {title:'Sort Bertingkat (Custom Sort)', formula:'Sort by Wilayah  →  Then by Penjualan', desc:'Tambahkan level Then by untuk memecah kesamaan. Contoh: urutkan berdasarkan Wilayah, lalu di dalam tiap wilayah urutkan berdasarkan Penjualan terbesar.'},
+    {title:'AutoFilter', formula:'Data → Filter   (Ctrl+Shift+L)', desc:'Menambahkan tombol dropdown di baris header. Filter menyembunyikan baris yang tidak cocok — datanya tetap utuh, dan nomor baris yang tersembunyi terlewati. Filter di beberapa kolom bekerja dengan logika AND: sebuah baris harus memenuhi semuanya.'},
+    {title:'Filter Teks & Angka', formula:'Text Filters: Equals · Contains · Begins With   |   Number Filters: Greater Than · Between · Top 10', desc:'Selain mencentang nilai, kamu bisa memakai kriteria. Mencentang beberapa nilai dalam satu kolom berarti logika OR di dalam kolom itu (misalnya Laptop atau Monitor).'},
+    {title:'Versi Rumus (Excel 365)', formula:'=SORT(A2:E13,5,-1)   |   =FILTER(A2:E13,B2:B13="Jawa Barat")', desc:'Excel 365 punya fungsi SORT dan FILTER yang menaruh hasil di sel lain, sehingga data asli tak tersentuh dan hasilnya ikut berubah saat data berubah. Lab di level ini mensimulasikan fitur Filter & Sort bawaan.'}
+  ],
+  exercises:[
+    {
+      id:'l12e1', type:'filtersort', title:'Lab 1 — Siapa Top Performer?',
+      instruction:'Pak Bayu ingin melihat top performer. Urutkan seluruh data berdasarkan kolom Penjualan dari yang TERBESAR ke terkecil (tanpa filter).',
+      hint:'Di bagian Sort, pilih kolom Penjualan lalu urutan Terbesar → Terkecil.',
+      solution:{filters:[], sorts:[{col:'omzet', dir:'desc'}]}
+    },
+    {
+      id:'l12e2', type:'filtersort', title:'Lab 2 — Filter Wilayah + Batas Penjualan',
+      instruction:'Tampilkan hanya penjualan di wilayah Jawa Barat yang nilainya di atas Rp20.000.000, lalu urutkan dari Penjualan terbesar.',
+      hint:'Dua filter aktif sekaligus (AND). Filter 1: Wilayah sama dengan Jawa Barat. Filter 2: Penjualan lebih besar dari 20000000.',
+      solution:{filters:[{col:'wilayah', op:'eq', val:'Jawa Barat'},{col:'omzet', op:'gt', val:'20000000'}], sorts:[{col:'omzet', dir:'desc'}]}
+    },
+    {
+      id:'l12e3', type:'filtersort', title:'Lab 3 — Sort Bertingkat',
+      instruction:'Kelompokkan data per Wilayah (A → Z). Di dalam setiap wilayah, urutkan Penjualan dari yang terbesar. Tidak perlu filter.',
+      hint:'Urutkan berdasarkan Wilayah (A → Z), lalu berdasarkan Penjualan (Terbesar → Terkecil) di level kedua.',
+      solution:{filters:[], sorts:[{col:'wilayah', dir:'asc'},{col:'omzet', dir:'desc'}]}
+    },
+    {
+      id:'l12e4', type:'filtersort', title:'Lab 4 — Laptop atau Monitor dengan Qty Besar',
+      instruction:'Tampilkan hanya produk Laptop atau Monitor (bukan Printer) dengan Qty minimal 5, lalu urutkan Penjualan dari yang TERKECIL ke terbesar.',
+      hint:'Pakai kriteria "salah satu dari" dengan nilai Laptop, Monitor — seperti mencentang dua item di daftar filter. Tambahkan filter Qty lebih besar atau sama dengan 5.',
+      solution:{filters:[{col:'produk', op:'in', val:'Laptop, Monitor'},{col:'qty', op:'ge', val:'5'}], sorts:[{col:'omzet', dir:'asc'}]}
+    }
+  ],
+  quiz:[
+    {q:'Apa perbedaan utama antara Sort dan Filter?', opts:['Sort menghapus data, Filter mengurutkan data','Sort mengubah urutan baris, Filter mengubah baris mana yang tampil','Keduanya sama saja','Sort hanya untuk angka, Filter hanya untuk teks'], correct:1, explain:'Sort menata ulang urutan baris; Filter menyembunyikan baris yang tidak memenuhi kriteria. Keduanya tidak menghapus data.'},
+    {q:'Mengapa saat Sort sebaiknya seluruh tabel (semua kolom) ikut terpilih?', opts:['Agar tampilan lebih rapi','Karena Excel mewajibkannya','Agar baris tetap utuh dan nilai satu kolom tidak terpisah dari baris asalnya','Agar rumus otomatis dihapus'], correct:2, explain:'Jika hanya satu kolom yang diurutkan, nilainya terlepas dari baris asalnya — nama Andi bisa berpasangan dengan penjualan milik orang lain.'},
+    {q:'Filter Wilayah = Jawa Barat dan Penjualan > 20 juta aktif bersamaan. Baris yang tampil adalah?', opts:['Yang memenuhi salah satu syarat','Yang memenuhi kedua syarat (AND antar kolom)','Semua baris Jawa Barat','Semua baris dengan penjualan di atas 20 juta'], correct:1, explain:'Filter pada beberapa kolom digabung dengan logika AND, jadi baris harus memenuhi semua filter yang aktif.'},
+    {q:'Sort by Wilayah (A→Z), Then by Penjualan (besar→kecil). Baris dengan wilayah yang sama akan?', opts:['Diacak','Dipindah ke sheet lain','Diurutkan berdasarkan Penjualan terbesar di dalam wilayah itu','Dihapus salah satunya'], correct:2, explain:'Level Then by dipakai untuk memecah kesamaan pada level sebelumnya, sehingga penjualan terbesar muncul lebih dulu di tiap wilayah.'},
+    {q:'Baris 5 sampai 8 tidak terlihat setelah filter diterapkan. Apa yang terjadi pada baris itu?', opts:['Terhapus permanen','Nilainya berubah jadi nol','Dipindahkan ke sheet baru','Hanya disembunyikan; kembali muncul saat filter dibersihkan'], correct:3, explain:'Filter tidak menghapus apa pun. Nomor baris yang terlewati menandakan ada baris tersembunyi.'}
+  ]
+},
+{
+  id:13, title:'Conditional Formatting', tagline:'Sorot sel otomatis: nilai, duplikat, Top N, data bar & rumus',
+  narrative:[
+    {who:'client', name:'Bu Tari (Supervisor Gudang)', text:'Tiap pagi saya membaca laporan stok baris demi baris untuk mencari barang yang hampir habis, kode yang dobel, dan tagihan yang belum lunas. Kalau masalahnya langsung menyala saat muncul, kerja saya jauh lebih cepat.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Itu tugas Conditional Formatting: warna sel berubah sendiri mengikuti aturan logika. Karena mengikuti nilai, begitu data berubah sorotannya ikut berubah — tidak perlu mewarnai manual.'},
+    {who:'you', name:('Kamu (Analis Data)'), text:'Jadi ini IF yang hasilnya berupa warna, bukan teks. Saya buat aturannya satu per satu.'}
+  ],
+  concepts:[
+    {title:'Di Mana Fiturnya?', formula:'Home → Conditional Formatting → New Rule', desc:'Pilih rentang sel terlebih dahulu, baru buat aturannya. Aturan melekat pada rentang dan dievaluasi ulang setiap kali nilai berubah.'},
+    {title:'Highlight Cells Rules', formula:'Greater Than · Less Than · Between · Equal To · Text that Contains · Duplicate Values', desc:'Aturan siap pakai untuk kasus paling umum: menyorot angka di atas atau di bawah batas, teks tertentu, atau nilai kembar.'},
+    {title:'Top/Bottom Rules', formula:'Top 10 Items · Bottom 10 Items · Above Average', desc:'Menyorot N nilai tertinggi atau terendah tanpa perlu mengurutkan data. Angka N bisa diubah, misalnya Top 3.'},
+    {title:'Data Bars & Color Scales', formula:'Data Bars: panjang bar mengikuti nilai   |   Color Scales: gradasi warna rendah → tinggi', desc:'Visualisasi kecil di dalam sel. Data bar membandingkan besar nilai sekilas; color scale (heatmap) memperlihatkan pola rendah-tinggi.'},
+    {title:'Rumus Kustom (Use a formula)', formula:'=$E2="Lunas"', desc:'Aturan paling fleksibel: rumus TRUE/FALSE yang ditulis untuk sel kiri-atas rentang. Tanda $ mengunci kolom ($E2) agar seluruh baris menyala berdasarkan kolom E — inilah pemakaian referensi campuran (mixed reference).'}
+  ],
+  exercises:[
+    {
+      id:'l13e1', type:'cf', title:'Lab 1 — Stok Menipis (Cell Value)',
+      instruction:'Sorot stok yang KURANG DARI 10 unit pada kolom Stok (C2:C11) dengan isi merah.',
+      hint:'Rentang C2:C11, jenis aturan "Nilai sel lebih kecil dari", nilai 10, format merah.',
+      solution:{range:'C2:C11', type:'lt', v1:'10', fill:'red'}
+    },
+    {
+      id:'l13e2', type:'cf', title:'Lab 2 — Kode Ganda (Duplicate Values)',
+      instruction:'Kode barang yang muncul lebih dari sekali harus tersorot kuning pada kolom Kode (A2:A11).',
+      hint:'Rentang A2:A11, jenis aturan "Nilai duplikat", format kuning.',
+      solution:{range:'A2:A11', type:'dup', fill:'yellow'}
+    },
+    {
+      id:'l13e3', type:'cf', title:'Lab 3 — 3 Penjualan Tertinggi (Top N)',
+      instruction:'Sorot 3 nilai Penjualan tertinggi pada kolom Penjualan (D2:D11) dengan isi hijau.',
+      hint:'Rentang D2:D11, jenis aturan "Top N nilai tertinggi", N = 3, format hijau.',
+      solution:{range:'D2:D11', type:'top', n:'3', fill:'green'}
+    },
+    {
+      id:'l13e4', type:'cf', title:'Lab 4 — Seluruh Baris Lunas (Rumus)',
+      instruction:'Sorot SELURUH baris data (A2:E11) dengan warna hijau bila Status di kolom E adalah "Lunas".',
+      hint:'Pakai jenis aturan Rumus pada rentang A2:E11. Tulis rumus untuk sel A2 dengan kolom terkunci: =$E2="Lunas".',
+      solution:{range:'A2:E11', type:'formula', formula:'=$E2="Lunas"', fill:'green'}
+    },
+    {
+      id:'l13e5', type:'cf', title:'Lab 5 — Data Bar pada Penjualan',
+      instruction:'Bu Tari ingin membandingkan besar penjualan sekilas tanpa membaca angka. Terapkan Data Bar pada kolom Penjualan (D2:D11).',
+      hint:'Rentang D2:D11, jenis aturan "Data Bar".',
+      expectRule:{range:'D2:D11', type:'databar'}
+    }
+  ],
+  quiz:[
+    {q:'Apa keunggulan Conditional Formatting dibanding mewarnai sel secara manual?', opts:['Warna manual lebih cepat diterapkan','Conditional Formatting mengubah nilai sel','Warna mengikuti aturan sehingga otomatis berubah saat data berubah','Tidak ada bedanya'], correct:2, explain:'Sorotan dievaluasi ulang setiap data berubah. Warna manual tetap menempel walau nilainya sudah tidak relevan.'},
+    {q:'Rumus =$E2="Lunas" diterapkan pada A2:E11. Mengapa kolom E diberi tanda $?', opts:['Agar rumus lebih cepat dihitung','Agar kolom E tetap dirujuk untuk setiap sel dalam baris, sementara nomor baris boleh bergeser','Agar E2 diubah menjadi teks','Agar tiap kolom berwarna berbeda'], correct:1, explain:'Tanda $ mengunci kolom E. Tanpa itu, sel di kolom B akan memeriksa kolom F, dan seterusnya, sehingga sorotan tidak menyeluruh.'},
+    {q:'Aturan mana yang menyorot N nilai tertinggi tanpa perlu mengurutkan data?', opts:['Duplicate Values','Data Bars','Text that Contains','Top/Bottom Rules → Top 10 Items'], correct:3, explain:'Top/Bottom Rules menyorot nilai tertinggi atau terendah, dan angka N bisa diganti, misalnya menjadi 3.'},
+    {q:'Apa yang dilakukan aturan Duplicate Values?', opts:['Menghapus nilai kembar dari data','Menyorot semua sel yang nilainya muncul lebih dari sekali dalam rentang','Menjumlahkan nilai yang kembar','Mengurutkan nilai kembar ke atas'], correct:1, explain:'Duplicate Values hanya memberi sorotan. Menghapus duplikat adalah fitur lain, yaitu Remove Duplicates.'},
+    {q:'Untuk apa Data Bars dipakai pada kolom angka?', opts:['Menampilkan bar di dalam sel yang panjangnya mengikuti besar nilai','Mengubah angka menjadi teks','Membuat chart di sheet terpisah','Menghapus baris kosong'], correct:0, explain:'Data bar adalah visualisasi mini di dalam sel, sehingga nilai besar dan kecil bisa dibandingkan sekilas.'}
+  ]
+},
+{
+  id:14, title:'Pivot Table', tagline:'Ringkas data besar: Rows, Columns, Values, fungsi agregasi & filter laporan',
+  narrative:[
+    {who:'client', name:'Bu Anita (Direktur Keuangan)', text:'Saya tidak mau melihat ratusan baris transaksi. Saya cuma mau tahu: total penjualan tiap wilayah, kombinasi wilayah dan produk, serta rata-rata — dan bisa berganti sudut pandang dalam hitungan detik.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Pivot Table jawabannya. Kamu tidak menulis SUMIF satu-satu; cukup tentukan field mana jadi baris, kolom, dan nilai, lalu Excel merangkumnya sendiri.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Seperti SUMIF dan COUNTIF versi otomatis, dan bisa diputar ke arah mana saja. Saya coba.'}
+  ],
+  concepts:[
+    {title:'Menyiapkan Data', formula:'Satu baris = satu transaksi · header unik · tanpa baris/kolom kosong', desc:'Pivot Table hanya sebaik datanya. Pastikan header ada di baris pertama, tidak ada sel gabungan, dan tiap kolom berisi satu jenis data. Ubah data menjadi Table (Ctrl+T) agar rentang ikut bertambah saat data baru masuk.'},
+    {title:'Empat Area Pivot', formula:'Filters · Columns · Rows · Values', desc:'Rows: label yang dibaca ke bawah. Columns: label yang dibaca ke samping. Values: angka yang dirangkum. Filters: menyaring seluruh laporan berdasarkan satu field.'},
+    {title:'Fungsi Ringkasan', formula:'Sum · Count · Average · Max · Min', desc:'Field angka biasanya di-Sum, field teks otomatis di-Count. Ubah lewat Value Field Settings. Sum mirip SUMIF, Count mirip COUNTIF, Average mirip AVERAGEIF — tetapi tanpa menulis rumus.'},
+    {title:'Grand Total & Refresh', formula:'PivotTable Analyze → Refresh   (Alt+F5)', desc:'Grand Total merangkum seluruh baris atau kolom dari data mentahnya (bukan rata-rata dari rata-rata). Pivot tidak otomatis mengikuti perubahan data sumber — klik Refresh setelah data berubah.'},
+    {title:'Slicer & PivotChart', formula:'Insert → Slicer   |   Insert → PivotChart', desc:'Slicer adalah tombol filter visual, PivotChart adalah grafik yang terhubung langsung ke pivot. Keduanya membuat laporan interaktif untuk presentasi.'}
+  ],
+  exercises:[
+    {
+      id:'l14e1', type:'pivot', title:'Lab 1 — Total Penjualan per Wilayah',
+      instruction:'Bu Anita ingin tahu total penjualan tiap wilayah. Susun pivot: baris = Wilayah, nilai = Penjualan yang dijumlahkan.',
+      hint:'Rows: Wilayah. Values: Penjualan dengan fungsi Jumlah (Sum).',
+      solution:{row:'wilayah', col:'', val:'omzet', fn:'sum', fField:'', fVal:''}
+    },
+    {
+      id:'l14e2', type:'pivot', title:'Lab 2 — Matriks Wilayah × Produk',
+      instruction:'Tampilkan total penjualan dengan Wilayah ke bawah dan Produk ke samping, sehingga terlihat produk apa yang kuat di wilayah mana.',
+      hint:'Rows: Wilayah. Columns: Produk. Values: Penjualan (Sum).',
+      solution:{row:'wilayah', col:'produk', val:'omzet', fn:'sum', fField:'', fVal:''}
+    },
+    {
+      id:'l14e3', type:'pivot', title:'Lab 3 — Berapa Transaksi per Produk?',
+      instruction:'Hitung JUMLAH TRANSAKSI (bukan total rupiah) untuk setiap produk.',
+      hint:'Rows: Produk. Values: field apa saja, dengan fungsi Hitung (Count) — misalnya Sales.',
+      solution:{row:'produk', col:'', val:'sales', fn:'count', fField:'', fVal:''}
+    },
+    {
+      id:'l14e4', type:'pivot', title:'Lab 4 — Rata-rata Penjualan Laptop per Wilayah',
+      instruction:'Tampilkan RATA-RATA penjualan per Wilayah, tetapi hanya untuk produk Laptop.',
+      hint:'Filters: Produk = Laptop. Rows: Wilayah. Values: Penjualan dengan fungsi Rata-rata (Average).',
+      solution:{row:'wilayah', col:'', val:'omzet', fn:'avg', fField:'produk', fVal:'Laptop'}
+    }
+  ],
+  quiz:[
+    {q:'Field mana yang sebaiknya ditaruh di area Values?', opts:['Kategori seperti Wilayah','Angka yang ingin dirangkum, misalnya Penjualan','Nama kolom','Nomor baris'], correct:1, explain:'Area Values berisi angka yang dihitung (Sum, Count, Average, dst). Kategori biasanya ditaruh di Rows atau Columns.'},
+    {q:'Kamu ingin Wilayah tampil ke bawah dan Produk tampil ke samping. Susunan yang tepat?', opts:['Rows = Produk, Columns = Wilayah','Values = Wilayah, Rows = Produk','Rows = Wilayah, Columns = Produk','Filters = Wilayah, Columns = Produk'], correct:2, explain:'Rows dibaca ke bawah, Columns dibaca ke samping. Wilayah di Rows dan Produk di Columns menghasilkan matriks yang diminta.'},
+    {q:'Data sumber berubah, tetapi Pivot Table masih menampilkan angka lama. Solusinya?', opts:['Buat ulang seluruh workbook','Hapus baris header','Tidak ada solusi','Klik Refresh pada Pivot Table'], correct:3, explain:'Pivot tidak otomatis mengikuti perubahan data sumber. Refresh (Alt+F5) memperbaruinya.'},
+    {q:'Fungsi ringkasan mana untuk menjawab "berapa jumlah transaksi per produk"?', opts:['Sum','Count','Max','Min'], correct:1, explain:'Count menghitung banyaknya baris. Sum akan menjumlahkan nilai rupiahnya — pertanyaan yang berbeda.'},
+    {q:'Apa keunggulan pivot dibanding menulis SUMIF satu-satu?', opts:['Pivot mengubah data sumber','Pivot tidak membutuhkan data','Pivot mengubah sudut pandang cukup dengan memindahkan field, tanpa menulis ulang rumus','Pivot selalu lebih akurat dari rumus'], correct:2, explain:'Memindahkan field dari Rows ke Columns (atau mengganti fungsi) langsung membangun ulang ringkasan tanpa menulis rumus baru.'}
+  ]
+},
+{
+  id:15, title:'Chart & Visualisasi', tagline:'Pilih jenis chart, atur sumbu & label, hindari grafik yang menyesatkan',
+  narrative:[
+    {who:'client', name:'Pak Hendro (CEO)', text:'Angka-angkanya bagus, tapi direksi hanya punya 30 detik per slide. Ubah jadi grafik yang langsung menunjukkan pesan — dan jangan sampai grafiknya membuat kesimpulan yang keliru.'},
+    {who:'mentor', name:'Dwiki (Mentor)', text:'Chart yang baik menjawab satu pertanyaan. Langkahnya: pilih jenis chart sesuai pertanyaan, atur data dan sumbunya, lalu rapikan judul, legend, dan label supaya jujur dan mudah dibaca.'},
+    {who:'you', name:'Kamu (Analis Data)', text:'Kuncinya bukan seberapa bagus tampilannya, tapi apakah pesannya tersampaikan dengan benar. Saya mulai dari memilih jenis chart.'}
+  ],
+  concepts:[
+    {title:'Pilih Chart Sesuai Pertanyaan', formula:'Tren waktu → Line   |   Bandingkan kategori → Column/Bar   |   Porsi dari total → Pie', desc:'Line untuk perubahan dari waktu ke waktu. Column atau Bar untuk membandingkan nilai antar kategori (Bar bila nama kategori panjang). Pie hanya untuk porsi dari satu total dengan sedikit kategori, maksimal sekitar 5-6.'},
+    {title:'Data Chart: Kategori & Seri', formula:'Pilih rentang (termasuk header) → Insert → Chart', desc:'Kolom label (Bulan, Wilayah) menjadi sumbu kategori; tiap kolom angka menjadi satu seri. Sertakan header agar nama seri ikut otomatis. Ubah pilihan lewat Select Data.'},
+    {title:'Elemen Chart', formula:'Chart Title · Axis Titles · Legend · Data Labels · Gridlines', desc:'Judul menjelaskan pesan, judul sumbu menyebut satuan, legend wajib bila ada lebih dari satu seri, dan data labels menampilkan angka langsung di grafik.'},
+    {title:'Sumbu yang Jujur', formula:'Format Axis → Bounds → Minimum = 0', desc:'Column atau bar chart yang sumbunya tidak dimulai dari 0 membuat selisih kecil tampak besar. Mulailah dari nol untuk chart batang; pada line chart, sumbu boleh disesuaikan untuk memperlihatkan tren asalkan jelas.'},
+    {title:'Yang Perlu Dihindari', formula:'Efek 3D · terlalu banyak irisan pie · warna berlebihan', desc:'Efek 3D memelintir proporsi, pie dengan banyak irisan sulit dibandingkan, dan terlalu banyak warna mengalihkan perhatian. Sederhana lebih komunikatif.'}
+  ],
+  exercises:[
+    {
+      id:'l15e1', type:'chartpick', title:'Lab 1 — Pilih Jenis Chart yang Tepat',
+      instruction:'Untuk setiap kebutuhan di bawah, pilih jenis chart yang paling tepat. Pratinjau langsung memperlihatkan hasilnya — perhatikan mana yang mudah dibaca dan mana yang tidak.',
+      scenarios:[
+        {title:'Tren omzet bulanan Januari sampai Juni', chartTitle:'Omzet Bulanan (Rp juta)', cats:['Jan','Feb','Mar','Apr','Mei','Jun'], series:[{name:'Omzet', values:[120,135,128,150,172,190]}], accept:['line'], why:'Perubahan dari waktu ke waktu paling jelas dibaca lewat garis.'},
+        {title:'Kontribusi 4 produk terhadap total omzet', chartTitle:'Porsi Omzet per Produk (%)', cats:['Laptop','Monitor','Printer','Aksesori'], series:[{name:'Omzet', values:[46,27,15,12]}], accept:['pie'], why:'Porsi dari satu total dengan sedikit kategori cocok untuk pie.'},
+        {title:'Membandingkan penjualan 8 kota', chartTitle:'Penjualan per Kota (Rp juta)', cats:['Jakarta','Bandung','Surabaya','Medan','Semarang','Makassar','Denpasar','Palembang'], series:[{name:'Penjualan', values:[98,74,81,52,47,39,33,28]}], accept:['column','bar'], why:'Banyak kategori lebih mudah dibandingkan lewat batang; pie dengan 8 irisan sulit dibaca.'},
+        {title:'Realisasi vs Target tiap kuartal', chartTitle:'Realisasi vs Target (Rp juta)', cats:['Q1','Q2','Q3','Q4'], series:[{name:'Target', values:[100,110,120,130]},{name:'Realisasi', values:[96,118,115,141]}], accept:['column','bar'], why:'Dua nilai per kategori paling mudah dibandingkan lewat batang berdampingan.'}
+      ]
+    },
+    {
+      id:'l15e2', type:'chartbuild', title:'Lab 2 — Bangun Line Chart dari Tabel',
+      instruction:'Bu Anita ingin melihat apakah penjualan mengejar target dari bulan ke bulan. Buat LINE chart dengan Bulan di sumbu horizontal dan hanya dua seri: Penjualan dan Target. Beri judul chart, judul sumbu Y (satuan), dan tampilkan legend agar dua garis bisa dibedakan.',
+      hint:'Jangan sertakan Biaya. Judul sumbu Y contoh: Rp juta.',
+      expect:{type:'line', cat:'bulan', series:['penjualan','target']}
+    },
+    {
+      id:'l15e3', type:'chartaxis', title:'Lab 3 — Sumbu dan Label yang Jujur',
+      instruction:'Chart kepuasan pelanggan ini membuat Cabang C tampak jauh unggul, padahal selisihnya hanya beberapa poin. Atur sumbu Y agar dimulai dari 0 dan aktifkan data labels supaya angka aslinya terbaca.',
+      hint:'Ubah Minimum sumbu Y menjadi 0, lalu centang Tampilkan data labels.'
+    }
+  ],
+  quiz:[
+    {q:'Untuk menunjukkan perubahan penjualan dari Januari sampai Desember, chart yang paling tepat adalah?', opts:['Pie chart','Doughnut chart','Line chart','Pie 3D'], correct:2, explain:'Line chart menghubungkan titik-titik berurutan sehingga tren dari waktu ke waktu mudah terbaca.'},
+    {q:'Pie chart cocok dipakai untuk?', opts:['Membandingkan 15 kategori','Menunjukkan porsi dari satu total dengan sedikit kategori','Menunjukkan tren waktu','Membandingkan dua tabel'], correct:1, explain:'Pie menampilkan bagian dari keseluruhan. Dengan banyak irisan, mata sulit membandingkan ukurannya.'},
+    {q:'Mengapa sumbu Y pada column chart sebaiknya dimulai dari 0?', opts:['Agar chart terlihat lebih cantik','Karena Excel mewajibkannya','Agar legend muncul','Agar tinggi batang sebanding dengan nilainya dan tidak melebih-lebihkan selisih'], correct:3, explain:'Tinggi batang adalah penanda nilai. Jika sumbu dipotong, selisih kecil tampak sangat besar dan menyesatkan.'},
+    {q:'Sebuah chart memiliki dua seri (Penjualan dan Target). Elemen apa yang wajib ada agar terbaca?', opts:['Legend','Efek 3D','Gridlines dihapus','Warna acak'], correct:0, explain:'Legend menjelaskan warna atau garis mana yang mewakili seri apa. Tanpanya pembaca harus menebak.'},
+    {q:'Kolom Bulan dan tiga kolom angka dipilih lalu Insert Chart. Kolom Bulan akan menjadi?', opts:['Seri data','Sumbu kategori (label sumbu horizontal)','Hanya legend','Judul chart'], correct:1, explain:'Kolom teks di sisi kiri dibaca sebagai label kategori; tiap kolom angka menjadi satu seri.'}
+  ]
+}
+];
+
+/* ============================= INTEGRASI ============================= */
+NEW_LEVELS.forEach(function(l){ LEVELS.push(l); });
+
+CV_GROUPS.push({
+  title:'Pengelolaan Data, Pelaporan & Visualisasi',
+  items:[
+    {lv:11, name:'Validasi Data',         desc:'Data Validation: angka, dropdown, rumus kustom'},
+    {lv:12, name:'Filter & Sort',         desc:'Urutan bertingkat, filter multi-kriteria'},
+    {lv:13, name:'Conditional Formatting',desc:'Aturan sorot: nilai, duplikat, Top N, rumus'},
+    {lv:14, name:'Pivot Table',           desc:'Rows, Columns, Values, agregasi & filter'},
+    {lv:15, name:'Chart & Visualisasi',   desc:'Pilih jenis chart, sumbu & label yang jujur'}
+  ]
+});
+
+/* Lab bertipe baru ditangani modul ini; lab spreadsheet lama tetap ke renderExercise asli. */
+const _renderExercise = renderExercise;
+renderExercise = function(el, ex){
+  if(ex && ex.type && LAB[ex.type]) return LAB[ex.type](el, ex);
+  return _renderExercise(el, ex);
+};
+
+/* Migrasi progres: pengguna yang sudah menamatkan level terakhir lama tetap bisa membuka level berikutnya. */
+(function(){
+  if(!state.levelDone) state.levelDone = {};
+  let maxDone = 0;
+  for(let i = 1; i <= LEVELS.length; i++) if(state.levelDone[i]) maxDone = i;
+  const target = Math.min(maxDone + 1, LEVELS.length);
+  if(!state.unlockedLevel || state.unlockedLevel < target) state.unlockedLevel = target;
+  saveState();
+  updateTopbar();
+  const map = document.getElementById('screen-map');
+  if(map && map.classList.contains('active')) renderMap();
+})();
+
+})();
+</script>
+
 </body>
 </html>
