@@ -128,9 +128,11 @@ h1,h2,h3{font-family:var(--mono); letter-spacing:-0.01em; margin:0 0 8px;}
 .hero-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:26px 0;}
 .hero-grid div{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px; font-family:var(--mono); font-size:11px; color:var(--text-dim); text-align:center;}
 .hero-grid div b{display:block; color:var(--text); font-size:13px; margin-bottom:2px;}
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:repeat(3,1fr);}
+}
 @media (max-width:640px){
   .hero-grid{grid-template-columns:repeat(2,1fr);}
-  .hero-grid div:last-child{grid-column:1 / -1;}
 }
 
 /* maskot (di tengah, tepat sebelum footer) */
@@ -157,17 +159,22 @@ h1,h2,h3{font-family:var(--mono); letter-spacing:-0.01em; margin:0 0 8px;}
   #screen-hero .hero-badge{font-size:10px; padding:4px 10px; margin-bottom:14px;}
   #screen-hero h1{font-size:clamp(24px,7vw,32px); margin-bottom:12px;}
   #screen-hero p.lead{font-size:14px; margin-bottom:20px;}
-  .hero-grid{margin:20px 0; gap:8px;}
-  .hero-grid div{padding:10px; font-size:10px;}
+   .hero-grid{
+    margin:20px 0;
+    gap:8px;
+    grid-template-columns:repeat(2,1fr);
+  }
+  .hero-grid div{
+    padding:10px;
+    font-size:10px;
+    text-align:left;
+  }
   .hero-grid div b{font-size:12px;}
+
   .btn{display:block; width:100%; text-align:center; padding:14px 18px; font-size:13.5px;}
   .mascot{margin-top:22px;}
   .mascot img{width:150px;}
   .site-footer{font-size:10.5px; margin-top:26px; padding:14px 0 20px;}
-}
-@media (max-width:360px){
-  #screen-hero h1{font-size:22px;}
-  .hero-grid{grid-template-columns:1fr 1fr;}
 }
 
 </style>
